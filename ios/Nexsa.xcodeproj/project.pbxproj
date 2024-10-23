@@ -31,7 +31,6 @@
 		1CB6BDBB2CC8D9E0003454DD /* JosefinSans-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CB6BDA02CC8D9E0003454DD /* JosefinSans-Thin.ttf */; };
 		1CB6BDBC2CC8D9E0003454DD /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CB6BDA12CC8D9E0003454DD /* Roboto-Regular.ttf */; };
 		1CB6BDBD2CC8D9E0003454DD /* JosefinSans-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CB6BDA22CC8D9E0003454DD /* JosefinSans-ExtraLightItalic.ttf */; };
-		1CB6BDBE2CC8D9E0003454DD /* NothingYouCouldDo-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CB6BDA32CC8D9E0003454DD /* NothingYouCouldDo-Regular.ttf */; };
 		1CB6BDBF2CC8D9E0003454DD /* JosefinSans-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CB6BDA42CC8D9E0003454DD /* JosefinSans-MediumItalic.ttf */; };
 		1CB6BDC02CC8D9E0003454DD /* JosefinSans-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CB6BDA52CC8D9E0003454DD /* JosefinSans-SemiBold.ttf */; };
 		1CB6BDC12CC8D9E0003454DD /* Roboto-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CB6BDA62CC8D9E0003454DD /* Roboto-BlackItalic.ttf */; };
@@ -40,6 +39,7 @@
 		1CB6BDC42CC8D9E0003454DD /* Roboto-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CB6BDA92CC8D9E0003454DD /* Roboto-LightItalic.ttf */; };
 		1CB6BDC52CC8D9E0003454DD /* JosefinSans-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CB6BDAA2CC8D9E0003454DD /* JosefinSans-SemiBoldItalic.ttf */; };
 		1CB6BDC62CC8D9E0003454DD /* JosefinSans-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CB6BDAB2CC8D9E0003454DD /* JosefinSans-LightItalic.ttf */; };
+		1CB6BDCA2CC8E5A5003454DD /* NothingYouCouldDo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CB6BDC92CC8E5A5003454DD /* NothingYouCouldDo.ttf */; };
 		7699B88040F8A987B510C191 /* libPods-Nexsa-NexsaTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-Nexsa-NexsaTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
@@ -84,7 +84,6 @@
 		1CB6BDA02CC8D9E0003454DD /* JosefinSans-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "JosefinSans-Thin.ttf"; path = "../android/app/src/main/assets/fonts/JosefinSans-Thin.ttf"; sourceTree = "<group>"; };
 		1CB6BDA12CC8D9E0003454DD /* Roboto-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Regular.ttf"; path = "../android/app/src/main/assets/fonts/Roboto-Regular.ttf"; sourceTree = "<group>"; };
 		1CB6BDA22CC8D9E0003454DD /* JosefinSans-ExtraLightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "JosefinSans-ExtraLightItalic.ttf"; path = "../android/app/src/main/assets/fonts/JosefinSans-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
-		1CB6BDA32CC8D9E0003454DD /* NothingYouCouldDo-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "NothingYouCouldDo-Regular.ttf"; path = "../android/app/src/main/assets/fonts/NothingYouCouldDo-Regular.ttf"; sourceTree = "<group>"; };
 		1CB6BDA42CC8D9E0003454DD /* JosefinSans-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "JosefinSans-MediumItalic.ttf"; path = "../android/app/src/main/assets/fonts/JosefinSans-MediumItalic.ttf"; sourceTree = "<group>"; };
 		1CB6BDA52CC8D9E0003454DD /* JosefinSans-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "JosefinSans-SemiBold.ttf"; path = "../android/app/src/main/assets/fonts/JosefinSans-SemiBold.ttf"; sourceTree = "<group>"; };
 		1CB6BDA62CC8D9E0003454DD /* Roboto-BlackItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-BlackItalic.ttf"; path = "../android/app/src/main/assets/fonts/Roboto-BlackItalic.ttf"; sourceTree = "<group>"; };
@@ -93,6 +92,7 @@
 		1CB6BDA92CC8D9E0003454DD /* Roboto-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-LightItalic.ttf"; path = "../android/app/src/main/assets/fonts/Roboto-LightItalic.ttf"; sourceTree = "<group>"; };
 		1CB6BDAA2CC8D9E0003454DD /* JosefinSans-SemiBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "JosefinSans-SemiBoldItalic.ttf"; path = "../android/app/src/main/assets/fonts/JosefinSans-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
 		1CB6BDAB2CC8D9E0003454DD /* JosefinSans-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "JosefinSans-LightItalic.ttf"; path = "../android/app/src/main/assets/fonts/JosefinSans-LightItalic.ttf"; sourceTree = "<group>"; };
+		1CB6BDC92CC8E5A5003454DD /* NothingYouCouldDo.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = NothingYouCouldDo.ttf; path = ../android/app/src/main/assets/fonts/NothingYouCouldDo.ttf; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-Nexsa.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Nexsa.debug.xcconfig"; path = "Target Support Files/Pods-Nexsa/Pods-Nexsa.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-Nexsa.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Nexsa.release.xcconfig"; path = "Target Support Files/Pods-Nexsa/Pods-Nexsa.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-Nexsa-NexsaTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Nexsa-NexsaTests.debug.xcconfig"; path = "Target Support Files/Pods-Nexsa-NexsaTests/Pods-Nexsa-NexsaTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -158,6 +158,7 @@
 		1CB6BD902CC8D9BF003454DD /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				1CB6BDC92CC8E5A5003454DD /* NothingYouCouldDo.ttf */,
 				1CB6BD9B2CC8D9E0003454DD /* JosefinSans-Bold.ttf */,
 				1CB6BD932CC8D9DF003454DD /* JosefinSans-BoldItalic.ttf */,
 				1CB6BD952CC8D9E0003454DD /* JosefinSans-ExtraLight.ttf */,
@@ -172,7 +173,6 @@
 				1CB6BDAA2CC8D9E0003454DD /* JosefinSans-SemiBoldItalic.ttf */,
 				1CB6BDA02CC8D9E0003454DD /* JosefinSans-Thin.ttf */,
 				1CB6BD972CC8D9E0003454DD /* JosefinSans-ThinItalic.ttf */,
-				1CB6BDA32CC8D9E0003454DD /* NothingYouCouldDo-Regular.ttf */,
 				1CB6BDA72CC8D9E0003454DD /* Roboto-Black.ttf */,
 				1CB6BDA62CC8D9E0003454DD /* Roboto-BlackItalic.ttf */,
 				1CB6BD962CC8D9E0003454DD /* Roboto-Bold.ttf */,
@@ -346,9 +346,9 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				1CB6BDBD2CC8D9E0003454DD /* JosefinSans-ExtraLightItalic.ttf in Resources */,
 				1CB6BDC22CC8D9E0003454DD /* Roboto-Black.ttf in Resources */,
-				1CB6BDBE2CC8D9E0003454DD /* NothingYouCouldDo-Regular.ttf in Resources */,
 				1CB6BDAD2CC8D9E0003454DD /* Roboto-Italic.ttf in Resources */,
 				1CB6BDB82CC8D9E0003454DD /* Roboto-Light.ttf in Resources */,
+				1CB6BDCA2CC8E5A5003454DD /* NothingYouCouldDo.ttf in Resources */,
 				1CB6BDBB2CC8D9E0003454DD /* JosefinSans-Thin.ttf in Resources */,
 				1CB6BDC52CC8D9E0003454DD /* JosefinSans-SemiBoldItalic.ttf in Resources */,
 				1CB6BDB12CC8D9E0003454DD /* Roboto-Bold.ttf in Resources */,

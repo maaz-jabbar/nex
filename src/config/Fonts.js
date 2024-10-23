@@ -13,7 +13,7 @@ export default {
   JosefinSansSemiBoldItalic: 'JosefinSans-SemiBoldItalic',
   JosefinSansThin: 'JosefinSans-Thin',
   JosefinSansThinItalic: 'JosefinSans-ThinItalic',
-  NothingYouCouldDoRegular: 'NothingYouCouldDo-Regular',
+  NothingYouCouldDoRegular: 'NothingYouCouldDo',
   RobotoBlack: 'Roboto-Black',
   RobotoBlackItalic: 'Roboto-BlackItalic',
   RobotoBold: 'Roboto-Bold',
