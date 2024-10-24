@@ -40,6 +40,7 @@
 		1CB6BDC52CC8D9E0003454DD /* JosefinSans-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CB6BDAA2CC8D9E0003454DD /* JosefinSans-SemiBoldItalic.ttf */; };
 		1CB6BDC62CC8D9E0003454DD /* JosefinSans-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CB6BDAB2CC8D9E0003454DD /* JosefinSans-LightItalic.ttf */; };
 		1CB6BDCA2CC8E5A5003454DD /* NothingYouCouldDo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CB6BDC92CC8E5A5003454DD /* NothingYouCouldDo.ttf */; };
+		1CBBC1042CCA4BEC000EEC93 /* splash.png in Resources */ = {isa = PBXBuildFile; fileRef = 1CBBC1032CCA4BEC000EEC93 /* splash.png */; };
 		7699B88040F8A987B510C191 /* libPods-Nexsa-NexsaTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-Nexsa-NexsaTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
@@ -93,6 +94,7 @@
 		1CB6BDAA2CC8D9E0003454DD /* JosefinSans-SemiBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "JosefinSans-SemiBoldItalic.ttf"; path = "../android/app/src/main/assets/fonts/JosefinSans-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
 		1CB6BDAB2CC8D9E0003454DD /* JosefinSans-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "JosefinSans-LightItalic.ttf"; path = "../android/app/src/main/assets/fonts/JosefinSans-LightItalic.ttf"; sourceTree = "<group>"; };
 		1CB6BDC92CC8E5A5003454DD /* NothingYouCouldDo.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = NothingYouCouldDo.ttf; path = ../android/app/src/main/assets/fonts/NothingYouCouldDo.ttf; sourceTree = "<group>"; };
+		1CBBC1032CCA4BEC000EEC93 /* splash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = splash.png; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-Nexsa.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Nexsa.debug.xcconfig"; path = "Target Support Files/Pods-Nexsa/Pods-Nexsa.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-Nexsa.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Nexsa.release.xcconfig"; path = "Target Support Files/Pods-Nexsa/Pods-Nexsa.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-Nexsa-NexsaTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Nexsa-NexsaTests.debug.xcconfig"; path = "Target Support Files/Pods-Nexsa-NexsaTests/Pods-Nexsa-NexsaTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -158,6 +160,7 @@
 		1CB6BD902CC8D9BF003454DD /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				1CBBC1032CCA4BEC000EEC93 /* splash.png */,
 				1CB6BDC92CC8E5A5003454DD /* NothingYouCouldDo.ttf */,
 				1CB6BD9B2CC8D9E0003454DD /* JosefinSans-Bold.ttf */,
 				1CB6BD932CC8D9DF003454DD /* JosefinSans-BoldItalic.ttf */,
@@ -341,6 +344,7 @@
 				1CB6BDBC2CC8D9E0003454DD /* Roboto-Regular.ttf in Resources */,
 				1CB6BDBF2CC8D9E0003454DD /* JosefinSans-MediumItalic.ttf in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				1CBBC1042CCA4BEC000EEC93 /* splash.png in Resources */,
 				1CB6BDAE2CC8D9E0003454DD /* JosefinSans-BoldItalic.ttf in Resources */,
 				1CB6BDB02CC8D9E0003454DD /* JosefinSans-ExtraLight.ttf in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
@@ -706,7 +710,10 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -779,7 +786,10 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;

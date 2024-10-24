@@ -34,9 +34,8 @@ const data = [
   },
 ];
 
-const Onboarding = () => {
+const Onboarding = ({navigation}) => {
   const {width} = Dimensions.get('screen');
-
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const flatlistRef = React.useRef(null);
 
@@ -61,6 +60,7 @@ const Onboarding = () => {
           title="Next"
           onPress={() => {
             if (currentIndex === data.length - 1) {
+              navigation.navigate('LoginSignup');
               return;
             }
             flatlistRef.current.scrollToIndex({
@@ -74,7 +74,11 @@ const Onboarding = () => {
           textStyle={{marginLeft: 0}}
         />
 
-        <Text style={styles.skip}>Skip</Text>
+        <Text
+          onPress={() => navigation.navigate('LoginSignup')}
+          style={styles.skip}>
+          Skip
+        </Text>
         <View style={styles.pageIndicator}>
           {data.map((_, index) => (
             <LinearGradient
@@ -150,7 +154,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: Fonts.RobotoMedium,
     color: Colors.secondary,
-    marginTop: 20,
   },
   dot: {
     width: 13,
@@ -161,8 +164,7 @@ const styles = StyleSheet.create({
   pageIndicator: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginVertical: 20,
-    marginBottom: 40,
+    marginVertical: 50,
   },
   pageIndicatorContainer: {
     alignItems: 'center',

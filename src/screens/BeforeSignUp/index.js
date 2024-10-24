@@ -8,6 +8,11 @@ const BeforeSignUp = ({navigation}) => {
   const moveToOnboarding = () => {
     navigation.navigate('Onboarding');
   };
+
+  const moveToLogin = () => {
+    navigation.navigate('LoginSignup',{loginActive: true});
+  }
+
   return (
     <View style={styles.container}>
       <View>
@@ -32,7 +37,7 @@ const BeforeSignUp = ({navigation}) => {
       </View>
       <View>
         <Text style={styles.alreadyHaveAccount}>Already have an account?</Text>
-        <Text style={styles.signIn}>Sign In</Text>
+        <Text style={styles.signIn} onPress={moveToLogin}>Sign In</Text>
       </View>
       <View />
     </View>
