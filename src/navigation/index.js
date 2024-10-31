@@ -3,6 +3,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import AuthStack from './AuthStack';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import SplashScreen from 'react-native-splash-screen';
+import ProfileCreationStack from './ProfileCreationStack';
 
 const Stack = createNativeStackNavigator();
 
@@ -14,8 +15,9 @@ export default function Navigation() {
   }, []);
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name="AuthStack" component={AuthStack} />
+      <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName="Auth">
+        <Stack.Screen name="Auth" component={AuthStack} />
+        <Stack.Screen name="ProfileCreation" component={ProfileCreationStack} />
       </Stack.Navigator>
     </NavigationContainer>
   );

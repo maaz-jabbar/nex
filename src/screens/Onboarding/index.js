@@ -69,9 +69,7 @@ const Onboarding = ({navigation}) => {
               viewPosition: 0,
             });
           }}
-          buttonStyle={{width: 200, marginTop: 20}}
-          containerStyle={{justifyContent: 'center'}}
-          textStyle={{marginLeft: 0}}
+          buttonStyle={{width: 150, marginTop: 20}}
         />
 
         <Text

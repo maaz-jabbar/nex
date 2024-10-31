@@ -14,12 +14,18 @@ import {Colors, Fonts} from '../../config';
 import Images from '../../assets';
 import {CheckBox, GradientButton, TextInputCustom} from '../../components';
 
-const LoginSignup = ({route}) => {
-  const [loginActive, setLoginActive] = React.useState(route?.params?.loginActive || false);
+const LoginSignup = ({route, navigation}) => {
+  const [loginActive, setLoginActive] = React.useState(
+    route?.params?.loginActive || false,
+  );
 
   const phoneInput = React.useRef(null);
   const emailInput = React.useRef(null);
   const passwordInput = React.useRef(null);
+
+  const _onSubmit = () => {
+    navigation.navigate('ProfileCreation');
+  };
 
   return (
     <LinearGradient
@@ -55,8 +61,7 @@ const LoginSignup = ({route}) => {
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={() => {
-                setLoginActive(false)
-                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+              setLoginActive(false);
             }}
             style={{
               borderBottomWidth: loginActive ? 0 : 2,
@@ -75,8 +80,7 @@ const LoginSignup = ({route}) => {
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={() => {
-                setLoginActive(true)
-                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+              setLoginActive(true);
             }}
             style={{
               borderBottomWidth: loginActive ? 2 : 0,
@@ -109,6 +113,7 @@ const LoginSignup = ({route}) => {
                   title="Full Name"
                   textInputProps={{
                     placeholder: 'Full Name',
+                    placeholderTextColor: Colors.lightGrey,
                     keyboardType: 'default',
                     returnKeyType: 'next',
                     onSubmitEditing: () => {
@@ -120,6 +125,7 @@ const LoginSignup = ({route}) => {
                   title="Phone Number"
                   textInputProps={{
                     placeholder: 'Phone Number',
+                    placeholderTextColor: Colors.lightGrey,
                     keyboardType: 'number-pad',
                     returnKeyType: 'next',
                     ref: phoneInput,
@@ -134,6 +140,7 @@ const LoginSignup = ({route}) => {
               title="Email Address"
               textInputProps={{
                 placeholder: 'Email Address',
+                placeholderTextColor: Colors.lightGrey,
                 keyboardType: 'email-address',
                 returnKeyType: 'next',
                 ref: emailInput,
@@ -146,6 +153,7 @@ const LoginSignup = ({route}) => {
               title="Password"
               textInputProps={{
                 placeholder: 'Password',
+                placeholderTextColor: Colors.lightGrey,
                 keyboardType: 'default',
                 returnKeyType: 'done',
                 secureTextEntry: true,
@@ -180,12 +188,8 @@ const LoginSignup = ({route}) => {
             )}
           </View>
           <GradientButton
-            textStyle={{textAlign: 'center', marginLeft: 0}}
-            containerStyle={{
-              justifyContent: 'center',
-            }}
-            buttonStyle={{alignSelf: 'center', width: 200, marginTop: 20}}
-            onPress={() => {}}
+            buttonStyle={{alignSelf: 'center', width: 150, marginTop: 20}}
+            onPress={_onSubmit}
             title={loginActive ? 'Sign In' : 'Sign Up'}
           />
         </ScrollView>

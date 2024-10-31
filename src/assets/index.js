@@ -4,4 +4,7 @@ export default {
     onboarding1: require('./onboarding1.png'),
     logo: require('./logo.png'),
     bgLogo: require('./bgLogo.png'),
+    back: require('./back.png'),
+    congratulations: require('./congratulations.png'),
+    link: require('./link.png'),
 }

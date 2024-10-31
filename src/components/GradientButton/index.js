@@ -11,6 +11,9 @@ const GradientButton = ({
   buttonStyle = {},
   containerStyle = {},
   textStyle = {},
+  iconStyle = {},
+  noGradient = false,
+  iconSize = 25
 }) => {
   return (
     <TouchableOpacity
@@ -18,12 +21,19 @@ const GradientButton = ({
       activeOpacity={0.8}
       style={[styles.button, buttonStyle]}>
       <LinearGradient
-        colors={[Colors.primary, Colors.secondary]}
+        colors={noGradient ? [Colors.transparent, Colors.transparent] : [Colors.primary, Colors.secondary]}
         start={{x: 0, y: 0}}
         end={{x: 1, y: 0}}
-        style={[styles.linearGradient, containerStyle]}>
-        {icon && <Image source={icon} style={{width: 25, height: 25}} />}
-        <Text style={[styles.buttonText, textStyle]}>{title}</Text>
+        style={[
+          styles.linearGradient,
+          !icon && {justifyContent: 'center'},
+          noGradient && styles.border,
+          containerStyle,
+        ]}>
+        {icon && <Image source={icon} style={[{width: iconSize, height: iconSize}, iconStyle]} />}
+        <Text style={[styles.buttonText, !icon && {marginLeft: 0}, textStyle]}>
+          {title}
+        </Text>
       </LinearGradient>
     </TouchableOpacity>
   );
@@ -41,7 +51,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 100,
-    padding: 20,
+    paddingHorizontal: 20,
+    height: 48,
   },
   buttonText: {
     color: Colors.white,
@@ -49,4 +60,8 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.RobotoBold,
     marginLeft: 20,
   },
+  border: {
+    borderWidth: 2,
+    borderColor: Colors.secondary,
+  }
 });
