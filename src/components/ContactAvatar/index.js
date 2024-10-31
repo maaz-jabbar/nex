@@ -1,0 +1,52 @@
+import React from 'react';
+import {View, Text, Image, StyleSheet} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import {Colors, Fonts} from '../../config';
+const ContactAvatar = ({
+  contact,
+  size = 60,
+  displayName = true,
+  displayFullLastName,
+}) => {
+  const fisrtName = contact?.name?.split(' ')[0];
+  const lastName = contact?.name?.split(' ')[1];
+
+  return (
+    <View style={{alignItems: 'center', marginRight: 20}}>
+      <LinearGradient
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 0}}
+        colors={[Colors.primary, Colors.secondary]}
+        style={{borderRadius: (size + 4) / 2, padding: 2}}>
+        <Image
+          source={{uri: contact.imageLink}}
+          resizeMode="cover"
+          style={{
+            width: size,
+            height: size,
+            borderRadius: size / 2,
+            borderWidth: 2,
+            borderColor: Colors.white,
+          }}
+        />
+      </LinearGradient>
+      {displayName && (
+        <Text numberOfLines={1} style={styles.contactName}>{`${fisrtName} ${
+          lastName ? (displayFullLastName ? lastName : lastName[0]) : ''
+        }`}</Text>
+      )}
+    </View>
+  );
+};
+
+export default ContactAvatar;
+
+const styles = StyleSheet.create({
+  contactName: {
+    color: Colors.black,
+    fontSize: 13,
+    fontFamily: Fonts.RobotoRegular,
+    maxWidth: 60,
+    textTransform: 'capitalize',
+  },
+});

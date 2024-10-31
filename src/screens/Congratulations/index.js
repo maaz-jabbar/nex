@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {Dimensions, Image, StyleSheet, Text, View} from 'react-native';
 import {Colors, Fonts} from '../../config';
 import Images from '../../assets';
@@ -6,7 +6,16 @@ import {GradientButton} from '../../components';
 
 const {width} = Dimensions.get('window');
 
-const Congratulations = () => {
+const Congratulations = ({
+  navigation
+}) => {
+
+  useEffect(() => {
+    setTimeout(() => {
+      navigation.navigate('AppStack');
+    }, 3000);
+  }, []);
+
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Congratulations!</Text>

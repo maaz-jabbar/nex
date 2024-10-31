@@ -11,13 +11,21 @@ import {
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import {Colors, Fonts} from '../../config';
 import Images from '../../assets';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const Header = ({navigation}) => {
+  const insets = useSafeAreaInsets();
   const _goBack = () => {
     navigation.goBack();
   };
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          paddingTop: insets.top,
+        },
+      ]}>
       <View style={styles.header}>
         <TouchableOpacity
           onPress={_goBack}

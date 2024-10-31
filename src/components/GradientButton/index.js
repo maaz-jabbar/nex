@@ -12,8 +12,9 @@ const GradientButton = ({
   containerStyle = {},
   textStyle = {},
   iconStyle = {},
+  indicator = false,
   noGradient = false,
-  iconSize = 25
+  iconSize = 25,
 }) => {
   return (
     <TouchableOpacity
@@ -21,7 +22,11 @@ const GradientButton = ({
       activeOpacity={0.8}
       style={[styles.button, buttonStyle]}>
       <LinearGradient
-        colors={noGradient ? [Colors.transparent, Colors.transparent] : [Colors.primary, Colors.secondary]}
+        colors={
+          noGradient
+            ? [Colors.transparent, Colors.transparent]
+            : [Colors.primary, Colors.secondary]
+        }
         start={{x: 0, y: 0}}
         end={{x: 1, y: 0}}
         style={[
@@ -30,10 +35,32 @@ const GradientButton = ({
           noGradient && styles.border,
           containerStyle,
         ]}>
-        {icon && <Image source={icon} style={[{width: iconSize, height: iconSize}, iconStyle]} />}
-        <Text style={[styles.buttonText, !icon && {marginLeft: 0}, textStyle]}>
-          {title}
-        </Text>
+        {icon && (
+          <Image
+            source={icon}
+            resizeMode="contain"
+            style={[{width: iconSize, height: iconSize}, iconStyle]}
+          />
+        )}
+        {title && (
+          <Text
+            style={[styles.buttonText, !icon && {marginLeft: 0}, textStyle]}>
+            {title}
+          </Text>
+        )}
+        {indicator && (
+          <View style={styles.indicator}>
+            <Text
+              style={[
+                styles.indicatorText,
+                {
+                  color: noGradient ? Colors.darkerGrey : Colors.secondary,
+                },
+              ]}>
+              {indicator}
+            </Text>
+          </View>
+        )}
       </LinearGradient>
     </TouchableOpacity>
   );
@@ -42,6 +69,10 @@ const GradientButton = ({
 export default GradientButton;
 
 const styles = StyleSheet.create({
+  indicatorText: {
+    fontSize: 16,
+    fontFamily: Fonts.RobotoBold,
+  },
   button: {
     width: '100%',
     marginBottom: 20,
@@ -63,5 +94,14 @@ const styles = StyleSheet.create({
   border: {
     borderWidth: 2,
     borderColor: Colors.secondary,
-  }
+  },
+  indicator: {
+    backgroundColor: Colors.white,
+    height: 20,
+    width: 20,
+    borderRadius: 10,
+    marginLeft: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });

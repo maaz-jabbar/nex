@@ -5,5 +5,23 @@ import Welcome from './Welcome';
 import ChoosePosition from './ChoosePosition';
 import ChooseLocation from './ChooseLocation';
 import Congratulations from './Congratulations';
+import ChatLanding from './ChatLanding';
+import Contacts from './Contacts';
+import Settings from './Settings';
+import Home from './Home';
+import Gallery from './Gallery';
 
-export {BeforeSignUp, Onboarding, LoginSignup, Welcome, ChoosePosition, ChooseLocation, Congratulations};
+export {
+  BeforeSignUp,
+  Onboarding,
+  LoginSignup,
+  Welcome,
+  ChoosePosition,
+  ChooseLocation,
+  Congratulations,
+  ChatLanding,
+  Contacts,
+  Settings,
+  Home,
+  Gallery,
+};
