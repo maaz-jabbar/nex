@@ -3,8 +3,11 @@ import {StyleSheet, Text, View} from 'react-native';
 import {Colors, Fonts} from '../../config';
 import {GradientButton} from '../../components';
 
-const Welcome = ({navigation}) => {
-  const moveToProfileCreation = () => navigation.navigate('ChoosePosition');
+const Welcome = ({navigation, route: {params: {isCustomer} = {}}}) => {
+  const moveToProfileCreation = () => {
+    if (isCustomer) navigation.navigate('ChooseProduct');
+    else navigation.navigate('ChoosePosition');
+  };
 
   const skip = () => {};
 

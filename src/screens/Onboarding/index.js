@@ -34,10 +34,14 @@ const data = [
   },
 ];
 
-const Onboarding = ({navigation}) => {
+const Onboarding = ({navigation, route: {params: {isCustomer} = {}}}) => {
   const {width} = Dimensions.get('screen');
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const flatlistRef = React.useRef(null);
+
+  const moveToLogin = () => {
+    navigation.navigate('LoginSignup', {isCustomer});
+  };
 
   const _renderItem = ({item, index}) => {
     return (
@@ -60,7 +64,7 @@ const Onboarding = ({navigation}) => {
           title="Next"
           onPress={() => {
             if (currentIndex === data.length - 1) {
-              navigation.navigate('LoginSignup');
+              moveToLogin();
               return;
             }
             flatlistRef.current.scrollToIndex({
@@ -72,9 +76,7 @@ const Onboarding = ({navigation}) => {
           buttonStyle={{width: 150, marginTop: 20}}
         />
 
-        <Text
-          onPress={() => navigation.navigate('LoginSignup')}
-          style={styles.skip}>
+        <Text onPress={moveToLogin} style={styles.skip}>
           Skip
         </Text>
         <View style={styles.pageIndicator}>

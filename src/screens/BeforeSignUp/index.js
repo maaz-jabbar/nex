@@ -5,13 +5,13 @@ import GradientButton from '../../components/GradientButton';
 import Images from '../../assets';
 
 const BeforeSignUp = ({navigation}) => {
-  const moveToOnboarding = () => {
-    navigation.navigate('Onboarding');
+  const moveToOnboarding = isCustomer => {
+    navigation.navigate('Onboarding', {isCustomer});
   };
 
   const moveToLogin = () => {
-    navigation.navigate('LoginSignup',{loginActive: true});
-  }
+    navigation.navigate('LoginSignup', {loginActive: true, isCustomer: true});
+  };
 
   return (
     <View style={styles.container}>
@@ -25,19 +25,21 @@ const BeforeSignUp = ({navigation}) => {
           alignItems: 'center',
         }}>
         <GradientButton
-          onPress={moveToOnboarding}
+          onPress={() => moveToOnboarding(true)}
           icon={Images.cart}
           title="I am a Customer"
         />
         <GradientButton
-          onPress={moveToOnboarding}
+          onPress={() => moveToOnboarding(false)}
           icon={Images.cart}
           title="I am a Seller"
         />
       </View>
       <View>
         <Text style={styles.alreadyHaveAccount}>Already have an account?</Text>
-        <Text style={styles.signIn} onPress={moveToLogin}>Sign In</Text>
+        <Text style={styles.signIn} onPress={moveToLogin}>
+          Sign In
+        </Text>
       </View>
       <View />
     </View>

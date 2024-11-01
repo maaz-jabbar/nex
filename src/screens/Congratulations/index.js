@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import {Dimensions, Image, StyleSheet, Text, View} from 'react-native';
 import {Colors, Fonts} from '../../config';
 import Images from '../../assets';
@@ -6,10 +6,7 @@ import {GradientButton} from '../../components';
 
 const {width} = Dimensions.get('window');
 
-const Congratulations = ({
-  navigation
-}) => {
-
+const Congratulations = ({navigation, route: {params: {isCustomer} = {}}}) => {
   useEffect(() => {
     setTimeout(() => {
       navigation.navigate('AppStack');
@@ -26,14 +23,18 @@ const Congratulations = ({
         resizeMode="contain"
       />
       <Text style={styles.subHeading}>
-        Add customers to your{"\n"}Shopspace to get started
+        {isCustomer
+          ? `Now invite your favorite sellers &${'\n'}friends to join Nexsa`
+          : `Add customers to your${'\n'}Shopspace to get started`}
       </Text>
-      <GradientButton
-        title="Import Contacts"
-        onPress={() => {}}
-        buttonStyle={{width: 150}}
-        containerStyle={{paddingHorizontal: 0}}
-      />
+      {!isCustomer && (
+        <GradientButton
+          title="Import Contacts"
+          onPress={() => {}}
+          buttonStyle={{width: 150}}
+          containerStyle={{paddingHorizontal: 0}}
+        />
+      )}
       <GradientButton
         title="Invite Link"
         onPress={() => {}}
@@ -44,7 +45,9 @@ const Congratulations = ({
         buttonStyle={{width: 150}}
         textStyle={{color: Colors.black, marginLeft: 10}}
       />
-      <Text style={styles.editProfile}>Add/invite customers in Contacts or Settings</Text>
+      <Text style={styles.editProfile}>
+        Add/invite customers in Contacts or Settings
+      </Text>
     </View>
   );
 };

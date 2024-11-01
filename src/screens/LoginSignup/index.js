@@ -19,12 +19,15 @@ const LoginSignup = ({route, navigation}) => {
     route?.params?.loginActive || false,
   );
 
+  const isCustomer = route?.params?.isCustomer || true;
+
   const phoneInput = React.useRef(null);
   const emailInput = React.useRef(null);
   const passwordInput = React.useRef(null);
 
   const _onSubmit = () => {
-    navigation.navigate('ProfileCreation');
+    if (isCustomer) navigation.navigate('CustomerProfileCreation');
+    else navigation.navigate('ProfileCreation');
   };
 
   return (

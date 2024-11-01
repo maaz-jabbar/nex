@@ -4,6 +4,8 @@ import CheckBox from './CheckBox';
 import Header from './Header';
 import SelectionPill from './SelectionPill';
 import ContactAvatar from './ContactAvatar';
+import ChatCard from './ChatCard';
+import ContactCard from './ContactCard';
 
 export {
   TextInputCustom,
@@ -12,4 +14,6 @@ export {
   Header,
   SelectionPill,
   ContactAvatar,
+  ChatCard,
+  ContactCard,
 };

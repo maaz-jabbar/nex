@@ -19,4 +19,6 @@ export default {
   settingsFocused: require('./settingsFocused.png'),
   plus: require('./plus.png'),
   search: require('./search.png'),
+  read: require('./read.png'),
+  delivered: require('./delivered.png'),
 };

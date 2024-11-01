@@ -5,6 +5,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import Images from '../../assets';
 
 const GradientButton = ({
+  disabled = false,
   icon = null,
   title = '',
   onPress = () => {},
@@ -18,6 +19,7 @@ const GradientButton = ({
 }) => {
   return (
     <TouchableOpacity
+      disabled={disabled}
       onPress={onPress}
       activeOpacity={0.8}
       style={[styles.button, buttonStyle]}>

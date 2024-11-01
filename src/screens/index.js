@@ -10,6 +10,8 @@ import Contacts from './Contacts';
 import Settings from './Settings';
 import Home from './Home';
 import Gallery from './Gallery';
+import ChooseProduct from './ChooseProduct';
+import ChooseFavoriteBrands from './ChooseFavoriteBrands';
 
 export {
   BeforeSignUp,
@@ -24,4 +26,6 @@ export {
   Settings,
   Home,
   Gallery,
+  ChooseProduct,
+  ChooseFavoriteBrands
 };

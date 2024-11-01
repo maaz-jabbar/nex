@@ -10,13 +10,18 @@ const ContactAvatar = ({
 }) => {
   const fisrtName = contact?.name?.split(' ')[0];
   const lastName = contact?.name?.split(' ')[1];
+  const storyAvailable = contact?.storyAvailable;
 
   return (
     <View style={{alignItems: 'center', marginRight: 20}}>
       <LinearGradient
         start={{x: 0, y: 0}}
         end={{x: 1, y: 0}}
-        colors={[Colors.primary, Colors.secondary]}
+        colors={
+          storyAvailable
+            ? [Colors.primary, Colors.secondary]
+            : [Colors.darkGrey, Colors.darkGrey]
+        }
         style={{borderRadius: (size + 4) / 2, padding: 2}}>
         <Image
           source={{uri: contact.imageLink}}
