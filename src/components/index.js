@@ -6,6 +6,7 @@ import SelectionPill from './SelectionPill';
 import ContactAvatar from './ContactAvatar';
 import ChatCard from './ChatCard';
 import ContactCard from './ContactCard';
+import BroadcastCard from './BroadcastCard';
 
 export {
   TextInputCustom,
@@ -16,4 +17,5 @@ export {
   ContactAvatar,
   ChatCard,
   ContactCard,
+  BroadcastCard
 };

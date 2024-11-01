@@ -11,10 +11,10 @@ import {
 } from 'react-native';
 import {Colors, Fonts} from '../../config';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {ChatCard, GradientButton} from '../../components';
+import {BroadcastCard, ChatCard, GradientButton} from '../../components';
 import Images from '../../assets';
 import {ContactAvatar} from '../../components';
-import {chats, contacts} from '../../dummyData';
+import {broadcasts, chats, contacts} from '../../dummyData';
 import ReactNativeModal from 'react-native-modal';
 
 const ChatLanding = () => {
@@ -131,10 +131,14 @@ const ChatLanding = () => {
           </View>
         </>
         <FlatList
-          data={chats}
+          key={selectedTab}
+          data={selectedTab == 'Chat' ? chats : broadcasts}
           scrollEnabled={false}
           renderItem={({item, index}) => {
-            return <ChatCard key={index} chat={item} />;
+            if (selectedTab == 'Chat') {
+              return <ChatCard key={index} chat={item} />;
+            }
+            return <BroadcastCard key={index} chat={item} />;
           }}
         />
       </ScrollView>

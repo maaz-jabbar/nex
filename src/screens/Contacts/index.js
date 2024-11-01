@@ -15,9 +15,8 @@ import Images from '../../assets';
 import {ContactAvatar} from '../../components';
 import {chats, contacts} from '../../dummyData';
 
-const Contacts = () => {
+const Contacts = ({navigation}) => {
   const {top} = useSafeAreaInsets();
-  const [selectedTab, setSelectedTab] = React.useState('Chat');
 
   const _goBack = () => {
     navigation.goBack();

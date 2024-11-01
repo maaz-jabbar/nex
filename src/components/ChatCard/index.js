@@ -48,8 +48,11 @@ const ChatCard = ({chat}) => {
             alignItems: 'center',
           }}>
           <Text
+            numberOfLines={1}
             style={{
               fontSize: 14,
+              flex: 1,
+              paddingRight: 10,
               color: lastMessageColor,
               fontFamily: Fonts.RobotoRegular,
             }}>

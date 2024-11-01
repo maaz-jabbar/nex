@@ -7,13 +7,14 @@ const ContactAvatar = ({
   size = 60,
   displayName = true,
   displayFullLastName,
+  containerStyle = {},
 }) => {
   const fisrtName = contact?.name?.split(' ')[0];
   const lastName = contact?.name?.split(' ')[1];
   const storyAvailable = contact?.storyAvailable;
 
   return (
-    <View style={{alignItems: 'center', marginRight: 20}}>
+    <View style={[{alignItems: 'center', marginRight: 20}, containerStyle]}>
       <LinearGradient
         start={{x: 0, y: 0}}
         end={{x: 1, y: 0}}

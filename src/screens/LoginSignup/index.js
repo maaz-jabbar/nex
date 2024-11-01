@@ -19,7 +19,7 @@ const LoginSignup = ({route, navigation}) => {
     route?.params?.loginActive || false,
   );
 
-  const isCustomer = route?.params?.isCustomer || true;
+  const isCustomer = route?.params?.isCustomer;
 
   const phoneInput = React.useRef(null);
   const emailInput = React.useRef(null);

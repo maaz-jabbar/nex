@@ -379,3 +379,200 @@ export const productType = [
     name: 'Handbags/Accessories',
   },
 ];
+
+export const broadcasts = [
+  {
+    id: 1,
+    name: 'New Arrivals',
+    lastMessage: {
+      senderId: 1,
+      text: 'just checking in to see if you had a chance to review the proposal lorem ipsum dolor just checking in to see if you had a chance to review the proposal lorem ipsum dolor',
+      time: new Date(),
+    },
+    users: [
+      {
+        id: 1,
+        imageLink:
+          'https://images.inc.com/uploaded_files/image/1024x576/getty_481292845_77896.jpg',
+        name: 'John Doe',
+        storyAvailable: true,
+      },
+      {
+        id: 2,
+        imageLink:
+          'https://images.squarespace-cdn.com/content/v1/5c7c30767980b31affc87b09/1602396079712-4JS2RJYHTAP5OXOUQ1SB/image-asset.jpeg',
+        name: 'Emily Clark',
+        storyAvailable: false,
+      },
+      {
+        id: 3,
+        imageLink:
+          'https://cdn2.psychologytoday.com/assets/styles/manual_crop_4_3_1200x900/public/field_blog_entry_images/2018-09/shutterstock_648907024.jpg?itok=eaVcXTz5',
+        name: 'Janet S',
+        storyAvailable: true,
+      },
+      {
+        id: 4,
+        imageLink:
+          'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
+        name: 'Marty M',
+        storyAvailable: true,
+      },
+      {
+        id: 5,
+        imageLink:
+          'https://images.inc.com/uploaded_files/image/1024x576/getty_481292845_77896.jpg',
+        name: 'John D',
+        storyAvailable: true,
+      },
+      {
+        id: 6,
+        imageLink:
+          'https://images.squarespace-cdn.com/content/v1/5c7c30767980b31affc87b09/1602396079712-4JS2RJYHTAP5OXOUQ1SB/image-asset.jpeg',
+        name: 'Emily',
+        storyAvailable: false,
+      },
+      {
+        id: 7,
+        imageLink:
+          'https://cdn2.psychologytoday.com/assets/styles/manual_crop_4_3_1200x900/public/field_blog_entry_images/2018-09/shutterstock_648907024.jpg?itok=eaVcXTz5',
+        name: 'Janet S',
+        storyAvailable: true,
+      },
+      {
+        id: 8,
+        imageLink:
+          'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
+        name: 'Marty M',
+        storyAvailable: true,
+      },
+    ],
+  },
+  {
+    id: 2,
+    name: 'Final Meeting Call',
+    lastMessage: {
+      senderId: 1,
+      text: 'just checking in to see if you had a chance to review the proposal lorem ipsum dolor just checking in to see if you had a chance to review the proposal lorem ipsum dolor',
+      time: new Date(),
+    },
+    users: [
+      {
+        id: 4,
+        imageLink:
+          'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
+        name: 'Marty M',
+        storyAvailable: true,
+      },
+      {
+        id: 5,
+        imageLink:
+          'https://images.inc.com/uploaded_files/image/1024x576/getty_481292845_77896.jpg',
+        name: 'John D',
+        storyAvailable: true,
+      },
+      {
+        id: 6,
+        imageLink:
+          'https://images.squarespace-cdn.com/content/v1/5c7c30767980b31affc87b09/1602396079712-4JS2RJYHTAP5OXOUQ1SB/image-asset.jpeg',
+        name: 'Emily',
+        storyAvailable: false,
+      },
+      {
+        id: 7,
+        imageLink:
+          'https://cdn2.psychologytoday.com/assets/styles/manual_crop_4_3_1200x900/public/field_blog_entry_images/2018-09/shutterstock_648907024.jpg?itok=eaVcXTz5',
+        name: 'Janet S',
+        storyAvailable: true,
+      },
+      {
+        id: 8,
+        imageLink:
+          'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
+        name: 'Marty M',
+        storyAvailable: true,
+      },
+    ],
+  },
+  {
+    id: 3,
+    name: 'Deal Closing Request',
+    lastMessage: {
+      senderId: 1,
+      text: 'just checking in to see if you had a chance to review the proposal lorem ipsum dolor just checking in to see if you had a chance to review the proposal lorem ipsum dolor',
+      time: new Date(),
+    },
+    users: [
+      {
+        id: 7,
+        imageLink:
+          'https://cdn2.psychologytoday.com/assets/styles/manual_crop_4_3_1200x900/public/field_blog_entry_images/2018-09/shutterstock_648907024.jpg?itok=eaVcXTz5',
+        name: 'Janet S',
+        storyAvailable: true,
+      },
+      {
+        id: 8,
+        imageLink:
+          'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
+        name: 'Marty M',
+        storyAvailable: true,
+      },
+      {
+        id: 1,
+        imageLink:
+          'https://images.inc.com/uploaded_files/image/1024x576/getty_481292845_77896.jpg',
+        name: 'John Doe',
+        storyAvailable: true,
+      },
+      {
+        id: 2,
+        imageLink:
+          'https://images.squarespace-cdn.com/content/v1/5c7c30767980b31affc87b09/1602396079712-4JS2RJYHTAP5OXOUQ1SB/image-asset.jpeg',
+        name: 'Emily Clark',
+        storyAvailable: false,
+      },
+      {
+        id: 3,
+        imageLink:
+          'https://cdn2.psychologytoday.com/assets/styles/manual_crop_4_3_1200x900/public/field_blog_entry_images/2018-09/shutterstock_648907024.jpg?itok=eaVcXTz5',
+        name: 'Janet S',
+        storyAvailable: true,
+      },
+      {
+        id: 4,
+        imageLink:
+          'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
+        name: 'Marty M',
+        storyAvailable: true,
+      },
+      {
+        id: 5,
+        imageLink:
+          'https://images.inc.com/uploaded_files/image/1024x576/getty_481292845_77896.jpg',
+        name: 'John D',
+        storyAvailable: true,
+      },
+      {
+        id: 6,
+        imageLink:
+          'https://images.squarespace-cdn.com/content/v1/5c7c30767980b31affc87b09/1602396079712-4JS2RJYHTAP5OXOUQ1SB/image-asset.jpeg',
+        name: 'Emily',
+        storyAvailable: false,
+      },
+      {
+        id: 7,
+        imageLink:
+          'https://cdn2.psychologytoday.com/assets/styles/manual_crop_4_3_1200x900/public/field_blog_entry_images/2018-09/shutterstock_648907024.jpg?itok=eaVcXTz5',
+        name: 'Janet S',
+        storyAvailable: true,
+      },
+      {
+        id: 8,
+        imageLink:
+          'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
+        name: 'Marty M',
+        storyAvailable: true,
+      },
+    ],
+  },
+];
