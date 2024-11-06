@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, Image, StyleSheet} from 'react-native';
+import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {Colors, Fonts} from '../../config';
 const ContactAvatar = ({
@@ -8,13 +8,17 @@ const ContactAvatar = ({
   displayName = true,
   displayFullLastName,
   containerStyle = {},
+  onPress = () => {},
 }) => {
   const fisrtName = contact?.name?.split(' ')[0];
   const lastName = contact?.name?.split(' ')[1];
   const storyAvailable = contact?.storyAvailable;
 
   return (
-    <View style={[{alignItems: 'center', marginRight: 20}, containerStyle]}>
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={onPress}
+      style={[{alignItems: 'center', marginRight: size / 3}, containerStyle]}>
       <LinearGradient
         start={{x: 0, y: 0}}
         end={{x: 1, y: 0}}
@@ -25,7 +29,7 @@ const ContactAvatar = ({
         }
         style={{borderRadius: (size + 4) / 2, padding: 2}}>
         <Image
-          source={{uri: contact.imageLink}}
+          source={{uri: contact?.imageLink}}
           resizeMode="cover"
           style={{
             width: size,
@@ -41,7 +45,7 @@ const ContactAvatar = ({
           lastName ? (displayFullLastName ? lastName : lastName[0]) : ''
         }`}</Text>
       )}
-    </View>
+    </TouchableOpacity>
   );
 };
 

@@ -7,6 +7,8 @@ import ContactAvatar from './ContactAvatar';
 import ChatCard from './ChatCard';
 import ContactCard from './ContactCard';
 import BroadcastCard from './BroadcastCard';
+import ChatBubble from './ChatBubble';
+import ToggleButton from './ToggleButton';
 
 export {
   TextInputCustom,
@@ -17,5 +19,7 @@ export {
   ContactAvatar,
   ChatCard,
   ContactCard,
-  BroadcastCard
+  BroadcastCard,
+  ChatBubble,
+  ToggleButton,
 };

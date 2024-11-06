@@ -19,7 +19,7 @@ export default function Navigation() {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{headerShown: false}}
-        initialRouteName="Auth">
+        initialRouteName="AppStack">
         <Stack.Screen name="Auth" component={AuthStack} />
         <Stack.Screen name="ProfileCreation" component={ProfileCreationStack} />
         <Stack.Screen

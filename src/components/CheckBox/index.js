@@ -1,27 +1,58 @@
 import React from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Colors, Fonts} from '../../config';
+import LinearGradient from 'react-native-linear-gradient';
+import Images from '../../assets';
 
-const CheckBox = ({title}) => {
-  const [isChecked, setIsChecked] = React.useState(false);
+const CheckBox = ({
+  title,
+  size = 26,
+  rounded = false,
+  isChecked = false,
+  setIsChecked = () => {},
+}) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        onPress={() => setIsChecked(!isChecked)}
+        onPress={setIsChecked}
         style={{
-          justifyContent: 'center',
-          alignItems: 'center',
-          width: 26,
-          height: 26,
-          borderRadius: 5,
-          borderWidth: 1,
+          width: size,
+          height: size,
+          borderRadius: rounded ? size / 2 : 5,
+          borderWidth: isChecked ? 0 : 1,
+          overflow: 'hidden',
           borderColor: Colors.lightGrey,
           marginRight: 10,
           backgroundColor: isChecked ? Colors.lightGrey : Colors.white,
-        }}></TouchableOpacity>
-      <Text style={{color: Colors.black, fontFamily: Fonts.RobotoMedium}}>
-        {title}
-      </Text>
+        }}>
+        {isChecked && (
+          <LinearGradient
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: size,
+              height: size,
+            }}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}
+            colors={
+              isChecked
+                ? [Colors.primary, Colors.secondary]
+                : [Colors.darkGrey, Colors.darkGrey]
+            }>
+            <Image
+              resizeMode="contain"
+              source={Images.delivered}
+              style={styles.tick}
+            />
+          </LinearGradient>
+        )}
+      </TouchableOpacity>
+      {title && (
+        <Text style={{color: Colors.black, fontFamily: Fonts.RobotoMedium}}>
+          {title}
+        </Text>
+      )}
     </View>
   );
 };
@@ -33,5 +64,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     marginLeft: 10,
+  },
+  gradient: {
+    flex: 1,
+  },
+  tick: {
+    width: 15,
+    height: 20,
+    resizeMode: 'contain',
+    tintColor: Colors.white,
   },
 });

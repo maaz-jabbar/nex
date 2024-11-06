@@ -1,21 +1,24 @@
 import React from 'react';
-import {StyleSheet, Text, View, Image} from 'react-native';
+import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
 import ContactAvatar from '../ContactAvatar';
 import {Colors, Fonts} from '../../config';
 import {userId} from '../../dummyData';
 import Images from '../../assets';
 import LinearGradient from 'react-native-linear-gradient';
 
-const ChatCard = ({chat}) => {
-  const sentByMe = userId === chat.lastMessage.senderId;
+const ChatCard = ({chat, onPress}) => {
+  const sentByMe = userId === chat?.lastMessage.senderId;
 
-  const lastMessageToShow = chat.isTyping ? 'Typing...' : chat.lastMessage.text;
+  const lastMessageToShow = chat?.isTyping ? 'Typing...' : chat?.lastMessage.text;
   const lastMessageColor =
-    sentByMe && !chat.isTyping ? Colors.darkerGrey : Colors.primary;
+    sentByMe && !chat?.isTyping ? Colors.darkerGrey : Colors.primary;
 
   return (
-    <View style={styles.container}>
-      <ContactAvatar contact={chat.user} size={50} displayName={false} />
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={0.8}
+      style={styles.container}>
+      <ContactAvatar contact={chat?.user} size={50} displayName={false} />
       <View style={{flex: 1}}>
         <View
           style={{
@@ -30,7 +33,7 @@ const ChatCard = ({chat}) => {
               color: Colors.black,
               fontFamily: Fonts.RobotoRegular,
             }}>
-            {chat.user.name}
+            {chat?.user?.name}
           </Text>
           <Text
             style={{
@@ -38,7 +41,7 @@ const ChatCard = ({chat}) => {
               color: Colors.lightGrey,
               fontFamily: Fonts.RobotoRegular,
             }}>
-            {chat.lastMessage.time}
+            {chat?.lastMessage.time}
           </Text>
         </View>
         <View
@@ -61,7 +64,7 @@ const ChatCard = ({chat}) => {
           {sentByMe ? (
             <Image
               style={styles.tick}
-              source={chat.lastMessage?.isRead ? Images.read : Images.delivered}
+              source={chat?.lastMessage?.isRead ? Images.read : Images.delivered}
             />
           ) : (
             <View
@@ -96,14 +99,14 @@ const ChatCard = ({chat}) => {
                     color: Colors.white,
                     fontFamily: Fonts.RobotoRegular,
                   }}>
-                  {chat.unreadCount}
+                  {chat?.unreadCount}
                 </Text>
               </LinearGradient>
             </View>
           )}
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

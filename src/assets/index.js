@@ -21,4 +21,8 @@ export default {
   search: require('./search.png'),
   read: require('./read.png'),
   delivered: require('./delivered.png'),
+  dots: require('./3dots.png'),
+  send: require('./send.png'),
+  attachment: require('./attachment.png'),
+  cross: require('./cross.png'),
 };

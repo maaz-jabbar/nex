@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, View, Image} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import ContactAvatar from '../ContactAvatar';
 import {Colors, Fonts} from '../../config';
 import {userId} from '../../dummyData';
@@ -7,15 +7,18 @@ import Images from '../../assets';
 import LinearGradient from 'react-native-linear-gradient';
 import moment from 'moment';
 
-const BroadcastCard = ({chat}) => {
-  const sentByMe = userId === chat.lastMessage.senderId;
+const BroadcastCard = ({chat, onPress}) => {
+  const sentByMe = userId === chat?.lastMessage.senderId;
 
-  const lastMessageToShow = chat.isTyping ? 'Typing...' : chat.lastMessage.text;
+  const lastMessageToShow = chat?.isTyping ? 'Typing...' : chat?.lastMessage.text;
   const lastMessageColor =
-    sentByMe && !chat.isTyping ? Colors.darkerGrey : Colors.primary;
+    sentByMe && !chat?.isTyping ? Colors.darkerGrey : Colors.primary;
 
   return (
-    <View style={styles.container}>
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={0.8}
+      style={styles.container}>
       <Text
         style={{
           fontSize: 16,
@@ -41,7 +44,7 @@ const BroadcastCard = ({chat}) => {
             color: Colors.lightGrey,
             fontFamily: Fonts.RobotoRegular,
           }}>
-          {chat.lastMessage?.text}
+          {chat?.lastMessage?.text}
         </Text>
         <View>
           <Text
@@ -51,7 +54,7 @@ const BroadcastCard = ({chat}) => {
               fontFamily: Fonts.RobotoRegular,
               textAlign: 'right',
             }}>
-            {moment(chat.lastMessage.time).format('DD/MM/YYYY')}
+            {moment(chat?.lastMessage.time).format('DD/MM/YYYY')}
           </Text>
           <Text
             style={{
@@ -60,7 +63,7 @@ const BroadcastCard = ({chat}) => {
               fontFamily: Fonts.RobotoRegular,
               textAlign: 'right',
             }}>
-            {moment(chat.lastMessage.time).format('hh:mm a')}
+            {moment(chat?.lastMessage.time).format('hh:mm a')}
           </Text>
         </View>
       </View>
@@ -69,7 +72,7 @@ const BroadcastCard = ({chat}) => {
           flexDirection: 'row',
           alignItems: 'center',
         }}>
-        {chat.users?.slice(0, 3)?.map((user, index) => {
+        {chat?.users?.slice(0, 3)?.map((user, index) => {
           const userTemp = {...user, storyAvailable: false};
           return (
             <ContactAvatar
@@ -81,7 +84,7 @@ const BroadcastCard = ({chat}) => {
             />
           );
         })}
-        {chat.users?.length > 3 && (
+        {chat?.users?.length > 3 && (
           <View
             style={{
               borderRadius: 34 / 2,
@@ -99,12 +102,12 @@ const BroadcastCard = ({chat}) => {
                 color: Colors.darkerGrey,
                 fontFamily: Fonts.RobotoRegular,
               }}>
-              {chat.users?.length - 3}
+              {chat?.users?.length - 3}
             </Text>
           </View>
         )}
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

@@ -5,13 +5,18 @@ import {Colors, Fonts} from '../../config';
 const TextInputCustom = ({
   title = '',
   textInputProps = {},
+  textInputStyle = {},
   containerStyle = {},
   hideLabel = false,
 }) => {
   return (
     <View style={[styles.container, containerStyle]}>
       {!hideLabel && <Text style={styles.title}>{title}</Text>}
-      <TextInput style={styles.input} placeholder={title} {...textInputProps} />
+      <TextInput
+        style={[styles.input, textInputStyle]}
+        placeholder={title}
+        {...textInputProps}
+      />
     </View>
   );
 };

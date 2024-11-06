@@ -12,6 +12,9 @@ import Home from './Home';
 import Gallery from './Gallery';
 import ChooseProduct from './ChooseProduct';
 import ChooseFavoriteBrands from './ChooseFavoriteBrands';
+import Chat from './Chat';
+import SelectContacts from './SelectContacts';
+import BroadcastForm from './BroadcastForm';
 
 export {
   BeforeSignUp,
@@ -27,5 +30,8 @@ export {
   Home,
   Gallery,
   ChooseProduct,
-  ChooseFavoriteBrands
+  ChooseFavoriteBrands,
+  Chat,
+  SelectContacts,
+  BroadcastForm
 };

@@ -22,6 +22,10 @@ const Contacts = ({navigation}) => {
     navigation.goBack();
   };
 
+  const moveToChat = user => {
+    navigation.navigate('Chat', {user});
+  };
+
   return (
     <View style={[styles.container, {paddingTop: top}]}>
       <View style={styles.header}>
@@ -36,9 +40,15 @@ const Contacts = ({navigation}) => {
         <View style={styles.headerPlaceholder} />
       </View>
       <FlatList
-        data={chats}
+        data={contacts}
         renderItem={({item, index}) => {
-          return <ContactCard key={index} chat={item} />;
+          return (
+            <ContactCard
+              onPress={() => moveToChat(item)}
+              key={index}
+              user={item}
+            />
+          );
         }}
         ListHeaderComponent={() => {
           return (
@@ -69,7 +79,13 @@ const Contacts = ({navigation}) => {
                   contentContainerStyle={styles.listContent}
                   showsHorizontalScrollIndicator={false}
                   renderItem={({item, index}) => {
-                    return <ContactAvatar key={index} contact={item} />;
+                    return (
+                      <ContactAvatar
+                        onPress={() => moveToChat(item)}
+                        key={index}
+                        contact={item}
+                      />
+                    );
                   }}
                 />
               </View>

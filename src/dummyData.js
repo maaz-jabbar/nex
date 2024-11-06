@@ -1,5 +1,13 @@
 export const userId = -1;
 
+export const myUser = {
+  id: userId,
+  imageLink:
+    'https://images.inc.com/uploaded_files/image/1024x576/getty_481292845_77896.jpg',
+  name: 'Max Parker',
+  storyAvailable: true,
+};
+
 export const contacts = [
   {
     id: 1,
@@ -574,5 +582,51 @@ export const broadcasts = [
         storyAvailable: true,
       },
     ],
+  },
+];
+
+export const chat = [
+  {
+    text: 'Hello',
+    time: 'Just Now',
+    isRead: true,
+    sender: myUser,
+  },
+  {
+    text: "What's up?",
+    time: 'Just Now',
+    isRead: true,
+    sender: myUser,
+  },
+  {
+    text: '???',
+    time: 'Just Now',
+    isRead: true,
+    sender: myUser,
+  },
+  {
+    text: 'Hi there, how are you?',
+    time: 'Just Now',
+    isRead: true,
+    sender: {
+      id: 1,
+      imageLink:
+        'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
+      name: 'Marty M',
+      storyAvailable: true,
+    },
+  },
+
+  {
+    text: 'I am good, how about you?',
+    time: 'Just Now',
+    isRead: true,
+    sender: {
+      id: 1,
+      imageLink:
+        'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
+      name: 'Marty M',
+      storyAvailable: true,
+    },
   },
 ];

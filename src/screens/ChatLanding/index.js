@@ -17,12 +17,33 @@ import {ContactAvatar} from '../../components';
 import {broadcasts, chats, contacts} from '../../dummyData';
 import ReactNativeModal from 'react-native-modal';
 
-const ChatLanding = () => {
+const ChatLanding = ({navigation}) => {
   const {top} = useSafeAreaInsets();
   const [selectedTab, setSelectedTab] = React.useState('Chat');
   const [showPopup, setShowPopup] = React.useState(false);
 
+  const moveToChat = (user, isBroadcast) => {
+    setShowPopup(false);
+    const params = {};
+    if (isBroadcast) {
+      params.isBroadcast = true;
+      params.broadcast = user;
+    } else {
+      params.user = user;
+    }
+    navigation.navigate('Chat', params);
+  };
+
+  const moveToBroadcastCreation = () => {
+    setShowPopup(false);
+    navigation.navigate('SelectContacts');
+  };
+
   const _renderPopup = () => {
+    const moveToContacts = () => {
+      setShowPopup(false);
+      navigation.navigate('Contacts');
+    };
     return (
       <ReactNativeModal
         isVisible={showPopup}
@@ -36,6 +57,7 @@ const ChatLanding = () => {
           <Text style={styles.createChat}>Create Chat or Broadcast</Text>
           <GradientButton
             title="Create Chat"
+            onPress={moveToContacts}
             icon={Images.chat}
             iconStyle={{tintColor: Colors.white}}
             containerStyle={{height: 50, justifyContent: 'center'}}
@@ -44,6 +66,7 @@ const ChatLanding = () => {
           <GradientButton
             title="Broadcast"
             icon={Images.contacts}
+            onPress={moveToBroadcastCreation}
             iconStyle={{tintColor: Colors.white}}
             containerStyle={{height: 50, justifyContent: 'center'}}
             buttonStyle={{width: '80%'}}
@@ -94,7 +117,13 @@ const ChatLanding = () => {
             contentContainerStyle={styles.listContent}
             showsHorizontalScrollIndicator={false}
             renderItem={({item, index}) => {
-              return <ContactAvatar key={index} contact={item} />;
+              return (
+                <ContactAvatar
+                  onPress={() => moveToChat(item)}
+                  key={index}
+                  contact={item}
+                />
+              );
             }}
           />
         </View>
@@ -136,9 +165,21 @@ const ChatLanding = () => {
           scrollEnabled={false}
           renderItem={({item, index}) => {
             if (selectedTab == 'Chat') {
-              return <ChatCard key={index} chat={item} />;
+              return (
+                <ChatCard
+                  onPress={() => moveToChat(item.user)}
+                  key={index}
+                  chat={item}
+                />
+              );
             }
-            return <BroadcastCard key={index} chat={item} />;
+            return (
+              <BroadcastCard
+                onPress={() => moveToChat(item, true)}
+                key={index}
+                chat={item}
+              />
+            );
           }}
         />
       </ScrollView>

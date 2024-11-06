@@ -1,12 +1,27 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import ContactAvatar from '../ContactAvatar';
 import {Colors, Fonts} from '../../config';
+import CheckBox from '../CheckBox';
 
-const ContactCard = ({chat}) => {
+const ContactCard = ({
+  user,
+  onPress,
+  selectable = false,
+  selected = false,
+  onSelect = () => {},
+}) => {
   return (
-    <View style={styles.container}>
-      <ContactAvatar contact={chat.user} size={50} displayName={false} />
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={0.8}
+      style={styles.container}>
+      <ContactAvatar
+        onPress={onPress}
+        contact={user}
+        size={50}
+        displayName={false}
+      />
       <View
         style={{
           flex: 1,
@@ -17,12 +32,16 @@ const ContactCard = ({chat}) => {
           style={{
             fontSize: 16,
             color: Colors.black,
+            flex: 1,
             fontFamily: Fonts.RobotoRegular,
           }}>
-          {chat.user.name}
+          {user?.name}
         </Text>
+        {selectable && (
+          <CheckBox isChecked={selected} setIsChecked={onSelect} rounded />
+        )}
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
