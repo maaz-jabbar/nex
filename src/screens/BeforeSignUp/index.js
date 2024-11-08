@@ -15,15 +15,15 @@ const BeforeSignUp = ({navigation}) => {
   };
 
   const moveToLogin = () => {
-    dispatch(saveUserType(customerType));
+    dispatch(saveUserType("customer"));
     navigation.navigate('LoginSignup', {loginActive: true});
   };
 
   return (
     <View style={styles.container}>
+      <View/>
       <View>
         <Text style={styles.welcomeText}>Welcome to Nexsa</Text>
-        <Text style={styles.instructions}>shop smarter</Text>
       </View>
       <View
         style={{

@@ -41,7 +41,7 @@ const ChooseProduct = ({navigation}) => {
             );
           })}
         </View>
-        <Text style={styles.heading}>Product Type</Text>
+        <Text style={styles.heading}>Product type</Text>
         <Text style={styles.smallText}>Select all that apply</Text>
         <View style={styles.positions}>
           {productType.map((position, index) => {

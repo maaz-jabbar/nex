@@ -1,6 +1,14 @@
 import React from 'react';
-import {StyleSheet, Text, TextInput, View} from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {Colors, Fonts} from '../../config';
+import Images from '../../assets';
 
 const TextInputCustom = ({
   title = '',
@@ -8,15 +16,31 @@ const TextInputCustom = ({
   textInputStyle = {},
   containerStyle = {},
   hideLabel = false,
+  isPassword = false,
 }) => {
+  const [isSecureText, setIsSecureText] = React.useState(
+    textInputProps.secureTextEntry,
+  );
   return (
     <View style={[styles.container, containerStyle]}>
       {!hideLabel && <Text style={styles.title}>{title}</Text>}
       <TextInput
-        style={[styles.input, textInputStyle]}
+        style={[styles.input, isPassword && {paddingRight: 50}, textInputStyle]}
         placeholder={title}
         {...textInputProps}
+        secureTextEntry={isSecureText}
       />
+      {isPassword && (
+        <TouchableOpacity
+          onPress={() => setIsSecureText(!isSecureText)}
+          style={{position: 'absolute', right: 15, bottom: 22}}
+          activeOpacity={0.8}>
+          <Image
+            source={Images.eye}
+            style={{width: 24, height: 24, tintColor: Colors.lightGrey}}
+          />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

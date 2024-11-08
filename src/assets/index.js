@@ -38,4 +38,5 @@ export default {
   newContact: require('./newContact.png'),
   block: require('./block.png'),
   star: require('./star.png'),
+  eye: require('./eye.png'),
 };

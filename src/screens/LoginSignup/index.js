@@ -155,6 +155,7 @@ const LoginSignup = ({route, navigation}) => {
             />
             <TextInputCustom
               title="Password"
+              isPassword
               textInputProps={{
                 placeholder: 'Password',
                 placeholderTextColor: Colors.lightGrey,

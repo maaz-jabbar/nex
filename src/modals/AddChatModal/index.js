@@ -32,7 +32,7 @@ const AddChatModal = ({isVisible, setVisible}) => {
       <View style={styles.popup}>
         <Text style={styles.createChat}>Create Chat or Broadcast</Text>
         <GradientButton
-          title="Create Chat"
+          title="New Chat"
           onPress={moveToContacts}
           icon={Images.chat}
           iconStyle={{tintColor: Colors.white}}
@@ -40,7 +40,7 @@ const AddChatModal = ({isVisible, setVisible}) => {
           buttonStyle={{width: '80%'}}
         />
         <GradientButton
-          title="Broadcast"
+          title="Broadcast msg"
           icon={Images.contacts}
           onPress={moveToBroadcastCreation}
           iconStyle={{tintColor: Colors.white}}
