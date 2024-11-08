@@ -100,44 +100,37 @@ const ViewSellerProfile = ({navigation}) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.lowerContentContainer}
         style={styles.container}>
-        <View style={styles.info}>
-          <Text style={styles.name}>{user.name}</Text>
-          <Text style={styles.phone}>{user.phone}</Text>
-          <Text style={styles.email}>{user.email}</Text>
-          <Text style={styles.preferences}>Bio</Text>
-          <Text style={styles.bio}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-          </Text>
-          {links.map((link, index) => {
-            return (
-              <GradientButton
-                key={index}
-                noGradient
-                onPress={() => {
-                  Linking.openURL(link.link);
-                }}
-                icon={Images.link}
-                iconSize={20}
-                iconStyle={{tintColor: Colors.secondary}}
-                title={link.title}
-                textStyle={{color: Colors.secondary, flex: 1, marginLeft: 10}}
-                buttonStyle={{marginBottom: 0}}
-                containerStyle={{
-                  borderWidth: 0,
-                  height: undefined,
-                  paddingVertical: 5,
-                  paddingHorizontal: 0,
-                }}
-              />
-            );
-          })}
-        </View>
-        <GradientButton
-          title="Edit Profile"
-          buttonStyle={{width: 150, alignSelf: 'center', marginTop: 20}}
-          onPress={moveToEditProfile}
-        />
+        <Text style={styles.name}>{user.name}</Text>
+        <Text style={styles.phone}>{user.phone}</Text>
+        <Text style={styles.email}>{user.email}</Text>
+        <Text style={styles.preferences}>Bio</Text>
+        <Text style={styles.bio}>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+        </Text>
+        {links.map((link, index) => {
+          return (
+            <GradientButton
+              key={index}
+              noGradient
+              onPress={() => {
+                Linking.openURL(link.link);
+              }}
+              icon={Images.link}
+              iconSize={20}
+              iconStyle={{tintColor: Colors.secondary}}
+              title={link.title}
+              textStyle={{color: Colors.secondary, flex: 1, marginLeft: 10}}
+              buttonStyle={{marginBottom: 0}}
+              containerStyle={{
+                borderWidth: 0,
+                height: undefined,
+                paddingVertical: 5,
+                paddingHorizontal: 0,
+              }}
+            />
+          );
+        })}
       </ScrollView>
     </View>
   );
@@ -231,8 +224,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
   },
   lowerContentContainer: {
-    flexGrow: 1,
-    justifyContent: 'space-between',
     padding: 20,
     paddingTop: 80,
   },
