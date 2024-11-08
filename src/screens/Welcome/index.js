@@ -2,8 +2,11 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {Colors, Fonts} from '../../config';
 import {GradientButton} from '../../components';
+import { useSelector } from 'react-redux';
 
-const Welcome = ({navigation, route: {params: {isCustomer} = {}}}) => {
+const Welcome = ({navigation}) => {
+  const userType = useSelector(state => state.user?.userType);
+  const isCustomer = userType === 'customer';
   const moveToProfileCreation = () => {
     if (isCustomer) navigation.navigate('ChooseProduct');
     else navigation.navigate('ChoosePosition');

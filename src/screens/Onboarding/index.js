@@ -34,13 +34,13 @@ const data = [
   },
 ];
 
-const Onboarding = ({navigation, route: {params: {isCustomer} = {}}}) => {
+const Onboarding = ({navigation}) => {
   const {width} = Dimensions.get('screen');
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const flatlistRef = React.useRef(null);
 
   const moveToLogin = () => {
-    navigation.navigate('LoginSignup', {isCustomer});
+    navigation.navigate('LoginSignup');
   };
 
   const _renderItem = ({item, index}) => {

@@ -3,14 +3,20 @@ import {StyleSheet, Text, View} from 'react-native';
 import {Colors, Fonts} from '../../config';
 import GradientButton from '../../components/GradientButton';
 import Images from '../../assets';
+import {useDispatch} from 'react-redux';
+import {saveUserType} from '../../redux/actions/UserActions';
 
 const BeforeSignUp = ({navigation}) => {
-  const moveToOnboarding = isCustomer => {
-    navigation.navigate('Onboarding', {isCustomer});
+  const dispatch = useDispatch();
+
+  const moveToOnboarding = customerType => {
+    dispatch(saveUserType(customerType));
+    navigation.navigate('Onboarding');
   };
 
   const moveToLogin = () => {
-    navigation.navigate('LoginSignup', {loginActive: true, isCustomer: true});
+    dispatch(saveUserType(customerType));
+    navigation.navigate('LoginSignup', {loginActive: true});
   };
 
   return (
@@ -25,12 +31,12 @@ const BeforeSignUp = ({navigation}) => {
           alignItems: 'center',
         }}>
         <GradientButton
-          onPress={() => moveToOnboarding(true)}
+          onPress={() => moveToOnboarding('customer')}
           icon={Images.cart}
           title="I am a Customer"
         />
         <GradientButton
-          onPress={() => moveToOnboarding(false)}
+          onPress={() => moveToOnboarding('seller')}
           icon={Images.cart}
           title="I am a Seller"
         />

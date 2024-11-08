@@ -3,16 +3,18 @@ import {Dimensions, Image, StyleSheet, Text, View} from 'react-native';
 import {Colors, Fonts} from '../../config';
 import Images from '../../assets';
 import {GradientButton} from '../../components';
+import { useSelector } from 'react-redux';
 
 const {width} = Dimensions.get('window');
 
-const Congratulations = ({navigation, route: {params: {isCustomer} = {}}}) => {
+const Congratulations = ({navigation}) => {
   useEffect(() => {
     setTimeout(() => {
       navigation.navigate('AppStack');
     }, 3000);
   }, []);
-
+  const userType = useSelector(state => state.user?.userType);
+  const isCustomer = userType === 'customer';
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Congratulations!</Text>

@@ -46,6 +46,7 @@ const GradientButton = ({
         )}
         {title && (
           <Text
+            numberOfLines={1}
             style={[styles.buttonText, !icon && {marginLeft: 0}, textStyle]}>
             {title}
           </Text>

@@ -7,7 +7,7 @@ import ChooseLocation from './ChooseLocation';
 import Congratulations from './Congratulations';
 import ChatLanding from './ChatLanding';
 import Contacts from './Contacts';
-import Settings from './Settings';
+import CustomerProfile from './CustomerProfile';
 import Home from './Home';
 import Gallery from './Gallery';
 import ChooseProduct from './ChooseProduct';
@@ -15,6 +15,11 @@ import ChooseFavoriteBrands from './ChooseFavoriteBrands';
 import Chat from './Chat';
 import SelectContacts from './SelectContacts';
 import BroadcastForm from './BroadcastForm';
+import CustomerEditProfile from './CustomerEditProfile';
+import SellerProfile from './SellerProfile';
+import SellerEditProfile from './SellerEditProfile';
+import ViewSellerProfile from './ViewSellerProfile';
+import ViewCustomerProfile from './ViewCustomerProfile';
 
 export {
   BeforeSignUp,
@@ -26,12 +31,17 @@ export {
   Congratulations,
   ChatLanding,
   Contacts,
-  Settings,
+  CustomerProfile,
   Home,
   Gallery,
   ChooseProduct,
   ChooseFavoriteBrands,
   Chat,
   SelectContacts,
-  BroadcastForm
+  BroadcastForm,
+  CustomerEditProfile,
+  SellerProfile,
+  SellerEditProfile,
+  ViewSellerProfile,
+  ViewCustomerProfile,
 };

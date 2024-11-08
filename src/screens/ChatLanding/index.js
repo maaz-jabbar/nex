@@ -16,11 +16,16 @@ import Images from '../../assets';
 import {ContactAvatar} from '../../components';
 import {broadcasts, chats, contacts} from '../../dummyData';
 import ReactNativeModal from 'react-native-modal';
+import {AddChatModal} from '../../modals';
+import {useSelector} from 'react-redux';
 
 const ChatLanding = ({navigation}) => {
   const {top} = useSafeAreaInsets();
   const [selectedTab, setSelectedTab] = React.useState('Chat');
   const [showPopup, setShowPopup] = React.useState(false);
+
+  const userType = useSelector(state => state.user?.userType);
+  const isCustomer = userType === 'customer';
 
   const moveToChat = (user, isBroadcast) => {
     setShowPopup(false);
@@ -34,51 +39,17 @@ const ChatLanding = ({navigation}) => {
     navigation.navigate('Chat', params);
   };
 
-  const moveToBroadcastCreation = () => {
-    setShowPopup(false);
-    navigation.navigate('SelectContacts');
-  };
-
-  const _renderPopup = () => {
-    const moveToContacts = () => {
-      setShowPopup(false);
-      navigation.navigate('Contacts');
-    };
-    return (
-      <ReactNativeModal
-        isVisible={showPopup}
-        onBackdropPress={() => setShowPopup(false)}
-        onBackButtonPress={() => setShowPopup(false)}
-        animationIn={'zoomIn'}
-        animationOut={'zoomOut'}
-        style={[styles.popupModal, {paddingTop: top + 40}]}
-        onDismiss={() => setShowPopup(false)}>
-        <View style={styles.popup}>
-          <Text style={styles.createChat}>Create Chat or Broadcast</Text>
-          <GradientButton
-            title="Create Chat"
-            onPress={moveToContacts}
-            icon={Images.chat}
-            iconStyle={{tintColor: Colors.white}}
-            containerStyle={{height: 50, justifyContent: 'center'}}
-            buttonStyle={{width: '80%'}}
-          />
-          <GradientButton
-            title="Broadcast"
-            icon={Images.contacts}
-            onPress={moveToBroadcastCreation}
-            iconStyle={{tintColor: Colors.white}}
-            containerStyle={{height: 50, justifyContent: 'center'}}
-            buttonStyle={{width: '80%'}}
-          />
-        </View>
-      </ReactNativeModal>
-    );
+  const viewProfile = () => {
+    if (isCustomer) {
+      navigation.navigate('ViewSellerProfile');
+    } else {
+      navigation.navigate('ViewCustomerProfile');
+    }
   };
 
   return (
     <View style={[styles.container, {paddingTop: top}]}>
-      {_renderPopup()}
+      <AddChatModal isVisible={showPopup} setVisible={setShowPopup} />
       <View style={styles.header}>
         <View style={styles.headerPlaceholder} />
         <Text style={styles.title}>Chats</Text>
@@ -119,7 +90,7 @@ const ChatLanding = ({navigation}) => {
             renderItem={({item, index}) => {
               return (
                 <ContactAvatar
-                  onPress={() => moveToChat(item)}
+                  onPress={() => viewProfile(item)}
                   key={index}
                   contact={item}
                 />

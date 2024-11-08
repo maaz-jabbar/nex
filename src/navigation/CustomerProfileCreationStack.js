@@ -4,15 +4,20 @@ import {
   Welcome,
   ChooseProduct,
   Congratulations,
-  ChooseFavoriteBrands
+  ChooseFavoriteBrands,
 } from '../screens';
 import {StyleSheet, Text, View} from 'react-native';
 import {Colors} from '../config';
 import {Header} from '../components';
+import {useSelector} from 'react-redux';
 
 const Stack = createNativeStackNavigator();
 
 const CustomerProfileCreationStack = () => {
+  const userType = useSelector(state => state.user?.userType);
+  const isCustomer = userType === 'customer';
+  console.log("🚀 ~ CustomerProfileCreationStack ~ isCustomer:", isCustomer)
+  
   return (
     <Stack.Navigator
       screenOptions={{
@@ -25,16 +30,19 @@ const CustomerProfileCreationStack = () => {
         name="Welcome"
         component={Welcome}
         initialParams={{
-          isCustomer: true,
+          isCustomer,
         }}
       />
       <Stack.Screen name="ChooseProduct" component={ChooseProduct} />
-      <Stack.Screen name="ChooseFavoriteBrands" component={ChooseFavoriteBrands} />
+      <Stack.Screen
+        name="ChooseFavoriteBrands"
+        component={ChooseFavoriteBrands}
+      />
       <Stack.Screen
         name="Congratulations"
         component={Congratulations}
         initialParams={{
-          isCustomer: true,
+          isCustomer,
         }}
       />
     </Stack.Navigator>

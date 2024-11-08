@@ -52,65 +52,72 @@ const BroadcastForm = ({navigation}) => {
       </View>
       <ScrollView
         style={styles.container}
-        contentContainerStyle={{padding: 20, flexGrow: 1, justifyContent: 'space-between'}}>
-          <View>
-        <View style={styles.listItem}>
-          <Text style={styles.listTitle}>Send Message to Chat</Text>
-          <ToggleButton on={sendMessages} onToggle={setSendMessages} />
-        </View>
-        <View style={styles.listItem}>
-          <Text style={styles.listTitle}>Send SMS</Text>
-          <ToggleButton on={sendSMS} onToggle={setSendSMS} />
-        </View>
-        <TextInputCustom
-          containerStyle={{marginTop: 10}}
-          title="Message Title"
-        />
-        <TextInputCustom
-          title="Message"
-          textInputProps={{multiline: true}}
-          textInputStyle={{
-            height: 100,
-            textAlignVertical: 'top',
-            paddingTop: 10,
-          }}
-        />
-        <TouchableOpacity
-          activeOpacity={0.8}
-          style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
-          <Text style={styles.attachmentText}>Attachment</Text>
-          <Image
-            source={Images.attachment}
-            style={styles.attachmentIcon}
-            resizeMode="contain"
+        contentContainerStyle={{
+          padding: 20,
+          flexGrow: 1,
+          justifyContent: 'space-between',
+        }}>
+        <View>
+          <View style={styles.listItem}>
+            <Text style={styles.listTitle}>Send Message to Chat</Text>
+            <ToggleButton on={sendMessages} onToggle={setSendMessages} />
+          </View>
+          <View style={styles.listItem}>
+            <Text style={styles.listTitle}>Send SMS</Text>
+            <ToggleButton on={sendSMS} onToggle={setSendSMS} />
+          </View>
+          <TextInputCustom
+            containerStyle={{marginTop: 10}}
+            title="Message Title"
           />
-        </TouchableOpacity>
-        <View
-          style={{flexWrap: 'wrap', flexDirection: 'row'}}>
-          {attachments.map((item, index) => {
-            return (
-              <TouchableOpacity
-                key={index}
-                activeOpacity={0.8}
-                style={styles.attachment}>
-                <TouchableOpacity activeOpacity={0.8} style={styles.cross}>
-                  <Image
-                    source={Images.cross}
-                    style={styles.crossIcon}
-                    resizeMode="contain"
-                  />
+          <TextInputCustom
+            title="Message"
+            textInputProps={{multiline: true}}
+            textInputStyle={{
+              height: 100,
+              textAlignVertical: 'top',
+              paddingTop: 10,
+            }}
+          />
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginBottom: 20,
+            }}>
+            <Text style={styles.attachmentText}>Attachment</Text>
+            <Image
+              source={Images.attachment}
+              style={styles.attachmentIcon}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+          <View style={{flexWrap: 'wrap', flexDirection: 'row'}}>
+            {attachments.map((item, index) => {
+              return (
+                <TouchableOpacity
+                  key={index}
+                  activeOpacity={0.8}
+                  style={styles.attachment}>
+                  <TouchableOpacity activeOpacity={0.8} style={styles.cross}>
+                    <Image
+                      source={Images.cross}
+                      style={styles.crossIcon}
+                      resizeMode="contain"
+                    />
+                  </TouchableOpacity>
+                  <Text style={styles.attachmentTextName}>{item?.name}</Text>
                 </TouchableOpacity>
-                <Text style={styles.attachmentTextName}>{item?.name}</Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
+              );
+            })}
+          </View>
         </View>
         <GradientButton
           title="Send"
           buttonStyle={{marginBottom: 0, width: 200, alignSelf: 'center'}}
           onPress={() => {
-            navigation.navigate('Chat',{
+            navigation.navigate('Chat', {
               isBroadcast: true,
               broadcast: broadcasts[0],
             });
@@ -131,7 +138,7 @@ const styles = StyleSheet.create({
   },
   crossIcon: {
     width: 25,
-    height: 25
+    height: 25,
   },
   attachmentTextName: {
     fontFamily: Fonts.RobotoMedium,
@@ -139,7 +146,7 @@ const styles = StyleSheet.create({
     color: Colors.black,
   },
   attachment: {
-    backgroundColor: "#EAEAEA",
+    backgroundColor: '#EAEAEA',
     padding: 10,
     paddingHorizontal: 15,
     borderRadius: 20,

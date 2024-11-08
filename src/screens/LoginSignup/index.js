@@ -13,13 +13,14 @@ import LinearGradient from 'react-native-linear-gradient';
 import {Colors, Fonts} from '../../config';
 import Images from '../../assets';
 import {CheckBox, GradientButton, TextInputCustom} from '../../components';
+import { useSelector } from 'react-redux';
 
 const LoginSignup = ({route, navigation}) => {
   const [loginActive, setLoginActive] = React.useState(
     route?.params?.loginActive || false,
   );
-
-  const isCustomer = route?.params?.isCustomer;
+  const userType = useSelector(state => state.user?.userType);
+  const isCustomer = userType === 'customer';
 
   const phoneInput = React.useRef(null);
   const emailInput = React.useRef(null);

@@ -1,6 +1,7 @@
 export default {
   primary: '#FE5757',
   secondary: '#8D52FD',
+  secondaryOpacityLight: '#F1E9FF',
   black: '#000000',
   white: '#FFFFFF',
   lightGrey: '#9CA3AF',
@@ -11,4 +12,5 @@ export default {
   transparent: 'transparent',
   background: '#F4F4F4',
   broadcastBackground: '#909090',
+  textGrey: '#565656',
 };

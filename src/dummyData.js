@@ -5,6 +5,8 @@ export const myUser = {
   imageLink:
     'https://images.inc.com/uploaded_files/image/1024x576/getty_481292845_77896.jpg',
   name: 'Max Parker',
+  email: 'janetsmith@nexsa.com',
+  phone: '+1 (202) 555 0142 ',
   storyAvailable: true,
 };
 
@@ -14,6 +16,8 @@ export const contacts = [
     imageLink:
       'https://images.inc.com/uploaded_files/image/1024x576/getty_481292845_77896.jpg',
     name: 'John Doe',
+    email: 'janetsmith@nexsa.com',
+    phone: '+1 (202) 555 0142 ',
     storyAvailable: true,
   },
   {
@@ -21,6 +25,8 @@ export const contacts = [
     imageLink:
       'https://images.squarespace-cdn.com/content/v1/5c7c30767980b31affc87b09/1602396079712-4JS2RJYHTAP5OXOUQ1SB/image-asset.jpeg',
     name: 'Emily Clark',
+    email: 'janetsmith@nexsa.com',
+    phone: '+1 (202) 555 0142 ',
     storyAvailable: false,
   },
   {
@@ -28,6 +34,8 @@ export const contacts = [
     imageLink:
       'https://cdn2.psychologytoday.com/assets/styles/manual_crop_4_3_1200x900/public/field_blog_entry_images/2018-09/shutterstock_648907024.jpg?itok=eaVcXTz5',
     name: 'Janet S',
+    email: 'janetsmith@nexsa.com',
+    phone: '+1 (202) 555 0142 ',
     storyAvailable: true,
   },
   {
@@ -35,6 +43,8 @@ export const contacts = [
     imageLink:
       'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
     name: 'Marty M',
+    email: 'janetsmith@nexsa.com',
+    phone: '+1 (202) 555 0142 ',
     storyAvailable: true,
   },
   {
@@ -42,6 +52,8 @@ export const contacts = [
     imageLink:
       'https://images.inc.com/uploaded_files/image/1024x576/getty_481292845_77896.jpg',
     name: 'John D',
+    email: 'janetsmith@nexsa.com',
+    phone: '+1 (202) 555 0142 ',
     storyAvailable: true,
   },
   {
@@ -49,6 +61,8 @@ export const contacts = [
     imageLink:
       'https://images.squarespace-cdn.com/content/v1/5c7c30767980b31affc87b09/1602396079712-4JS2RJYHTAP5OXOUQ1SB/image-asset.jpeg',
     name: 'Emily',
+    email: 'janetsmith@nexsa.com',
+    phone: '+1 (202) 555 0142 ',
     storyAvailable: false,
   },
   {
@@ -56,6 +70,8 @@ export const contacts = [
     imageLink:
       'https://cdn2.psychologytoday.com/assets/styles/manual_crop_4_3_1200x900/public/field_blog_entry_images/2018-09/shutterstock_648907024.jpg?itok=eaVcXTz5',
     name: 'Janet S',
+    email: 'janetsmith@nexsa.com',
+    phone: '+1 (202) 555 0142 ',
     storyAvailable: true,
   },
   {
@@ -63,6 +79,8 @@ export const contacts = [
     imageLink:
       'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
     name: 'Marty M',
+    email: 'janetsmith@nexsa.com',
+    phone: '+1 (202) 555 0142 ',
     storyAvailable: true,
   },
 ];
@@ -75,6 +93,8 @@ export const chats = [
       imageLink:
         'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
       name: 'Marty M',
+      email: 'janetsmith@nexsa.com',
+      phone: '+1 (202) 555 0142 ',
       storyAvailable: true,
     },
     lastMessage: {
@@ -93,6 +113,8 @@ export const chats = [
       imageLink:
         'https://images.inc.com/uploaded_files/image/1024x576/getty_481292845_77896.jpg',
       name: 'John Doe',
+      email: 'janetsmith@nexsa.com',
+      phone: '+1 (202) 555 0142 ',
       storyAvailable: true,
     },
     lastMessage: {
@@ -111,6 +133,8 @@ export const chats = [
       imageLink:
         'https://images.squarespace-cdn.com/content/v1/5c7c30767980b31affc87b09/1602396079712-4JS2RJYHTAP5OXOUQ1SB/image-asset.jpeg',
       name: 'Emily',
+      email: 'janetsmith@nexsa.com',
+    phone: '+1 (202) 555 0142 ',
       storyAvailable: false,
     },
     lastMessage: {
@@ -129,6 +153,8 @@ export const chats = [
       imageLink:
         'https://cdn2.psychologytoday.com/assets/styles/manual_crop_4_3_1200x900/public/field_blog_entry_images/2018-09/shutterstock_648907024.jpg?itok=eaVcXTz5',
       name: 'Janet S',
+      email: 'janetsmith@nexsa.com',
+      phone: '+1 (202) 555 0142 ',
       storyAvailable: true,
     },
     lastMessage: {
@@ -147,6 +173,8 @@ export const chats = [
       imageLink:
         'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
       name: 'Marty M',
+      email: 'janetsmith@nexsa.com',
+      phone: '+1 (202) 555 0142 ',
       storyAvailable: true,
     },
     lastMessage: {
@@ -165,6 +193,8 @@ export const chats = [
       imageLink:
         'https://images.inc.com/uploaded_files/image/1024x576/getty_481292845_77896.jpg',
       name: 'John Doe',
+      email: 'janetsmith@nexsa.com',
+      phone: '+1 (202) 555 0142 ',
       storyAvailable: true,
     },
     lastMessage: {
@@ -183,6 +213,8 @@ export const chats = [
       imageLink:
         'https://images.squarespace-cdn.com/content/v1/5c7c30767980b31affc87b09/1602396079712-4JS2RJYHTAP5OXOUQ1SB/image-asset.jpeg',
       name: 'Emily',
+      email: 'janetsmith@nexsa.com',
+    phone: '+1 (202) 555 0142 ',
       storyAvailable: false,
     },
     lastMessage: {
@@ -201,6 +233,8 @@ export const chats = [
       imageLink:
         'https://cdn2.psychologytoday.com/assets/styles/manual_crop_4_3_1200x900/public/field_blog_entry_images/2018-09/shutterstock_648907024.jpg?itok=eaVcXTz5',
       name: 'Janet S',
+      email: 'janetsmith@nexsa.com',
+      phone: '+1 (202) 555 0142 ',
       storyAvailable: true,
     },
     lastMessage: {
@@ -219,6 +253,8 @@ export const chats = [
       imageLink:
         'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
       name: 'Marty M',
+      email: 'janetsmith@nexsa.com',
+      phone: '+1 (202) 555 0142 ',
       storyAvailable: true,
     },
     lastMessage: {
@@ -237,6 +273,8 @@ export const chats = [
       imageLink:
         'https://images.inc.com/uploaded_files/image/1024x576/getty_481292845_77896.jpg',
       name: 'John Doe',
+      email: 'janetsmith@nexsa.com',
+      phone: '+1 (202) 555 0142 ',
       storyAvailable: true,
     },
     lastMessage: {
@@ -255,6 +293,8 @@ export const chats = [
       imageLink:
         'https://images.squarespace-cdn.com/content/v1/5c7c30767980b31affc87b09/1602396079712-4JS2RJYHTAP5OXOUQ1SB/image-asset.jpeg',
       name: 'Emily',
+      email: 'janetsmith@nexsa.com',
+    phone: '+1 (202) 555 0142 ',
       storyAvailable: false,
     },
     lastMessage: {
@@ -273,6 +313,8 @@ export const chats = [
       imageLink:
         'https://cdn2.psychologytoday.com/assets/styles/manual_crop_4_3_1200x900/public/field_blog_entry_images/2018-09/shutterstock_648907024.jpg?itok=eaVcXTz5',
       name: 'Janet S',
+      email: 'janetsmith@nexsa.com',
+      phone: '+1 (202) 555 0142 ',
       storyAvailable: true,
     },
     lastMessage: {
@@ -403,6 +445,8 @@ export const broadcasts = [
         imageLink:
           'https://images.inc.com/uploaded_files/image/1024x576/getty_481292845_77896.jpg',
         name: 'John Doe',
+        email: 'janetsmith@nexsa.com',
+        phone: '+1 (202) 555 0142 ',
         storyAvailable: true,
       },
       {
@@ -410,6 +454,8 @@ export const broadcasts = [
         imageLink:
           'https://images.squarespace-cdn.com/content/v1/5c7c30767980b31affc87b09/1602396079712-4JS2RJYHTAP5OXOUQ1SB/image-asset.jpeg',
         name: 'Emily Clark',
+        email: 'janetsmith@nexsa.com',
+    phone: '+1 (202) 555 0142 ',
         storyAvailable: false,
       },
       {
@@ -417,6 +463,8 @@ export const broadcasts = [
         imageLink:
           'https://cdn2.psychologytoday.com/assets/styles/manual_crop_4_3_1200x900/public/field_blog_entry_images/2018-09/shutterstock_648907024.jpg?itok=eaVcXTz5',
         name: 'Janet S',
+        email: 'janetsmith@nexsa.com',
+        phone: '+1 (202) 555 0142 ',
         storyAvailable: true,
       },
       {
@@ -424,6 +472,8 @@ export const broadcasts = [
         imageLink:
           'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
         name: 'Marty M',
+        email: 'janetsmith@nexsa.com',
+        phone: '+1 (202) 555 0142 ',
         storyAvailable: true,
       },
       {
@@ -431,6 +481,8 @@ export const broadcasts = [
         imageLink:
           'https://images.inc.com/uploaded_files/image/1024x576/getty_481292845_77896.jpg',
         name: 'John D',
+        email: 'janetsmith@nexsa.com',
+        phone: '+1 (202) 555 0142 ',
         storyAvailable: true,
       },
       {
@@ -438,6 +490,8 @@ export const broadcasts = [
         imageLink:
           'https://images.squarespace-cdn.com/content/v1/5c7c30767980b31affc87b09/1602396079712-4JS2RJYHTAP5OXOUQ1SB/image-asset.jpeg',
         name: 'Emily',
+        email: 'janetsmith@nexsa.com',
+    phone: '+1 (202) 555 0142 ',
         storyAvailable: false,
       },
       {
@@ -445,6 +499,8 @@ export const broadcasts = [
         imageLink:
           'https://cdn2.psychologytoday.com/assets/styles/manual_crop_4_3_1200x900/public/field_blog_entry_images/2018-09/shutterstock_648907024.jpg?itok=eaVcXTz5',
         name: 'Janet S',
+        email: 'janetsmith@nexsa.com',
+        phone: '+1 (202) 555 0142 ',
         storyAvailable: true,
       },
       {
@@ -452,6 +508,8 @@ export const broadcasts = [
         imageLink:
           'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
         name: 'Marty M',
+        email: 'janetsmith@nexsa.com',
+        phone: '+1 (202) 555 0142 ',
         storyAvailable: true,
       },
     ],
@@ -470,6 +528,8 @@ export const broadcasts = [
         imageLink:
           'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
         name: 'Marty M',
+        email: 'janetsmith@nexsa.com',
+        phone: '+1 (202) 555 0142 ',
         storyAvailable: true,
       },
       {
@@ -477,6 +537,8 @@ export const broadcasts = [
         imageLink:
           'https://images.inc.com/uploaded_files/image/1024x576/getty_481292845_77896.jpg',
         name: 'John D',
+        email: 'janetsmith@nexsa.com',
+        phone: '+1 (202) 555 0142 ',
         storyAvailable: true,
       },
       {
@@ -484,6 +546,8 @@ export const broadcasts = [
         imageLink:
           'https://images.squarespace-cdn.com/content/v1/5c7c30767980b31affc87b09/1602396079712-4JS2RJYHTAP5OXOUQ1SB/image-asset.jpeg',
         name: 'Emily',
+        email: 'janetsmith@nexsa.com',
+    phone: '+1 (202) 555 0142 ',
         storyAvailable: false,
       },
       {
@@ -491,6 +555,8 @@ export const broadcasts = [
         imageLink:
           'https://cdn2.psychologytoday.com/assets/styles/manual_crop_4_3_1200x900/public/field_blog_entry_images/2018-09/shutterstock_648907024.jpg?itok=eaVcXTz5',
         name: 'Janet S',
+        email: 'janetsmith@nexsa.com',
+        phone: '+1 (202) 555 0142 ',
         storyAvailable: true,
       },
       {
@@ -498,6 +564,8 @@ export const broadcasts = [
         imageLink:
           'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
         name: 'Marty M',
+        email: 'janetsmith@nexsa.com',
+        phone: '+1 (202) 555 0142 ',
         storyAvailable: true,
       },
     ],
@@ -516,6 +584,8 @@ export const broadcasts = [
         imageLink:
           'https://cdn2.psychologytoday.com/assets/styles/manual_crop_4_3_1200x900/public/field_blog_entry_images/2018-09/shutterstock_648907024.jpg?itok=eaVcXTz5',
         name: 'Janet S',
+        email: 'janetsmith@nexsa.com',
+        phone: '+1 (202) 555 0142 ',
         storyAvailable: true,
       },
       {
@@ -523,6 +593,8 @@ export const broadcasts = [
         imageLink:
           'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
         name: 'Marty M',
+        email: 'janetsmith@nexsa.com',
+        phone: '+1 (202) 555 0142 ',
         storyAvailable: true,
       },
       {
@@ -530,6 +602,8 @@ export const broadcasts = [
         imageLink:
           'https://images.inc.com/uploaded_files/image/1024x576/getty_481292845_77896.jpg',
         name: 'John Doe',
+        email: 'janetsmith@nexsa.com',
+        phone: '+1 (202) 555 0142 ',
         storyAvailable: true,
       },
       {
@@ -537,6 +611,8 @@ export const broadcasts = [
         imageLink:
           'https://images.squarespace-cdn.com/content/v1/5c7c30767980b31affc87b09/1602396079712-4JS2RJYHTAP5OXOUQ1SB/image-asset.jpeg',
         name: 'Emily Clark',
+        email: 'janetsmith@nexsa.com',
+    phone: '+1 (202) 555 0142 ',
         storyAvailable: false,
       },
       {
@@ -544,6 +620,8 @@ export const broadcasts = [
         imageLink:
           'https://cdn2.psychologytoday.com/assets/styles/manual_crop_4_3_1200x900/public/field_blog_entry_images/2018-09/shutterstock_648907024.jpg?itok=eaVcXTz5',
         name: 'Janet S',
+        email: 'janetsmith@nexsa.com',
+        phone: '+1 (202) 555 0142 ',
         storyAvailable: true,
       },
       {
@@ -551,6 +629,8 @@ export const broadcasts = [
         imageLink:
           'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
         name: 'Marty M',
+        email: 'janetsmith@nexsa.com',
+        phone: '+1 (202) 555 0142 ',
         storyAvailable: true,
       },
       {
@@ -558,6 +638,8 @@ export const broadcasts = [
         imageLink:
           'https://images.inc.com/uploaded_files/image/1024x576/getty_481292845_77896.jpg',
         name: 'John D',
+        email: 'janetsmith@nexsa.com',
+        phone: '+1 (202) 555 0142 ',
         storyAvailable: true,
       },
       {
@@ -565,6 +647,8 @@ export const broadcasts = [
         imageLink:
           'https://images.squarespace-cdn.com/content/v1/5c7c30767980b31affc87b09/1602396079712-4JS2RJYHTAP5OXOUQ1SB/image-asset.jpeg',
         name: 'Emily',
+        email: 'janetsmith@nexsa.com',
+    phone: '+1 (202) 555 0142 ',
         storyAvailable: false,
       },
       {
@@ -572,6 +656,8 @@ export const broadcasts = [
         imageLink:
           'https://cdn2.psychologytoday.com/assets/styles/manual_crop_4_3_1200x900/public/field_blog_entry_images/2018-09/shutterstock_648907024.jpg?itok=eaVcXTz5',
         name: 'Janet S',
+        email: 'janetsmith@nexsa.com',
+        phone: '+1 (202) 555 0142 ',
         storyAvailable: true,
       },
       {
@@ -579,6 +665,8 @@ export const broadcasts = [
         imageLink:
           'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
         name: 'Marty M',
+        email: 'janetsmith@nexsa.com',
+        phone: '+1 (202) 555 0142 ',
         storyAvailable: true,
       },
     ],
@@ -613,6 +701,8 @@ export const chat = [
       imageLink:
         'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
       name: 'Marty M',
+      email: 'janetsmith@nexsa.com',
+      phone: '+1 (202) 555 0142 ',
       storyAvailable: true,
     },
   },
@@ -626,6 +716,8 @@ export const chat = [
       imageLink:
         'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
       name: 'Marty M',
+      email: 'janetsmith@nexsa.com',
+      phone: '+1 (202) 555 0142 ',
       storyAvailable: true,
     },
   },

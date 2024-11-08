@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   FlatList,
   Image,
@@ -14,20 +14,36 @@ import {ContactCard, GradientButton} from '../../components';
 import Images from '../../assets';
 import {ContactAvatar} from '../../components';
 import {chats, contacts} from '../../dummyData';
+import {AddInvitePopup, NewContactModal} from '../../modals';
+import {useSelector} from 'react-redux';
 
 const Contacts = ({navigation}) => {
   const {top} = useSafeAreaInsets();
+  const userType = useSelector(state => state.user?.userType);
+  const isCustomer = userType === 'customer';
 
   const _goBack = () => {
     navigation.goBack();
   };
 
-  const moveToChat = user => {
-    navigation.navigate('Chat', {user});
+  const viewProfile = () => {
+    if (isCustomer) {
+      navigation.navigate('ViewSellerProfile');
+    } else {
+      navigation.navigate('ViewCustomerProfile');
+    }
   };
+  const [addContactModal, setAddContactModal] = React.useState(false);
+  const [newContact, setNewContact] = React.useState(false);
 
   return (
     <View style={[styles.container, {paddingTop: top}]}>
+      <AddInvitePopup
+        isVisible={addContactModal}
+        setVisible={setAddContactModal}
+        setContactModal={setNewContact}
+      />
+      <NewContactModal isVisible={newContact} setVisible={setNewContact} />
       <View style={styles.header}>
         <TouchableOpacity
           onPress={_goBack}
@@ -44,7 +60,7 @@ const Contacts = ({navigation}) => {
         renderItem={({item, index}) => {
           return (
             <ContactCard
-              onPress={() => moveToChat(item)}
+              onPress={() => viewProfile(item)}
               key={index}
               user={item}
             />
@@ -73,6 +89,7 @@ const Contacts = ({navigation}) => {
                       buttonStyle={styles.listPlusButton}
                       iconSize={24}
                       noGradient
+                      onPress={() => setAddContactModal(true)}
                       iconStyle={{tintColor: Colors.secondary}}
                     />
                   )}
@@ -81,7 +98,7 @@ const Contacts = ({navigation}) => {
                   renderItem={({item, index}) => {
                     return (
                       <ContactAvatar
-                        onPress={() => moveToChat(item)}
+                        onPress={() => viewProfile(item)}
                         key={index}
                         contact={item}
                       />
