@@ -13,22 +13,64 @@ import LinearGradient from 'react-native-linear-gradient';
 import {Colors, Fonts} from '../../config';
 import Images from '../../assets';
 import {CheckBox, GradientButton, TextInputCustom} from '../../components';
-import { useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {login, signup} from '../../redux/middlewares/user';
+import * as EmailValidator from 'email-validator';
+import {errorToast} from '../../config/api';
+
+const emailError = 'Please enter a valid email.';
+const passwordError = 'Password must be at least 8 characters.';
+const phoneError = 'Please enter a valid phone number.';
+const nameError = 'Please enter a valid name (at least 3 characters).';
 
 const LoginSignup = ({route, navigation}) => {
+  const dispatch = useDispatch();
+
   const [loginActive, setLoginActive] = React.useState(
-    route?.params?.loginActive || false,
+    route?.params?.loginActive || true,
   );
   const userType = useSelector(state => state.user?.userType);
-  const isCustomer = userType === 'customer';
+  const isCustomer = userType === 'CUSTOMER';
+
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [phone, setPhone] = React.useState('');
+  const [fullName, setfullName] = React.useState('');
 
   const phoneInput = React.useRef(null);
   const emailInput = React.useRef(null);
   const passwordInput = React.useRef(null);
 
   const _onSubmit = () => {
-    if (isCustomer) navigation.navigate('CustomerProfileCreation');
-    else navigation.navigate('ProfileCreation');
+    let message = [];
+    if (fullName.length < 3 && !loginActive) {
+      message.push(nameError);
+    }
+    if (phone.length < 10 && !loginActive) {
+      message.push(phoneError);
+    }
+    if (!EmailValidator.validate(email)) {
+      message.push(emailError);
+    }
+    if (password.length < 8) {
+      message.push(passwordError);
+    }
+    message = message.join('\n');
+    if (message) return errorToast({message});
+    if (loginActive) {
+      dispatch(login(email, password));
+    } else {
+      dispatch(
+        signup(
+          fullName,
+          phone,
+          email,
+          password,
+          isCustomer ? 'CUSTOMER' : 'AGENT',
+          () => setLoginActive(true),
+        ),
+      );
+    }
   };
 
   return (
@@ -117,6 +159,8 @@ const LoginSignup = ({route, navigation}) => {
                   title="Full Name"
                   textInputProps={{
                     placeholder: 'Full Name',
+                    value: fullName,
+                    onChangeText: setfullName,
                     placeholderTextColor: Colors.lightGrey,
                     keyboardType: 'default',
                     returnKeyType: 'next',
@@ -129,6 +173,8 @@ const LoginSignup = ({route, navigation}) => {
                   title="Phone Number"
                   textInputProps={{
                     placeholder: 'Phone Number',
+                    value: phone,
+                    onChangeText: setPhone,
                     placeholderTextColor: Colors.lightGrey,
                     keyboardType: 'number-pad',
                     returnKeyType: 'next',
@@ -144,6 +190,11 @@ const LoginSignup = ({route, navigation}) => {
               title="Email Address"
               textInputProps={{
                 placeholder: 'Email Address',
+                autoCapitalize: 'none',
+                autoCorrect: false,
+                textContentType: 'emailAddress',
+                value: email,
+                onChangeText: setEmail,
                 placeholderTextColor: Colors.lightGrey,
                 keyboardType: 'email-address',
                 returnKeyType: 'next',
@@ -157,6 +208,8 @@ const LoginSignup = ({route, navigation}) => {
               title="Password"
               isPassword
               textInputProps={{
+                value: password,
+                onChangeText: setPassword,
                 placeholder: 'Password',
                 placeholderTextColor: Colors.lightGrey,
                 keyboardType: 'default',

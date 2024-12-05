@@ -25,7 +25,7 @@ const ChatLanding = ({navigation}) => {
   const [showPopup, setShowPopup] = React.useState(false);
 
   const userType = useSelector(state => state.user?.userType);
-  const isCustomer = userType === 'customer';
+  const isCustomer = userType === 'CUSTOMER';
 
   const moveToChat = (user, isBroadcast) => {
     setShowPopup(false);

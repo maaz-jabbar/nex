@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 
 const Welcome = ({navigation}) => {
   const userType = useSelector(state => state.user?.userType);
-  const isCustomer = userType === 'customer';
+  const isCustomer = userType === 'CUSTOMER';
   const moveToProfileCreation = () => {
     if (isCustomer) navigation.navigate('ChooseProduct');
     else navigation.navigate('ChoosePosition');

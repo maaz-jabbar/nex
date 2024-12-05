@@ -14,7 +14,7 @@ const Congratulations = ({navigation}) => {
     }, 3000);
   }, []);
   const userType = useSelector(state => state.user?.userType);
-  const isCustomer = userType === 'customer';
+  const isCustomer = userType === 'CUSTOMER';
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Congratulations!</Text>

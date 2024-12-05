@@ -6,6 +6,7 @@ import AuthStack from './AuthStack';
 import ProfileCreationStack from './ProfileCreationStack';
 import AppStack from './AppStack';
 import CustomerProfileCreationStack from './CustomerProfileCreationStack';
+import {setTopLevelNavigator} from './navigationService';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,7 +17,8 @@ export default function Navigation() {
     }, 3000);
   }, []);
   return (
-    <NavigationContainer>
+    <NavigationContainer
+      ref={navigationRef => setTopLevelNavigator(navigationRef)}>
       <Stack.Navigator
         screenOptions={{headerShown: false}}
         initialRouteName="Auth">

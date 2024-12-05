@@ -1,5 +1,6 @@
 const INITIAL_STATES = {
   userType: null,
+  user: null,
 };
 
 export default function (state = INITIAL_STATES, action) {
@@ -8,7 +9,12 @@ export default function (state = INITIAL_STATES, action) {
       return {
         ...state,
         userType: action.payload,
-    }
+      };
+    case 'SAVE_USER':
+      return {
+        ...state,
+        user: action.payload,
+      };
     case 'LOGOUT':
       return {
         ...INITIAL_STATES,

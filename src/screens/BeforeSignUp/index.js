@@ -1,27 +1,30 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {Colors, Fonts} from '../../config';
 import GradientButton from '../../components/GradientButton';
 import Images from '../../assets';
 import {useDispatch} from 'react-redux';
-import {saveUserType} from '../../redux/actions/UserActions';
+import {loaderFalse, saveUserType} from '../../redux/actions/UserActions';
 
 const BeforeSignUp = ({navigation}) => {
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(loaderFalse());
+  }, []);
   const moveToOnboarding = customerType => {
     dispatch(saveUserType(customerType));
     navigation.navigate('Onboarding');
   };
 
   const moveToLogin = () => {
-    dispatch(saveUserType("customer"));
+    dispatch(saveUserType('CUSTOMER'));
     navigation.navigate('LoginSignup', {loginActive: true});
   };
 
   return (
     <View style={styles.container}>
-      <View/>
+      <View />
       <View>
         <Text style={styles.welcomeText}>Welcome to Nexsa</Text>
       </View>
@@ -31,7 +34,7 @@ const BeforeSignUp = ({navigation}) => {
           alignItems: 'center',
         }}>
         <GradientButton
-          onPress={() => moveToOnboarding('customer')}
+          onPress={() => moveToOnboarding('CUSTOMER')}
           icon={Images.cart}
           title="I am a Customer"
         />

@@ -9,7 +9,7 @@ const SettingsStack = () => {
   const [initialRouteName, setInitialRouteName] = React.useState(null);
   const userType = useSelector(state => state.user?.userType);
   useEffect(() => {
-    if (userType === 'customer') {
+    if (userType === 'CUSTOMER') {
       setInitialRouteName('CustomerProfile');
     } else {
       setInitialRouteName('SellerProfile');

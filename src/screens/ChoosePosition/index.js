@@ -2,18 +2,51 @@ import React from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {Colors, Fonts} from '../../config';
 import {GradientButton, SelectionPill} from '../../components';
-import {brands, positions} from '../../dummyData';
+import {brands} from '../../dummyData';
+import {useDispatch} from 'react-redux';
+import {
+  getPositionDetails,
+  getPositions,
+} from '../../redux/middlewares/profileCreation';
+import {errorToast} from '../../config/api';
 
 const ChoosePosition = ({navigation}) => {
+  const dispatch = useDispatch();
+  const [positions, setPositions] = React.useState([]);
+  const [positionDetails, setPositionDetails] = React.useState([]);
   const [selectedPosition, setSelectedPosition] = React.useState('');
   const [selectedPositions, setSelectedPositions] = React.useState([]);
 
+  React.useEffect(() => {
+    dispatch(
+      getPositions(p => {
+        setPositions(p);
+      }),
+    );
+  }, []);
+
+  const getPositionDetailsFunc = id => {
+    dispatch(
+      getPositionDetails(id, p => {
+        setPositionDetails(p);
+      }),
+    );
+  };
+
   const moveToLocation = () => {
-    navigation.navigate('ChooseLocation');
+    if (selectedPositions.length) {
+      navigation.navigate('ChooseLocation', {
+        body: {
+          position: selectedPosition,
+          details: selectedPositions
+        },
+      });
+    } else errorToast({message: 'Please select the available options'});
   };
 
   return (
     <ScrollView
+      showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.mainContentContainer}
       style={styles.container}>
       <View>
@@ -23,9 +56,12 @@ const ChoosePosition = ({navigation}) => {
             return (
               <SelectionPill
                 key={index}
-                title={position.name}
-                isSelected={position.name === selectedPosition}
-                onPress={() => setSelectedPosition(position.name)}
+                title={position.positionName}
+                isSelected={position.positionName === selectedPosition}
+                onPress={() => {
+                  setSelectedPosition(position.positionName);
+                  getPositionDetailsFunc(position.positionId);
+                }}
               />
             );
           })}
@@ -34,24 +70,35 @@ const ChoosePosition = ({navigation}) => {
           <>
             <Text style={styles.heading}>{selectedPosition}</Text>
             <ScrollView
+              showsHorizontalScrollIndicator={false}
               horizontal
-              contentContainerStyle={styles.scrollablePositionsContent}
+              contentContainerStyle={[
+                styles.scrollablePositionsContent,
+                {
+                  maxWidth: positionDetails.length * 30,
+                },
+              ]}
               style={styles.scrollablePositions}>
-              {brands.map((position, index) => {
-                const isSelected = selectedPositions.includes(position.name);
+              {positionDetails.map((position, index) => {
+                const isSelected = selectedPositions.includes(position.detail);
                 const onPressPill = () => {
                   if (!isSelected) {
-                    setSelectedPositions([...selectedPositions, position.name]);
+                    setSelectedPositions([
+                      ...selectedPositions,
+                      position.detail,
+                    ]);
                   } else {
                     setSelectedPositions(
-                      selectedPositions.filter(item => item !== position.name),
+                      selectedPositions.filter(
+                        item => item !== position.detail,
+                      ),
                     );
                   }
                 };
                 return (
                   <SelectionPill
                     key={index}
-                    title={position.name}
+                    title={position.detail}
                     isSelected={isSelected}
                     onPress={onPressPill}
                   />
@@ -84,7 +131,6 @@ const styles = StyleSheet.create({
   },
   scrollablePositionsContent: {
     minWidth: '100%',
-    maxWidth: brands.length * 30,
     marginLeft: 20,
     flexWrap: 'wrap',
   },

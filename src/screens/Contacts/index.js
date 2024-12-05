@@ -20,7 +20,7 @@ import {useSelector} from 'react-redux';
 const Contacts = ({navigation}) => {
   const {top} = useSafeAreaInsets();
   const userType = useSelector(state => state.user?.userType);
-  const isCustomer = userType === 'customer';
+  const isCustomer = userType === 'CUSTOMER';
 
   const _goBack = () => {
     navigation.goBack();
