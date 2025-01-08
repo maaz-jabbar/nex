@@ -5,20 +5,35 @@ import {Colors, Fonts} from '../../config';
 import {userId} from '../../dummyData';
 import Images from '../../assets';
 import LinearGradient from 'react-native-linear-gradient';
+import {useSelector} from 'react-redux';
+import {baseURL} from '../../config/api';
+import moment from 'moment';
 
 const ChatCard = ({chat, onPress}) => {
-  const sentByMe = userId === chat?.lastMessage.senderId;
+  const user = useSelector(state => state.user?.user);
+  console.log("🚀 ~ ChatCard ~ user:", user)
+  const chatWith = chat?.user?.filter(sender => sender.userId !== user?.userId)[0];
+  const lastMessageSentByMe = user?.userId === chat?.lastMessage?.senderId;
 
-  const lastMessageToShow = chat?.isTyping ? 'Typing...' : chat?.lastMessage.text;
+  const lastMessageToShow = chat?.isTyping
+    ? 'Typing...'
+    : chat?.lastMessage?.content;
   const lastMessageColor =
-    sentByMe && !chat?.isTyping ? Colors.darkerGrey : Colors.primary;
+    lastMessageSentByMe && !chat?.isTyping ? Colors.darkerGrey : Colors.primary;
+
+  const contact = {
+    name: chatWith?.fullName,
+    storyAvailable: false,
+    imageLink: baseURL + '/' + chatWith?.imageId + '.png',
+  };
+  console.log("🚀 ~ ChatCard ~ contact.imageLink:", contact.imageLink)
 
   return (
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.8}
       style={styles.container}>
-      <ContactAvatar contact={chat?.user} size={50} displayName={false} />
+      <ContactAvatar contact={contact} size={50} displayName={false} />
       <View style={{flex: 1}}>
         <View
           style={{
@@ -33,7 +48,7 @@ const ChatCard = ({chat, onPress}) => {
               color: Colors.black,
               fontFamily: Fonts.RobotoRegular,
             }}>
-            {chat?.user?.name}
+            {chatWith?.fullName}
           </Text>
           <Text
             style={{
@@ -41,7 +56,7 @@ const ChatCard = ({chat, onPress}) => {
               color: Colors.lightGrey,
               fontFamily: Fonts.RobotoRegular,
             }}>
-            {chat?.lastMessage.time}
+            {moment(chat?.lastMessage?.timestamp).fromNow()}
           </Text>
         </View>
         <View
@@ -61,10 +76,12 @@ const ChatCard = ({chat, onPress}) => {
             }}>
             {lastMessageToShow}
           </Text>
-          {sentByMe ? (
+          {lastMessageSentByMe ? (
             <Image
               style={styles.tick}
-              source={chat?.lastMessage?.isRead ? Images.read : Images.delivered}
+              source={
+                chat?.lastMessage?.isRead ? Images.read : Images.delivered
+              }
             />
           ) : (
             <View
@@ -99,7 +116,7 @@ const ChatCard = ({chat, onPress}) => {
                     color: Colors.white,
                     fontFamily: Fonts.RobotoRegular,
                   }}>
-                  {chat?.unreadCount}
+                  {chat?.unReadCount}
                 </Text>
               </LinearGradient>
             </View>

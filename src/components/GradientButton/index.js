@@ -16,6 +16,7 @@ const GradientButton = ({
   indicator = false,
   noGradient = false,
   iconSize = 25,
+  customComp = null,
 }) => {
   return (
     <TouchableOpacity
@@ -37,6 +38,7 @@ const GradientButton = ({
           noGradient && styles.border,
           containerStyle,
         ]}>
+        {customComp}
         {icon && (
           <Image
             source={icon}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   FlatList,
   Image,
@@ -14,18 +14,38 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {BroadcastCard, ChatCard, GradientButton} from '../../components';
 import Images from '../../assets';
 import {ContactAvatar} from '../../components';
-import {broadcasts, chats, contacts} from '../../dummyData';
+import {broadcasts, chats as asd, contacts} from '../../dummyData';
 import ReactNativeModal from 'react-native-modal';
 import {AddChatModal} from '../../modals';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {getChats} from '../../redux/middlewares/chat';
 
 const ChatLanding = ({navigation}) => {
+  const dispatch = useDispatch();
   const {top} = useSafeAreaInsets();
   const [selectedTab, setSelectedTab] = React.useState('Chat');
   const [showPopup, setShowPopup] = React.useState(false);
+  const [chats, setChats] = React.useState([]);
 
   const userType = useSelector(state => state.user?.userType);
   const isCustomer = userType === 'CUSTOMER';
+
+  useEffect(() => {
+    // const unsubscribe = navigation.addListener('focus', e => {
+      // Prevent default action
+      getAll();
+    // });
+
+    // return unsubscribe;
+  }, []);
+
+  const getAll = () => {
+    dispatch(
+      getChats(data => {
+        setChats([...data]);
+      }),
+    );
+  };
 
   const moveToChat = (user, isBroadcast) => {
     setShowPopup(false);
@@ -34,7 +54,7 @@ const ChatLanding = ({navigation}) => {
       params.isBroadcast = true;
       params.broadcast = user;
     } else {
-      params.user = user;
+      params.conversation = user;
     }
     navigation.navigate('Chat', params);
   };
@@ -138,7 +158,7 @@ const ChatLanding = ({navigation}) => {
             if (selectedTab == 'Chat') {
               return (
                 <ChatCard
-                  onPress={() => moveToChat(item.user)}
+                  onPress={() => moveToChat(item)}
                   key={index}
                   chat={item}
                 />

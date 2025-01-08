@@ -3,9 +3,12 @@ import {StyleSheet, Text, View} from 'react-native';
 import {Colors, Fonts} from '../../config';
 import {userId} from '../../dummyData';
 import ContactAvatar from '../ContactAvatar';
+import { useSelector } from 'react-redux';
+import moment from 'moment';
 
-const ChatBubble = ({nextChatBySameUser, message}) => {
-  const sentByMe = userId === message?.sender?.id;
+const ChatBubble = ({nextChatBySameUser, message, sender}) => {
+  const user = useSelector(state => state.user?.user);
+  const sentByMe = user?.userId === message?.senderId;
   return (
     <View
       style={[
@@ -22,7 +25,7 @@ const ChatBubble = ({nextChatBySameUser, message}) => {
           containerStyle={sentByMe && {marginRight: 0, marginLeft: 10}}
           size={30}
           displayName={false}
-          contact={message?.sender}
+          contact={sender}
         />
       )}
       <View
@@ -42,10 +45,10 @@ const ChatBubble = ({nextChatBySameUser, message}) => {
             borderBottomRightRadius: !sentByMe ? 20 : 0,
             maxWidth: '80%',
           }}>
-          <Text style={styles.text}>{message?.text}</Text>
+          <Text style={styles.text}>{message?.content}</Text>
         </View>
         {!nextChatBySameUser && (
-          <Text style={styles.time}>{message?.time}</Text>
+          <Text style={styles.time}>{moment(message?.timestamp).fromNow()}</Text>
         )}
       </View>
     </View>

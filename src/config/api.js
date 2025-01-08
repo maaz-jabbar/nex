@@ -2,7 +2,7 @@ import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import {store} from '../redux';
 
-const baseURL = 'https://17ad-110-38-246-48.ngrok-free.app';
+export const baseURL = 'https://1114-39-35-222-27.ngrok-free.app';
 
 export const ApiInstance = axios.create({
   baseURL,
@@ -41,6 +41,7 @@ ApiInstance.interceptors.response.use(
     return response;
   },
   function (error) {
+    console.log("🚀 ~ error:", JSON.stringify(error))
     errorToast(error);
     return Promise.reject(error);
   },

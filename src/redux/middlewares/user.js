@@ -17,6 +17,7 @@ export const login = (email, password) => {
     dispatch(loaderTrue());
     ApiInstance.post('auth/login', body)
       .then(({data}) => {
+        console.log("🚀 ~ .then ~ data:", data)
         dispatch(getUser(data));
       })
       .finally(() => {

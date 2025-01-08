@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   Image,
   StyleSheet,
@@ -7,37 +7,65 @@ import {
   TouchableOpacity,
   FlatList,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Colors, Fonts} from '../../config';
 import Images from '../../assets';
 import {ChatBubble, ContactAvatar, GradientButton} from '../../components';
 import {chat, myUser} from '../../dummyData';
+import {useDispatch, useSelector} from 'react-redux';
+import {baseURL} from '../../config/api';
+import {
+  getChats,
+  getMessages,
+  sendMessageAsync,
+} from '../../redux/middlewares/chat';
 
 const Chat = ({route: {params}, navigation}) => {
+  const dispatch = useDispatch();
   const _goBack = () => {
     navigation.goBack();
   };
+  const [loader, setLoader] = React.useState(true);
+  const user = useSelector(state => state.user?.user);
+  const conversation = params?.conversation;
+  const chatWith = conversation?.user?.filter(
+    sender => sender.userId !== user?.userId,
+  )[0];
 
-  const user = params?.user;
+  useEffect(() => {
+    getAll();
+  }, []);
+
+  const getAll = () => {
+    setLoader(false);
+    dispatch(getMessages(conversation?.conversationId, setChatMessages));
+  };
+
+  const contact = {
+    name: chatWith?.fullName,
+    storyAvailable: false,
+    imageLink: baseURL + '/' + chatWith?.imageId + '.png',
+  };
+  console.log('🚀 ~ Chat ~ contact.imageLink:', contact.imageLink);
+
   const broadcast = params?.broadcast;
   const isBroadcast = params?.isBroadcast;
   const {top} = useSafeAreaInsets();
 
   const [message, setMessage] = React.useState('');
-  const [chatMessages, setChatMessages] = React.useState(chat);
+  const [chatMessages, setChatMessages] = React.useState([]);
 
   const sendMessage = () => {
     if (message === '') return;
-    setChatMessages([
-      ...chatMessages,
-      {
-        sender: myUser,
-        text: message,
-        time: 'Just Now',
-        isRead: true,
-      },
-    ]);
+    const messageObj = {
+      conversationId: conversation?.conversationId,
+      content: message,
+      senderId: user?.userId,
+    };
+    setLoader(true);
+    dispatch(sendMessageAsync(messageObj, getAll));
     setMessage('');
   };
   return (
@@ -92,7 +120,7 @@ const Chat = ({route: {params}, navigation}) => {
             )}
           </View>
         ) : (
-          <ContactAvatar contact={user} size={50} displayName={false} />
+          <ContactAvatar contact={contact} size={50} displayName={false} />
         )}
         <View
           style={{
@@ -101,7 +129,7 @@ const Chat = ({route: {params}, navigation}) => {
             paddingRight: 10,
           }}>
           <Text style={styles.username} numberOfLines={1}>
-            {isBroadcast ? broadcast?.name : user?.name}
+            {isBroadcast ? broadcast?.name : contact?.name}
           </Text>
           <Text style={styles.onlineStatus}>Online</Text>
         </View>
@@ -123,9 +151,10 @@ const Chat = ({route: {params}, navigation}) => {
         style={styles.chat}
         renderItem={({item, index}) => {
           const nextChatBySameUser =
-            chat[index + 1]?.sender?.id === item?.sender?.id;
+            chatMessages[index + 1]?.senderId === item?.senderId;
           return (
             <ChatBubble
+              sender={contact}
               message={item}
               nextChatBySameUser={nextChatBySameUser}
               key={index}
@@ -152,7 +181,8 @@ const Chat = ({route: {params}, navigation}) => {
           placeholder="Type your message here..."
         />
         <GradientButton
-          icon={Images.send}
+          icon={loader ? null : Images.send}
+          customComp={loader ? <ActivityIndicator color={Colors.white} /> : null}
           onPress={sendMessage}
           containerStyle={styles.sendButtonCont}
           buttonStyle={styles.sendButton}
