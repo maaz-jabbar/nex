@@ -43,13 +43,6 @@ const Chat = ({route: {params}, navigation}) => {
     dispatch(getMessages(conversation?.conversationId, setChatMessages));
   };
 
-  const contact = {
-    name: chatWith?.fullName,
-    storyAvailable: false,
-    imageLink: baseURL + '/' + chatWith?.imageId + '.png',
-  };
-  console.log('🚀 ~ Chat ~ contact.imageLink:', contact.imageLink);
-
   const broadcast = params?.broadcast;
   const isBroadcast = params?.isBroadcast;
   const {top} = useSafeAreaInsets();
@@ -85,11 +78,10 @@ const Chat = ({route: {params}, navigation}) => {
               alignItems: 'center',
             }}>
             {broadcast?.users?.slice(0, 3)?.map((user, index) => {
-              const userTemp = {...user, storyAvailable: false};
               return (
                 <ContactAvatar
                   key={index}
-                  contact={userTemp}
+                  contact={user}
                   size={30}
                   displayName={false}
                   containerStyle={{marginRight: -15, zIndex: 99 - index}}
@@ -120,7 +112,7 @@ const Chat = ({route: {params}, navigation}) => {
             )}
           </View>
         ) : (
-          <ContactAvatar contact={contact} size={50} displayName={false} />
+          <ContactAvatar contact={chatWith} size={50} displayName={false} />
         )}
         <View
           style={{
@@ -129,7 +121,7 @@ const Chat = ({route: {params}, navigation}) => {
             paddingRight: 10,
           }}>
           <Text style={styles.username} numberOfLines={1}>
-            {isBroadcast ? broadcast?.name : contact?.name}
+            {isBroadcast ? broadcast?.name : chatWith?.fullName}
           </Text>
           <Text style={styles.onlineStatus}>Online</Text>
         </View>
@@ -154,7 +146,7 @@ const Chat = ({route: {params}, navigation}) => {
             chatMessages[index + 1]?.senderId === item?.senderId;
           return (
             <ChatBubble
-              sender={contact}
+              sender={chatWith}
               message={item}
               nextChatBySameUser={nextChatBySameUser}
               key={index}

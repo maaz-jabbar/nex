@@ -24,7 +24,7 @@ const AddInvitePopup = ({isVisible, setVisible, setContactModal}) => {
   };
 
   const userType = useSelector(state => state.user?.userType);
-  const isSeller = userType === 'seller';
+  const isSeller = userType !== 'CUSTOMER';
 
   return (
     <ReactNativeModal

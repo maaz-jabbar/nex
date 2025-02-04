@@ -16,7 +16,6 @@ const Stack = createNativeStackNavigator();
 const CustomerProfileCreationStack = () => {
   const userType = useSelector(state => state.user?.userType);
   const isCustomer = userType === 'CUSTOMER';
-  console.log("🚀 ~ CustomerProfileCreationStack ~ isCustomer:", isCustomer)
   
   return (
     <Stack.Navigator

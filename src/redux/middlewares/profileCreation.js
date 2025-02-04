@@ -8,7 +8,6 @@ export const getPositions = onSuccess => {
     dispatch(loaderTrue());
     ApiInstanceWithJWT.get('listing/position')
       .then(({data}) => {
-        console.log('🚀 ~ .then ~ data:', data);
         onSuccess(data?.body);
       })
       .finally(() => {
@@ -35,7 +34,6 @@ export const getPlacesAutoComplete = async text => {
     const response = await axios.get(
       `http://api.geonames.org/searchJSON?q=${text}&maxRows=10&username=maxnada`,
     );
-    console.log('🚀 ~ getPlacesAutoComplete ~ response:', response);
     return response.data?.geonames;
   } catch (error) {
     console.log('🚀 ~ getPlacesAutoComplete ~ error:', error);

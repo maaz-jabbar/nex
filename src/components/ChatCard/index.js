@@ -11,7 +11,6 @@ import moment from 'moment';
 
 const ChatCard = ({chat, onPress}) => {
   const user = useSelector(state => state.user?.user);
-  console.log("🚀 ~ ChatCard ~ user:", user)
   const chatWith = chat?.user?.filter(sender => sender.userId !== user?.userId)[0];
   const lastMessageSentByMe = user?.userId === chat?.lastMessage?.senderId;
 
@@ -21,19 +20,12 @@ const ChatCard = ({chat, onPress}) => {
   const lastMessageColor =
     lastMessageSentByMe && !chat?.isTyping ? Colors.darkerGrey : Colors.primary;
 
-  const contact = {
-    name: chatWith?.fullName,
-    storyAvailable: false,
-    imageLink: baseURL + '/' + chatWith?.imageId + '.png',
-  };
-  console.log("🚀 ~ ChatCard ~ contact.imageLink:", contact.imageLink)
-
   return (
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.8}
       style={styles.container}>
-      <ContactAvatar contact={contact} size={50} displayName={false} />
+      <ContactAvatar contact={chatWith} size={50} displayName={false} />
       <View style={{flex: 1}}>
         <View
           style={{

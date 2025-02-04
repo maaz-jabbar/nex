@@ -16,18 +16,19 @@ import Images from '../../assets';
 import {ContactAvatar, GradientButton, ToggleButton} from '../../components';
 import {brands, contacts} from '../../dummyData';
 import {logout} from '../../redux/actions/UserActions';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 const socialIcons = [
   Images.instagram,
   Images.facebook,
   Images.tiktok,
   Images.twitterX,
 ];
-const user = contacts[1];
 
 const SellerProfile = ({navigation}) => {
   const {top} = useSafeAreaInsets();
   const dispatch = useDispatch();
+  const user = useSelector(state => state.user?.user);
+  const profile = useSelector(state => state.user?.profile);
 
   const _goBack = () => {
     navigation.goBack();
@@ -43,24 +44,6 @@ const SellerProfile = ({navigation}) => {
   const moveToEditProfile = () => {
     navigation.navigate('SellerEditProfile');
   };
-
-  const [links, setLinks] = React.useState([
-    {
-      id: 1,
-      title: 'Follow me on Instagram',
-      link: 'https://www.instagram.com/',
-    },
-    {
-      id: 2,
-      title: 'Follow me on Facebook',
-      link: 'https://www.facebook.com/',
-    },
-    {
-      id: 3,
-      title: 'Follow me on TikTok',
-      link: 'https://www.tiktok.com/',
-    },
-  ]);
 
   return (
     <View style={styles.container}>
@@ -107,9 +90,9 @@ const SellerProfile = ({navigation}) => {
         contentContainerStyle={styles.lowerContentContainer}
         style={styles.container}>
         <View style={styles.info}>
-          <Text style={styles.name}>{user.name}</Text>
-          <Text style={styles.phone}>{user.phone}</Text>
-          <Text style={styles.email}>{user.email}</Text>
+          <Text style={styles.name}>{user?.fullName}</Text>
+          <Text style={styles.phone}>{user?.mobileNumber}</Text>
+          <Text style={styles.email}>{user?.email}</Text>
           <GradientButton
             title="Invite Link"
             onPress={() => {}}
@@ -167,7 +150,7 @@ const SellerProfile = ({navigation}) => {
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. 
           </Text>
-          {links.map((link, index) => {
+          {profile?.links.map((link, index) => {
             return (
               <GradientButton
                 key={index}

@@ -17,6 +17,7 @@ const GradientButton = ({
   noGradient = false,
   iconSize = 25,
   customComp = null,
+  customIndicatorStyles = {},
 }) => {
   return (
     <TouchableOpacity
@@ -54,7 +55,7 @@ const GradientButton = ({
           </Text>
         )}
         {indicator && (
-          <View style={styles.indicator}>
+          <View style={[styles.indicator, customIndicatorStyles]}>
             <Text
               style={[
                 styles.indicatorText,

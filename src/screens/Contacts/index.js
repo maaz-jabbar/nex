@@ -13,25 +13,46 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ContactCard, GradientButton} from '../../components';
 import Images from '../../assets';
 import {ContactAvatar} from '../../components';
-import {chats, contacts} from '../../dummyData';
 import {AddInvitePopup, NewContactModal} from '../../modals';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {getUserWithId} from '../../redux/middlewares/user';
 
 const Contacts = ({navigation}) => {
   const {top} = useSafeAreaInsets();
   const userType = useSelector(state => state.user?.userType);
+  const contacts = useSelector(state => state.user?.contacts);
+  const dispatch = useDispatch();
   const isCustomer = userType === 'CUSTOMER';
 
   const _goBack = () => {
     navigation.goBack();
   };
 
-  const viewProfile = () => {
-    if (isCustomer) {
-      navigation.navigate('ViewSellerProfile');
+  const viewProfile = item => {
+    if (item?.joined) {
+      dispatch(
+        getUserWithId(item?.userId, data => {
+          const toSendData = {
+            user: {
+              ...item,
+              userId: item?.userId,
+            },
+          };
+          if (data?.body?.userType === 'CUSTOMER') {
+            navigation.navigate('ViewCustomerProfile', toSendData);
+          } else {
+            navigation.navigate('ViewSellerProfile', toSendData);
+          }
+        }),
+      );
     } else {
-      navigation.navigate('ViewCustomerProfile');
+      navigation.navigate('ViewCustomerProfile', {user: item});
     }
+    // if (isCustomer) {
+    //   navigation.navigate('ViewSellerProfile');
+    // } else {
+    //   navigation.navigate('ViewCustomerProfile');
+    // }
   };
   const [addContactModal, setAddContactModal] = React.useState(false);
   const [newContact, setNewContact] = React.useState(false);

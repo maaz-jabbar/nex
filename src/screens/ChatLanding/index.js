@@ -14,38 +14,31 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {BroadcastCard, ChatCard, GradientButton} from '../../components';
 import Images from '../../assets';
 import {ContactAvatar} from '../../components';
-import {broadcasts, chats as asd, contacts} from '../../dummyData';
+import {broadcasts} from '../../dummyData';
 import ReactNativeModal from 'react-native-modal';
 import {AddChatModal} from '../../modals';
 import {useDispatch, useSelector} from 'react-redux';
 import {getChats} from '../../redux/middlewares/chat';
+import {getUserWithId} from '../../redux/middlewares/user';
 
 const ChatLanding = ({navigation}) => {
   const dispatch = useDispatch();
   const {top} = useSafeAreaInsets();
   const [selectedTab, setSelectedTab] = React.useState('Chat');
   const [showPopup, setShowPopup] = React.useState(false);
-  const [chats, setChats] = React.useState([]);
 
   const userType = useSelector(state => state.user?.userType);
+  const contacts = useSelector(state => state.user?.contacts);
+  const chats = useSelector(state => state.user?.chats);
   const isCustomer = userType === 'CUSTOMER';
 
   useEffect(() => {
-    // const unsubscribe = navigation.addListener('focus', e => {
-      // Prevent default action
-      getAll();
-    // });
+    const unsubscribe = navigation.addListener('focus', e => {
+      dispatch(getChats());
+    });
 
-    // return unsubscribe;
+    return unsubscribe;
   }, []);
-
-  const getAll = () => {
-    dispatch(
-      getChats(data => {
-        setChats([...data]);
-      }),
-    );
-  };
 
   const moveToChat = (user, isBroadcast) => {
     setShowPopup(false);
@@ -59,11 +52,25 @@ const ChatLanding = ({navigation}) => {
     navigation.navigate('Chat', params);
   };
 
-  const viewProfile = () => {
-    if (isCustomer) {
-      navigation.navigate('ViewSellerProfile');
+  const viewProfile = item => {
+    if (item?.joined) {
+      dispatch(
+        getUserWithId(item?.userId, data => {
+          const toSendData = {
+            user: {
+              ...item,
+              userId: item?.userId,
+            },
+          };
+          if (data?.body?.userType === 'CUSTOMER') {
+            navigation.navigate('ViewCustomerProfile', toSendData);
+          } else {
+            navigation.navigate('ViewSellerProfile', toSendData);
+          }
+        }),
+      );
     } else {
-      navigation.navigate('ViewCustomerProfile');
+      navigation.navigate('ViewCustomerProfile', {user: item});
     }
   };
 
@@ -102,6 +109,7 @@ const ChatLanding = ({navigation}) => {
                 buttonStyle={styles.listPlusButton}
                 iconSize={24}
                 noGradient
+                onPress={()=>navigation.navigate('Contacts')}
                 iconStyle={{tintColor: Colors.secondary}}
               />
             )}

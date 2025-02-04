@@ -2,7 +2,7 @@ import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import {store} from '../redux';
 
-export const baseURL = 'https://1114-39-35-222-27.ngrok-free.app';
+export const baseURL = 'http://110.93.217.235:9092';
 
 export const ApiInstance = axios.create({
   baseURL,
@@ -17,7 +17,6 @@ export const ApiInstanceWithJWT = axios.create({
 ApiInstanceWithJWT.interceptors.request.use(
   function (config) {
     const token = store.getState()?.user?.user?.jwt;
-    console.log("🚀 ~ token:", token)
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

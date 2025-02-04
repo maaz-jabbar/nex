@@ -15,7 +15,8 @@ import Images from '../../assets';
 import {ContactAvatar, GradientButton, ToggleButton} from '../../components';
 import {brands, contacts} from '../../dummyData';
 import {logout} from '../../redux/actions/UserActions';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import { baseURL } from '../../config/api';
 
 const socialIcons = [
   Images.instagram,
@@ -23,9 +24,12 @@ const socialIcons = [
   Images.tiktok,
   Images.twitterX,
 ];
-const user = contacts[0];
 
 const CustomerProfile = ({navigation}) => {
+
+  const user = useSelector(state => state.user?.user);
+  const profile = useSelector(state => state.user?.profile);
+
   const {top} = useSafeAreaInsets();
   const dispatch = useDispatch();
   const _goBack = () => {
@@ -92,9 +96,9 @@ const CustomerProfile = ({navigation}) => {
         contentContainerStyle={styles.lowerContentContainer}
         style={styles.container}>
         <View style={styles.info}>
-          <Text style={styles.name}>{user.name}</Text>
-          <Text style={styles.phone}>{user.phone}</Text>
-          <Text style={styles.email}>{user.email}</Text>
+          <Text style={styles.name}>{user?.fullName}</Text>
+          <Text style={styles.phone}>{user?.mobileNumber}</Text>
+          <Text style={styles.email}>{user?.email}</Text>
           <GradientButton
             title="Invite Link"
             onPress={() => {}}
@@ -123,7 +127,7 @@ const CustomerProfile = ({navigation}) => {
           </View>
           <Text style={styles.preferences}>Preferences:</Text>
           <FlatList
-            data={brands}
+            data={profile?.favDesigner}
             showsHorizontalScrollIndicator={false}
             horizontal
             style={styles.list}
@@ -131,7 +135,7 @@ const CustomerProfile = ({navigation}) => {
             renderItem={({item, index}) => {
               return (
                 <View key={index} style={styles.brandItem}>
-                  <Text style={styles.brandItemText}>{item.name}</Text>
+                  <Text style={styles.brandItemText}>{item}</Text>
                 </View>
               );
             }}
@@ -163,6 +167,7 @@ export default CustomerProfile;
 const styles = StyleSheet.create({
   list: {
     marginBottom: 20,
+    alignSelf: 'stretch',
   },
   brandItem: {
     marginRight: 10,

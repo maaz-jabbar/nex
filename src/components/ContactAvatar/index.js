@@ -2,6 +2,8 @@ import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {Colors, Fonts} from '../../config';
+import {useSelector} from 'react-redux';
+import {baseURL} from '../../config/api';
 const ContactAvatar = ({
   contact,
   size = 60,
@@ -13,6 +15,7 @@ const ContactAvatar = ({
   const fisrtName = contact?.name?.split(' ')[0];
   const lastName = contact?.name?.split(' ')[1];
   const storyAvailable = contact?.storyAvailable;
+  const jwt = useSelector(state => state.user?.user?.jwt);
 
   return (
     <TouchableOpacity
@@ -29,7 +32,14 @@ const ContactAvatar = ({
         }
         style={{borderRadius: (size + 4) / 2, padding: 2}}>
         <Image
-          source={{uri: contact?.imageLink}}
+          source={{
+            uri: contact?.userId
+              ? `${baseURL}/images/upload/${contact?.userId}`
+              : 'https://thumbs.dreamstime.com/b/person-gray-photo-placeholder-man-shirt-white-background-person-gray-photo-placeholder-man-136701243.jpg',
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
+          }}
           resizeMode="cover"
           style={{
             width: size,

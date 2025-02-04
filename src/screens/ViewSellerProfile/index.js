@@ -23,11 +23,12 @@ const socialIcons = [
   Images.tiktok,
   Images.twitterX,
 ];
-const user = contacts[1];
 
-const ViewSellerProfile = ({navigation}) => {
+const ViewSellerProfile = ({navigation, route: {params}}) => {
   const {top} = useSafeAreaInsets();
   const dispatch = useDispatch();
+
+  const user = params?.user;
 
   const _goBack = () => {
     navigation.goBack();
@@ -100,9 +101,9 @@ const ViewSellerProfile = ({navigation}) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.lowerContentContainer}
         style={styles.container}>
-        <Text style={styles.name}>{user.name}</Text>
-        <Text style={styles.phone}>{user.phone}</Text>
-        <Text style={styles.email}>{user.email}</Text>
+        <Text style={styles.name}>{user?.name}</Text>
+        <Text style={styles.phone}>{user?.number}</Text>
+        <Text style={styles.email}>{user?.email}</Text>
         <Text style={styles.preferences}>Bio</Text>
         <Text style={styles.bio}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
@@ -226,6 +227,7 @@ const styles = StyleSheet.create({
   lowerContentContainer: {
     padding: 20,
     paddingTop: 80,
+    alignItems: 'center',
   },
   header: {
     flexDirection: 'row',

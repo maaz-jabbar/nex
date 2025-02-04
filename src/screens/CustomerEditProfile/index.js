@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -19,22 +19,28 @@ import {
   ToggleButton,
 } from '../../components';
 import {brands, contacts} from '../../dummyData';
+import {useSelector} from 'react-redux';
+import {baseURL} from '../../config/api';
 const socialIcons = [
   Images.instagram,
   Images.facebook,
   Images.tiktok,
   Images.twitterX,
 ];
-const user = contacts[0];
 
 const CustomerEditProfile = ({navigation}) => {
   const {top} = useSafeAreaInsets();
-
+  const user = useSelector(state => state.user?.user);
+  const profile = useSelector(state => state.user?.profile);
   const _goBack = () => {
     navigation.goBack();
   };
-  const [sendSMS, setSendSMS] = React.useState(false);
-  const [pushNotifications, setPushNotifications] = React.useState(false);
+  const [sendSMS, setSendSMS] = useState(false);
+  const [pushNotifications, setPushNotifications] = useState(false);
+  const [name, setName] = useState(user?.fullName);
+  const [phone, setPhone] = useState(user?.mobileNumber);
+  const [email, setEmail] = useState(user?.email);
+  const [preferences, setPreferences] = useState([]);
 
   return (
     <View style={[styles.container, {paddingTop: top}]}>
@@ -79,9 +85,27 @@ const CustomerEditProfile = ({navigation}) => {
               iconSize={18}
             />
           </View>
-          <TextInputCustom title="Name" />
-          <TextInputCustom title="Phone Number" />
-          <TextInputCustom title="Email" />
+          <TextInputCustom
+            title="Name"
+            textInputProps={{
+              value: name,
+              onChangeText: setName,
+            }}
+          />
+          <TextInputCustom
+            title="Phone Number"
+            textInputProps={{
+              value: phone,
+              onChangeText: setPhone,
+            }}
+          />
+          <TextInputCustom
+            title="Email"
+            textInputProps={{
+              value: email,
+              onChangeText: setEmail,
+            }}
+          />
           <Text style={styles.preferences}>Preferences:</Text>
           <FlatList
             data={brands.slice(0, 3)}

@@ -16,6 +16,7 @@ import {ContactAvatar, GradientButton, ToggleButton} from '../../components';
 import {brands, contacts} from '../../dummyData';
 import {logout} from '../../redux/actions/UserActions';
 import {useDispatch} from 'react-redux';
+import {createChat} from '../../redux/middlewares/chat';
 
 const socialIcons = [
   Images.instagram,
@@ -25,12 +26,14 @@ const socialIcons = [
 ];
 const user = contacts[0];
 
-const ViewCustomerProfile = ({navigation}) => {
+const ViewCustomerProfile = ({navigation, route: {params}}) => {
   const {top} = useSafeAreaInsets();
   const dispatch = useDispatch();
   const _goBack = () => {
     navigation.goBack();
   };
+
+  const user = params?.user;
 
   const logoutButton = () => {
     dispatch(logout());
@@ -48,7 +51,17 @@ const ViewCustomerProfile = ({navigation}) => {
     {
       name: 'Chat',
       icon: Images.chat,
-      onPress: () => navigation.navigate('Chat', {user}),
+      onPress: () => {
+        dispatch(
+          createChat(user?.userId, data => {
+            const conversation = {
+              conversationId: data?.id || data?.conversationId,
+              user: data?.participants || data?.user,
+            };
+            navigation.navigate('Chat', {conversation});
+          }),
+        );
+      },
     },
     {
       name: 'Favorite',
@@ -100,51 +113,81 @@ const ViewCustomerProfile = ({navigation}) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.lowerContentContainer}
         style={styles.container}>
-        <Text style={styles.name}>{user.name}</Text>
-        <Text style={styles.phone}>{user.phone}</Text>
-        <Text style={styles.email}>{user.email}</Text>
-        <View style={styles.actionContainer}>
-          {actionItems.map((item, index) => {
-            const isChat = index === 0;
-            const isLast = index === actionItems.length - 1;
-            return (
-              <TouchableOpacity
-                onPress={item.onPress}
-                activeOpacity={0.8}
-                style={[styles.actionButton, isLast && {marginRight: 0}]}>
-                <Image
-                  source={item.icon}
-                  resizeMode="contain"
-                  style={[
-                    styles.actionIcon,
-                    isChat && {tintColor: Colors.secondary},
-                  ]}
-                />
-                <Text style={styles.actionText}>{item.name}</Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-        <Text style={styles.preferences}>Notes</Text>
-        <Text style={styles.bio}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-        </Text>
-        <Text style={styles.preferences}>Preferences:</Text>
-        <FlatList
-          data={brands}
-          showsHorizontalScrollIndicator={false}
-          horizontal
-          style={styles.list}
-          contentContainerStyle={styles.listContent}
-          renderItem={({item, index}) => {
-            return (
-              <View key={index} style={styles.brandItem}>
-                <Text style={styles.brandItemText}>{item.name}</Text>
-              </View>
-            );
-          }}
-        />
+        {user?.joined ? (
+          <GradientButton
+            title="Joined"
+            onPress={() => {}}
+            noGradient
+            containerStyle={{
+              height: 35,
+              paddingHorizontal: 0,
+              backgroundColor: Colors.secondary,
+            }}
+            buttonStyle={{width: 120}}
+            textStyle={{color: Colors.white}}
+          />
+        ) : (
+          <GradientButton
+            title="Send Invite"
+            onPress={() => {}}
+            noGradient
+            containerStyle={{
+              height: 35,
+              paddingHorizontal: 0,
+            }}
+            buttonStyle={{width: 120}}
+            textStyle={{color: Colors.secondary}}
+          />
+        )}
+        <Text style={styles.name}>{user?.name}</Text>
+        <Text style={styles.phone}>{user?.number}</Text>
+        <Text style={styles.email}>{user?.email}</Text>
+        {user?.joined && (
+          <>
+            <View style={styles.actionContainer}>
+              {actionItems.map((item, index) => {
+                const isChat = index === 0;
+                const isLast = index === actionItems.length - 1;
+                return (
+                  <TouchableOpacity
+                    onPress={item.onPress}
+                    activeOpacity={0.8}
+                    style={[styles.actionButton, isLast && {marginRight: 0}]}>
+                    <Image
+                      source={item.icon}
+                      resizeMode="contain"
+                      style={[
+                        styles.actionIcon,
+                        isChat && {tintColor: Colors.secondary},
+                      ]}
+                    />
+                    <Text style={styles.actionText}>{item.name}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+            <Text style={styles.preferences}>Notes</Text>
+            <Text style={styles.bio}>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+            </Text>
+            <Text style={styles.preferences}>Preferences:</Text>
+            <FlatList
+              data={brands}
+              showsHorizontalScrollIndicator={false}
+              horizontal
+              style={styles.list}
+              contentContainerStyle={styles.listContent}
+              renderItem={({item, index}) => {
+                return (
+                  <View key={index} style={styles.brandItem}>
+                    <Text style={styles.brandItemText}>{item.name}</Text>
+                  </View>
+                );
+              }}
+            />
+          </>
+        )}
       </ScrollView>
     </View>
   );
@@ -261,6 +304,7 @@ const styles = StyleSheet.create({
   lowerContentContainer: {
     padding: 20,
     paddingTop: 80,
+    alignItems: 'center',
   },
   header: {
     flexDirection: 'row',

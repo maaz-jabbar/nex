@@ -4,6 +4,12 @@ export const saveUserType = userType => {
     payload: userType,
   };
 };
+export const saveUserProfile = profile => {
+  return {
+    type: 'SAVE_USER_PROFILE',
+    payload: profile,
+  };
+};
 
 export const saveUser = user => {
   return {
@@ -27,5 +33,19 @@ export const loaderTrue = () => {
 export const loaderFalse = () => {
   return {
     type: 'LOADER_FALSE',
+  };
+};
+
+export const saveUserContacts = contacts => {
+  return {
+    type: 'SAVE_USER_CONTACTS',
+    payload: contacts,
+  };
+};
+
+export const saveUserChats = chats => {
+  return {
+    type: 'SAVE_USER_CHATS',
+    payload: chats,
   };
 };

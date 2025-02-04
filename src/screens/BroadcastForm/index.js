@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   FlatList,
   Image,
@@ -27,14 +27,15 @@ const attachments = [
   {id: 2, name: 'document.pdf'},
 ];
 
-const BroadcastForm = ({navigation}) => {
+const BroadcastForm = ({navigation, route: {params}}) => {
   const {top} = useSafeAreaInsets();
-
+  const {selectedContacts} = params;
+  console.log('🚀 ~ BroadcastForm ~ selectedContacts:', selectedContacts);
   const _goBack = () => {
     navigation.goBack();
   };
 
-  const [sendMessages, setSendMessages] = React.useState(false);
+  const [sendMessages, setSendMessages] = React.useState(true);
   const [sendSMS, setSendSMS] = React.useState(false);
 
   return (
@@ -60,13 +61,28 @@ const BroadcastForm = ({navigation}) => {
         <View>
           <View style={styles.listItem}>
             <Text style={styles.listTitle}>Send Message to Chat</Text>
-            <ToggleButton on={sendMessages} onToggle={setSendMessages} />
+            <ToggleButton
+              on={sendMessages}
+              onToggle={data => {
+                setSendMessages(data);
+                setSendSMS(!data);
+              }}
+            />
           </View>
           <View style={styles.listItem}>
             <Text style={styles.listTitle}>Send SMS</Text>
-            <ToggleButton on={sendSMS} onToggle={setSendSMS} />
+            <ToggleButton
+              on={sendSMS}
+              onToggle={data => {
+                setSendMessages(!data);
+                setSendSMS(data);
+              }}
+            />
           </View>
           <TextInputCustom
+            textInputProps={{
+              value: 'Message Title',
+            }}
             containerStyle={{marginTop: 10}}
             title="Message Title"
           />

@@ -13,7 +13,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {CheckBox, ContactCard, GradientButton} from '../../components';
 import Images from '../../assets';
 import {ContactAvatar} from '../../components';
-import {chats, contacts} from '../../dummyData';
+import {useSelector} from 'react-redux';
 
 const SelectContacts = ({navigation}) => {
   const {top} = useSafeAreaInsets();
@@ -22,24 +22,22 @@ const SelectContacts = ({navigation}) => {
     navigation.goBack();
   };
 
-  const moveToChat = user => {
-    navigation.navigate('Chat', {user});
-  };
-
   const moveToForm = () => {
-    navigation.navigate('BroadcastForm');
+    navigation.navigate('BroadcastForm', {selectedContacts});
   };
 
   const [selectedContacts, setSelectedContacts] = React.useState([]);
+  const contacts = useSelector(state => state.user?.contacts);
 
   const _renderItem = ({item, index}) => {
     const isSelected =
-      selectedContacts.filter(contact => contact.id === item.id)?.length > 0;
+      selectedContacts.filter(contact => contact.number === item.number)
+        ?.length > 0;
 
     const onPressSelect = () => {
       if (isSelected) {
         setSelectedContacts(
-          selectedContacts.filter(contact => contact.id !== item.id),
+          selectedContacts.filter(contact => contact.number !== item.number),
         );
       } else {
         setSelectedContacts([...selectedContacts, item]);
@@ -87,13 +85,7 @@ const SelectContacts = ({navigation}) => {
             contentContainerStyle={styles.listContent}
             showsHorizontalScrollIndicator={false}
             renderItem={({item, index}) => {
-              return (
-                <ContactAvatar
-                  onPress={() => moveToChat(item)}
-                  key={index}
-                  contact={item}
-                />
-              );
+              return <ContactAvatar key={index} contact={item} />;
             }}
           />
         </View>
@@ -106,7 +98,7 @@ const SelectContacts = ({navigation}) => {
               ListHeaderComponent={() => (
                 <Text style={styles.toListTitle}>To:</Text>
               )}
-              contentContainerStyle={[styles.listContent, {paddingTop:0}]}
+              contentContainerStyle={[styles.listContent, {paddingTop: 0}]}
               showsHorizontalScrollIndicator={false}
               renderItem={({item, index}) => {
                 return (
