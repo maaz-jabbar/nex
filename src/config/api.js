@@ -40,7 +40,7 @@ ApiInstance.interceptors.response.use(
     return response;
   },
   function (error) {
-    console.log("🚀 ~ error:", JSON.stringify(error))
+    // console.log("🚀 ~ error:", error.response.status)
     errorToast(error);
     return Promise.reject(error);
   },

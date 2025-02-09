@@ -17,6 +17,7 @@ import {ContactAvatar, GradientButton, ToggleButton} from '../../components';
 import {brands, contacts} from '../../dummyData';
 import {logout} from '../../redux/actions/UserActions';
 import {useDispatch, useSelector} from 'react-redux';
+import {CommonActions} from '@react-navigation/native';
 const socialIcons = [
   Images.instagram,
   Images.facebook,
@@ -36,10 +37,12 @@ const SellerProfile = ({navigation}) => {
 
   const logoutButton = () => {
     dispatch(logout());
-    navigation.reset({
-      index: 0,
-      routes: [{name: 'Auth', params: {screen: 'BeforeSignUp'}}],
-    });
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 1,
+        routes: [{name: 'Auth', params: {screen: 'BeforeSignUp'}}],
+      }),
+    );
   };
   const moveToEditProfile = () => {
     navigation.navigate('SellerEditProfile');

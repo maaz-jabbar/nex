@@ -3,7 +3,8 @@ const INITIAL_STATES = {
   user: null,
   profile: null,
   contacts: [],
-  chats: []
+  chats: [],
+  broadcasts: []
 };
 
 export default function (state = INITIAL_STATES, action) {
@@ -32,6 +33,11 @@ export default function (state = INITIAL_STATES, action) {
       return {
         ...state,
         chats: action.payload,
+      }
+    case 'SAVE_USER_BROADCASTS':
+      return {
+        ...state,
+        broadcasts: action.payload,
       }
     case 'LOGOUT':
       return {

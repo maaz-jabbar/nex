@@ -36,12 +36,12 @@ const BeforeSignUp = ({navigation}) => {
         <GradientButton
           onPress={() => moveToOnboarding('CUSTOMER')}
           icon={Images.cart}
-          title="I am a Customer"
+          title="Customer account"
         />
         <GradientButton
           onPress={() => moveToOnboarding('seller')}
           icon={Images.cart}
-          title="I am a Seller"
+          title="Seller account"
         />
       </View>
       <View>

@@ -1,10 +1,16 @@
 import {ApiInstanceWithJWT, successToast} from '../../config/api';
-import {loaderFalse, loaderTrue, saveUserChats} from '../actions/UserActions';
+import {
+  loaderFalse,
+  loaderTrue,
+  saveUserBroadcasts,
+  saveUserChats,
+} from '../actions/UserActions';
 import {navigate} from '../../navigation/navigationService';
 
-export const getChats = () => {
-  return dispatch => {
-    dispatch(loaderTrue());
+export const getChats = (loaderStop = () => {}) => {
+  return (dispatch, getState) => {
+    const chatsLength = getState().user?.chats?.length;
+    if (!chatsLength) dispatch(loaderTrue());
     ApiInstanceWithJWT.get('/chat/conversation')
       .then(({data}) => {
         dispatch(saveUserChats(data));
@@ -14,14 +20,35 @@ export const getChats = () => {
       })
 
       .finally(() => {
+        loaderStop();
         dispatch(loaderFalse());
       });
   };
 };
 
-export const getMessages = (conversationId, onSuccess) => {
+export const getBroadcasts = (loaderStop = () => {}) => {
+  return (dispatch, getState) => {
+    const userId = getState().user?.user?.userId;
+    const chatsLength = getState().user?.broadcasts?.length;
+    if (!chatsLength) dispatch(loaderTrue());
+    ApiInstanceWithJWT.get('/chat/broadcast/' + userId)
+      .then(({data}) => {
+        console.log('🚀 ~ .then ~ data:', data);
+        dispatch(saveUserBroadcasts(data));
+      })
+      .catch(err => {
+        console.log('🚀 ~ .catch ~ err:', err);
+      })
+
+      .finally(() => {
+        loaderStop();
+        dispatch(loaderFalse());
+      });
+  };
+};
+
+export const getMessages = (conversationId, offset, onSuccess) => {
   return dispatch => {
-    dispatch(loaderTrue());
     ApiInstanceWithJWT.get('/chat/conversation/' + conversationId)
       .then(({data}) => {
         onSuccess(data?.messages);
@@ -58,7 +85,42 @@ export const createChat = (userId, onSuccess) => {
     ApiInstanceWithJWT.post('/chat/conversation', [userId, myId])
       .then(({data}) => {
         onSuccess(data);
-        dispatch(getChats())
+        dispatch(getChats());
+      })
+      .finally(() => {
+        dispatch(loaderFalse());
+      });
+  };
+};
+
+export const uploadMedia = (file, onSuccess, specialId) => {
+  return dispatch => {
+    const imageId = specialId ? specialId : Date.now();
+    const formdata = new FormData();
+    formdata.append('file', file);
+
+    dispatch(loaderTrue());
+    ApiInstanceWithJWT.post('/images/upload/' + imageId, formdata, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+      .then(({data}) => {
+        onSuccess(imageId);
+      })
+      .finally(() => {
+        dispatch(loaderFalse());
+      });
+  };
+};
+
+export const sendBroadcast = (body, onSuccess) => {
+  return dispatch => {
+    dispatch(loaderTrue());
+    ApiInstanceWithJWT.post('/chat/broadcast', body)
+      .then(({data}) => {
+        console.log('🚀 ~ .then ~ data:', data);
+        onSuccess(data);
       })
       .finally(() => {
         dispatch(loaderFalse());

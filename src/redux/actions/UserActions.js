@@ -49,3 +49,10 @@ export const saveUserChats = chats => {
     payload: chats,
   };
 };
+
+export const saveUserBroadcasts = chats => {
+  return {
+    type: 'SAVE_USER_BROADCASTS',
+    payload: chats,
+  };
+};

@@ -25,7 +25,7 @@ const ChatBubble = ({nextChatBySameUser, message, sender}) => {
           containerStyle={sentByMe && {marginRight: 0, marginLeft: 10}}
           size={30}
           displayName={false}
-          contact={sender}
+          contact={sentByMe ? user : sender}
         />
       )}
       <View

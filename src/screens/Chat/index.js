@@ -35,12 +35,22 @@ const Chat = ({route: {params}, navigation}) => {
   )[0];
 
   useEffect(() => {
-    getAll();
+    const timer = setInterval(() => {
+      console.log('asdasd');
+      getAll();
+    }, 1000);
+    return () => clearTimeout(timer);
   }, []);
 
   const getAll = () => {
     setLoader(false);
-    dispatch(getMessages(conversation?.conversationId, setChatMessages));
+    dispatch(
+      getMessages(
+        conversation?.conversationId,
+        chatMessages.length,
+        setChatMessages,
+      ),
+    );
   };
 
   const broadcast = params?.broadcast;
@@ -58,7 +68,7 @@ const Chat = ({route: {params}, navigation}) => {
       senderId: user?.userId,
     };
     setLoader(true);
-    dispatch(sendMessageAsync(messageObj, getAll));
+    dispatch(sendMessageAsync(messageObj, () => setLoader(false)));
     setMessage('');
   };
   return (
@@ -174,7 +184,9 @@ const Chat = ({route: {params}, navigation}) => {
         />
         <GradientButton
           icon={loader ? null : Images.send}
-          customComp={loader ? <ActivityIndicator color={Colors.white} /> : null}
+          customComp={
+            loader ? <ActivityIndicator color={Colors.white} /> : null
+          }
           onPress={sendMessage}
           containerStyle={styles.sendButtonCont}
           buttonStyle={styles.sendButton}

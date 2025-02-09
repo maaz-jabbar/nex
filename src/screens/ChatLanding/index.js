@@ -2,11 +2,11 @@ import React, {useEffect} from 'react';
 import {
   FlatList,
   Image,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import {Colors, Fonts} from '../../config';
@@ -14,11 +14,9 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {BroadcastCard, ChatCard, GradientButton} from '../../components';
 import Images from '../../assets';
 import {ContactAvatar} from '../../components';
-import {broadcasts} from '../../dummyData';
-import ReactNativeModal from 'react-native-modal';
 import {AddChatModal} from '../../modals';
 import {useDispatch, useSelector} from 'react-redux';
-import {getChats} from '../../redux/middlewares/chat';
+import {getBroadcasts, getChats} from '../../redux/middlewares/chat';
 import {getUserWithId} from '../../redux/middlewares/user';
 
 const ChatLanding = ({navigation}) => {
@@ -26,19 +24,28 @@ const ChatLanding = ({navigation}) => {
   const {top} = useSafeAreaInsets();
   const [selectedTab, setSelectedTab] = React.useState('Chat');
   const [showPopup, setShowPopup] = React.useState(false);
+  const [refreshing, setRefreshing] = React.useState(false);
 
   const userType = useSelector(state => state.user?.userType);
   const contacts = useSelector(state => state.user?.contacts);
   const chats = useSelector(state => state.user?.chats);
+  const broadcasts = useSelector(state => state.user?.broadcasts);
   const isCustomer = userType === 'CUSTOMER';
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', e => {
       dispatch(getChats());
+      dispatch(getBroadcasts());
     });
 
     return unsubscribe;
   }, []);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    dispatch(getChats(setRefreshing(false)));
+    dispatch(getBroadcasts(setRefreshing(false)));
+  };
 
   const moveToChat = (user, isBroadcast) => {
     setShowPopup(false);
@@ -109,7 +116,7 @@ const ChatLanding = ({navigation}) => {
                 buttonStyle={styles.listPlusButton}
                 iconSize={24}
                 noGradient
-                onPress={()=>navigation.navigate('Contacts')}
+                onPress={() => navigation.navigate('Contacts')}
                 iconStyle={{tintColor: Colors.secondary}}
               />
             )}
@@ -159,6 +166,9 @@ const ChatLanding = ({navigation}) => {
           </View>
         </>
         <FlatList
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
           key={selectedTab}
           data={selectedTab == 'Chat' ? chats : broadcasts}
           scrollEnabled={false}
@@ -172,13 +182,7 @@ const ChatLanding = ({navigation}) => {
                 />
               );
             }
-            return (
-              <BroadcastCard
-                onPress={() => moveToChat(item, true)}
-                key={index}
-                chat={item}
-              />
-            );
+            return <BroadcastCard key={index} chat={item} />;
           }}
         />
       </ScrollView>

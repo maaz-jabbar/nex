@@ -19,8 +19,15 @@ import {getUserWithId} from '../../redux/middlewares/user';
 
 const Contacts = ({navigation}) => {
   const {top} = useSafeAreaInsets();
+  const [search, setSearch] = React.useState('');
   const userType = useSelector(state => state.user?.userType);
   const contacts = useSelector(state => state.user?.contacts);
+  console.log(
+    '🚀 ~ Contacts ~ contacts:',
+    contacts.filter(contact => {
+      return contact?.name?.toLowerCase().includes(search?.toLowerCase());
+    }),
+  );
   const dispatch = useDispatch();
   const isCustomer = userType === 'CUSTOMER';
 
@@ -76,8 +83,58 @@ const Contacts = ({navigation}) => {
         <Text style={styles.title}>Contacts</Text>
         <View style={styles.headerPlaceholder} />
       </View>
+      <>
+        <View style={styles.searchCont}>
+          <Image
+            source={Images.search}
+            resizeMode="contain"
+            style={styles.searchIcon}
+          />
+          <TextInput
+            value={search}
+            onChangeText={setSearch}
+            placeholder="Search"
+            style={styles.input}
+          />
+        </View>
+        <View>
+          <FlatList
+            data={contacts.filter(contact => {
+              return contact?.name
+                ?.toLowerCase()
+                .includes(search?.toLowerCase());
+            })}
+            horizontal
+            style={styles.list}
+            ListHeaderComponent={() => (
+              <GradientButton
+                icon={Images.plus}
+                containerStyle={styles.listPlusButtonCont}
+                buttonStyle={styles.listPlusButton}
+                iconSize={24}
+                noGradient
+                onPress={() => setAddContactModal(true)}
+                iconStyle={{tintColor: Colors.secondary}}
+              />
+            )}
+            contentContainerStyle={styles.listContent}
+            showsHorizontalScrollIndicator={false}
+            renderItem={({item, index}) => {
+              return (
+                <ContactAvatar
+                  onPress={() => viewProfile(item)}
+                  key={index}
+                  contact={item}
+                />
+              );
+            }}
+          />
+        </View>
+      </>
       <FlatList
-        data={contacts}
+        data={contacts.filter(contact => {
+          return contact?.name?.toLowerCase().includes(search?.toLowerCase());
+        })}
         renderItem={({item, index}) => {
           return (
             <ContactCard
@@ -85,49 +142,6 @@ const Contacts = ({navigation}) => {
               key={index}
               user={item}
             />
-          );
-        }}
-        ListHeaderComponent={() => {
-          return (
-            <>
-              <View style={styles.searchCont}>
-                <Image
-                  source={Images.search}
-                  resizeMode="contain"
-                  style={styles.searchIcon}
-                />
-                <TextInput placeholder="Search" style={styles.input} />
-              </View>
-              <View>
-                <FlatList
-                  data={contacts}
-                  horizontal
-                  style={styles.list}
-                  ListHeaderComponent={() => (
-                    <GradientButton
-                      icon={Images.plus}
-                      containerStyle={styles.listPlusButtonCont}
-                      buttonStyle={styles.listPlusButton}
-                      iconSize={24}
-                      noGradient
-                      onPress={() => setAddContactModal(true)}
-                      iconStyle={{tintColor: Colors.secondary}}
-                    />
-                  )}
-                  contentContainerStyle={styles.listContent}
-                  showsHorizontalScrollIndicator={false}
-                  renderItem={({item, index}) => {
-                    return (
-                      <ContactAvatar
-                        onPress={() => viewProfile(item)}
-                        key={index}
-                        contact={item}
-                      />
-                    );
-                  }}
-                />
-              </View>
-            </>
           );
         }}
       />

@@ -21,11 +21,11 @@ import {
 import Images from '../../assets';
 import {ContactAvatar} from '../../components';
 import {broadcasts, chats, contacts} from '../../dummyData';
-
-const attachments = [
-  {id: 1, name: 'image.png'},
-  {id: 2, name: 'document.pdf'},
-];
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {StackActions} from '@react-navigation/native';
+import {errorToast} from '../../config/api';
+import {useDispatch, useSelector} from 'react-redux';
+import {sendBroadcast, uploadMedia} from '../../redux/middlewares/chat';
 
 const BroadcastForm = ({navigation, route: {params}}) => {
   const {top} = useSafeAreaInsets();
@@ -37,6 +37,52 @@ const BroadcastForm = ({navigation, route: {params}}) => {
 
   const [sendMessages, setSendMessages] = React.useState(true);
   const [sendSMS, setSendSMS] = React.useState(false);
+  const [title, setTitle] = React.useState('');
+  const [message, setMessage] = React.useState('');
+  const [attachments, setAttachments] = React.useState([]);
+  const user = useSelector(state => state.user?.user);
+  const dispatch = useDispatch();
+  console.log('🚀 ~ BroadcastForm ~ user:', user);
+
+  const onPressAttachment = async () => {
+    const result = await launchImageLibrary({
+      mediaType: 'photo',
+    });
+    if (!result.assets?.length) return;
+    setAttachments([
+      {
+        uri: result.assets[0].uri,
+        type: result.assets[0].type,
+        name: result.assets[0].fileName,
+      },
+    ]);
+  };
+
+  const onSend = () => {
+    if (!title.trim() || !message.trim())
+      return errorToast({message: 'Please enter title and message'});
+
+    const body = {
+      content: message,
+      title,
+      // attachmentId: 234,
+      senderId: user?.userId,
+      isTwilio: sendSMS,
+      receiverIds: [
+        ...selectedContacts
+          .filter(contact => contact.joined)
+          .map(contact => contact.userId),
+      ],
+    };
+    if (attachments.length) {
+      dispatch(
+        uploadMedia(attachments[0], data => {
+          body.attachmentId = data;
+          dispatch(sendBroadcast(body, () => navigation.pop(2)));
+        }),
+      );
+    } else dispatch(sendBroadcast(body, () => navigation.pop(2)));
+  };
 
   return (
     <View style={[styles.container, {paddingTop: top}]}>
@@ -81,14 +127,23 @@ const BroadcastForm = ({navigation, route: {params}}) => {
           </View>
           <TextInputCustom
             textInputProps={{
-              value: 'Message Title',
+              value: title,
+              onChangeText: data => {
+                setTitle(data);
+              },
             }}
             containerStyle={{marginTop: 10}}
             title="Message Title"
           />
           <TextInputCustom
             title="Message"
-            textInputProps={{multiline: true}}
+            textInputProps={{
+              multiline: true,
+              value: message,
+              onChangeText: data => {
+                setMessage(data);
+              },
+            }}
             textInputStyle={{
               height: 100,
               textAlignVertical: 'top',
@@ -96,6 +151,7 @@ const BroadcastForm = ({navigation, route: {params}}) => {
             }}
           />
           <TouchableOpacity
+            onPress={onPressAttachment}
             activeOpacity={0.8}
             style={{
               flexDirection: 'row',
@@ -116,7 +172,12 @@ const BroadcastForm = ({navigation, route: {params}}) => {
                   key={index}
                   activeOpacity={0.8}
                   style={styles.attachment}>
-                  <TouchableOpacity activeOpacity={0.8} style={styles.cross}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setAttachments(attachments.filter((_, i) => i !== index));
+                    }}
+                    activeOpacity={0.8}
+                    style={styles.cross}>
                     <Image
                       source={Images.cross}
                       style={styles.crossIcon}
@@ -132,12 +193,7 @@ const BroadcastForm = ({navigation, route: {params}}) => {
         <GradientButton
           title="Send"
           buttonStyle={{marginBottom: 0, width: 200, alignSelf: 'center'}}
-          onPress={() => {
-            navigation.navigate('Chat', {
-              isBroadcast: true,
-              broadcast: broadcasts[0],
-            });
-          }}
+          onPress={onSend}
         />
       </ScrollView>
     </View>
