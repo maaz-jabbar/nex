@@ -2,6 +2,7 @@ import axios from 'axios';
 import {ApiInstanceWithJWT, successToast} from '../../config/api';
 import {loaderFalse, loaderTrue, saveUserProfile} from '../actions/UserActions';
 import {navigate} from '../../navigation/navigationService';
+import {getProfile} from './user';
 
 export const getPositions = onSuccess => {
   return dispatch => {
@@ -66,12 +67,12 @@ export const getPlacesAutoComplete = async text => {
 };
 
 export const createAgentProfile = (id, body) => {
-  return dispatch => {
+  return (dispatch, getState) => {
     dispatch(loaderTrue());
     ApiInstanceWithJWT.post('profiles/agent/' + id, body)
       .then(({data}) => {
-        console.log("🚀 ~ .then ~ data:", data)
-        saveUserProfile(data?.body);
+        console.log('🚀 ~ .then ~ data:', data);
+        dispatch(getProfile(getState()?.user?.user));
 
         successToast('Profile created successfully');
         if (data?.status == 201) navigate('Congratulations');
@@ -86,11 +87,12 @@ export const createCustomerProfile = (body, success) => {
   return (dispatch, getState) => {
     const userId = getState()?.user?.user?.userId;
     dispatch(loaderTrue());
-    ApiInstanceWithJWT.post('profiles/agent/' + userId, body)
+    ApiInstanceWithJWT.post('profiles/customer/' + userId, body)
       .then(({data}) => {
-        console.log("🚀 ~ .then ~ data:", data)
+        console.log('🚀 ~ .then ~ data:', data);
+        dispatch(getProfile(getState()?.user?.user));
+
         successToast('Profile created successfully');
-        saveUserProfile(data?.body);
         if (data?.status == 201) navigate('Congratulations');
       })
       .finally(() => {

@@ -159,12 +159,12 @@ const SellerProfile = ({navigation}) => {
                 key={index}
                 noGradient
                 onPress={() => {
-                  Linking.openURL(link.link);
+                  Linking.openURL(link);
                 }}
                 icon={Images.link}
                 iconSize={20}
                 iconStyle={{tintColor: Colors.secondary}}
-                title={link.title}
+                title={link}
                 textStyle={{color: Colors.secondary, flex: 1, marginLeft: 10}}
                 buttonStyle={{marginBottom: 0}}
                 containerStyle={{

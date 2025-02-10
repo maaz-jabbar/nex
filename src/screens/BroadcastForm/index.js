@@ -79,7 +79,7 @@ const BroadcastForm = ({navigation, route: {params}}) => {
     if (attachments.length) {
       dispatch(
         uploadMedia(attachments[0], data => {
-          body.attachmentId = data;
+          body.attachmentId = [data];
           dispatch(sendBroadcast(body, () => navigation.pop(2)));
         }),
       );

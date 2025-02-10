@@ -2,6 +2,7 @@ import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import {store} from '../redux';
 
+// export const baseURL = 'https://30b5-2400-adc1-469-6b00-bd79-64b1-1d39-175c.ngrok-free.app';
 export const baseURL = 'http://110.93.217.235:9092';
 
 export const ApiInstance = axios.create({
@@ -32,7 +33,9 @@ ApiInstanceWithJWT.interceptors.response.use(
   },
   function (error) {
     if (
-      error?.request?.responseURL?.includes('profiles/') &&
+      (error?.request?.responseURL?.includes('profiles/') ||
+        error?.request?.responseURL?.includes('contacts/') ||
+        error?.request?.responseURL?.includes('chat/')) &&
       error?.request?._method === 'GET'
     ) {
     } else {

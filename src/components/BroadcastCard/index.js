@@ -30,9 +30,9 @@ const BroadcastCard = ({chat, onPress}) => {
         onBackdropPress={() => setAttachmentModal('')}
         isVisible={!!attachmentModal}>
         <TouchableOpacity
-        activeOpacity={1}
-        onPress={() => setAttachmentModal('')}
-        style={{flex: 1}}>
+          activeOpacity={1}
+          onPress={() => setAttachmentModal('')}
+          style={{flex: 1}}>
           <Image
             source={{
               uri: `${baseURL}/images/upload/${attachmentModal}`,
@@ -102,16 +102,19 @@ const BroadcastCard = ({chat, onPress}) => {
             flexDirection: 'row',
             alignItems: 'center',
           }}>
-          {!!chat?.attachmentId && (
-            <TouchableOpacity
-              onPress={() => setAttachmentModal(chat?.attachmentId)}
-              activeOpacity={0.8}
-              style={styles.attachment}>
-              <Text style={styles.attachmentTextName}>
-                {chat?.attachmentId}
-              </Text>
-            </TouchableOpacity>
-          )}
+          {chat?.attachmentId?.length &&
+            chat?.attachmentId?.map(data => {
+              return (
+                <TouchableOpacity
+                  onPress={() => setAttachmentModal(data)}
+                  activeOpacity={0.8}
+                  style={styles.attachment}>
+                  <Text style={styles.attachmentTextName}>
+                    {data}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
         </View>
         <View
           style={{

@@ -84,7 +84,7 @@ const CustomerEditProfile = ({navigation}) => {
       )
         dispatch(updateCustomer(name, phone, email, () => navigation.goBack()));
       if (
-        JSON.stringify(profile?.preferences) !== JSON.stringify(preferences)
+        JSON.stringify(profile?.favDesigner) !== JSON.stringify(preferences)
       ) {
         dispatch(updateCustomerProfile(preferences, () => navigation.goBack()));
       }
@@ -209,7 +209,7 @@ const CustomerEditProfile = ({navigation}) => {
             renderItem={({item, index}) => {
               return (
                 <View key={index} style={styles.brandItem}>
-                  <Text style={styles.brandItemText}>{item.name}</Text>
+                  <Text style={styles.brandItemText}>{item}</Text>
                 </View>
               );
             }}

@@ -6,7 +6,7 @@ import {
   View,
   Image,
   ScrollView,
-  FlatList,
+  Linking,
 } from 'react-native';
 import {Colors, Fonts} from '../../config';
 import LinearGradient from 'react-native-linear-gradient';
@@ -25,7 +25,11 @@ import {uploadMedia} from '../../redux/middlewares/chat';
 import {
   updateCustomerProfile,
   updateSeller,
+  updateSellerProfile,
 } from '../../redux/middlewares/user';
+
+const urlRegex =
+  /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
 
 const SellerEditProfile = ({navigation}) => {
   const dispatch = useDispatch();
@@ -37,6 +41,14 @@ const SellerEditProfile = ({navigation}) => {
   const [links, setLinks] = React.useState(profile?.links);
   const _goBack = () => {
     navigation.goBack();
+  };
+
+  const onPressSaveLink = () => {
+    if (urlRegex.test(link)) {
+      setLinks([...links, link]);
+      setLink('');
+      setLinkAdd(false);
+    } else errorToast({message: 'Please provide a valid link'});
   };
 
   const onPressSave = () => {
@@ -74,7 +86,7 @@ const SellerEditProfile = ({navigation}) => {
       )
         dispatch(updateSeller(name, phone, email, () => navigation.goBack()));
       if (JSON.stringify(profile?.links) !== JSON.stringify(links)) {
-        dispatch(updateCustomerProfile(links, () => navigation.goBack()));
+        dispatch(updateSellerProfile(links, () => {}));
       }
     }
   };
@@ -83,6 +95,7 @@ const SellerEditProfile = ({navigation}) => {
   const [name, setName] = React.useState(user?.fullName);
   const [phone, setPhone] = React.useState(user?.mobileNumber);
   const [email, setEmail] = React.useState(user?.email);
+  const [link, setLink] = React.useState('');
   const [image, setImage] = React.useState('');
   // const [bio, setBio] = React.useState('');
 
@@ -205,12 +218,12 @@ const SellerEditProfile = ({navigation}) => {
                 key={index}
                 noGradient
                 onPress={() => {
-                  Linking.openURL(link.link);
+                  Linking.openURL(link);
                 }}
                 icon={Images.link}
                 iconSize={20}
                 iconStyle={{tintColor: Colors.secondary}}
-                title={link.title}
+                title={link}
                 textStyle={{color: Colors.secondary, flex: 1, marginLeft: 10}}
                 buttonStyle={{marginBottom: 0}}
                 containerStyle={{
@@ -241,26 +254,17 @@ const SellerEditProfile = ({navigation}) => {
             <>
               <TextInputCustom
                 textInputProps={{
-                  value: email,
+                  value: link,
                   onChangeText: text => {
-                    setEmail(text);
+                    setLink(text);
                   },
                 }}
-                title="Email"
-              />
-              <TextInputCustom
-                textInputProps={{
-                  value: email,
-                  onChangeText: text => {
-                    setEmail(text);
-                  },
-                }}
-                title="Email"
+                title="Link"
               />
               <GradientButton
                 title="Save"
                 buttonStyle={{width: 150, alignSelf: 'center', marginTop: 20}}
-                onPress={onPressSave}
+                onPress={onPressSaveLink}
               />
             </>
           )}

@@ -26,14 +26,19 @@ export const getChats = (loaderStop = () => {}) => {
 
 export const getBroadcasts = (loaderStop = () => {}) => {
   return (dispatch, getState) => {
-    const userId = 4;
+    const userId = getState().user?.user?.userId;
+    console.log("🚀 ~ return ~ userId:", userId)
     const chatsLength = getState().user?.broadcasts?.length;
     if (!chatsLength) dispatch(loaderTrue());
-    ApiInstanceWithJWT.get('/chat/broadcast/' + userId)
+    ApiInstanceWithJWT.get('/chat/broadcast/receiver/' + userId)
       .then(({data}) => {
-        dispatch(saveUserBroadcasts([data]));
+        console.log("🚀 ~ .then ~ data:", data)
+        dispatch(saveUserBroadcasts(data));
       })
-      .catch(err => {})
+      .catch(err => {
+        console.log("🚀 ~ return ~ sserr:", err)
+        
+      })
 
       .finally(() => {
         loaderStop();

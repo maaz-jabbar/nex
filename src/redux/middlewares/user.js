@@ -147,6 +147,7 @@ export const saveContact = (data, closeModal) => {
 };
 
 export const updateCustomer = (name, phone, email, goBack) => {
+  console.log("🚀 ~ updateCustomer ~ name:", name)
   return (dispatch, getState) => {
     const userId = getState().user?.user?.userId;
     dispatch(loaderTrue());
@@ -205,6 +206,7 @@ export const updateSeller = (name, phone, email, links, goBack) => {
 };
 
 export const updateCustomerProfile = (preferences, goBack) => {
+  console.log("🚀 ~ updateCustomerProfile ~ preferences:", preferences)
   return (dispatch, getState) => {
     const profileId = getState().user?.profile?.profileId;
     console.log("🚀 ~ return ~ profileId:", profileId)
@@ -227,8 +229,10 @@ export const updateCustomerProfile = (preferences, goBack) => {
   };
 };
 export const updateSellerProfile = (links, goBack) => {
+  console.log("🚀 ~ updateSellerProfile ~ links:", links)
   return (dispatch, getState) => {
     const profileId = getState().user?.profile?.profileId;
+    console.log("🚀 ~ return ~ profileId:", 'profiles/agent/' + profileId)
     dispatch(loaderTrue());
     ApiInstanceWithJWT.patch('profiles/agent/' + profileId, {
       links,

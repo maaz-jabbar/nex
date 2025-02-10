@@ -169,6 +169,24 @@ const ChatLanding = ({navigation}) => {
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
+          ListEmptyComponent={() => {
+            return (
+              <View
+                style={{
+                  alignItems: 'center',
+                  marginTop: 100,
+                }}>
+                <Text
+                  style={{
+                    fontFamily: Fonts.RobotoRegular,
+                    color: Colors.black,
+                    fontSize: 16,
+                  }}>
+                  No chats to show
+                </Text>
+              </View>
+            );
+          }}
           key={selectedTab}
           data={selectedTab == 'Chat' ? chats : broadcasts}
           scrollEnabled={false}
