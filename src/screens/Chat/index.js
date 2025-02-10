@@ -68,8 +68,8 @@ const Chat = ({route: {params}, navigation}) => {
       senderId: user?.userId,
     };
     setLoader(true);
-    dispatch(sendMessageAsync(messageObj, () => setLoader(false)));
     setMessage('');
+    dispatch(sendMessageAsync(messageObj, () => setLoader(false)));
   };
   return (
     <View style={[styles.container, {paddingTop: top}]}>

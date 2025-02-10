@@ -1,12 +1,36 @@
 import axios from 'axios';
 import {ApiInstanceWithJWT, successToast} from '../../config/api';
-import {loaderFalse, loaderTrue} from '../actions/UserActions';
+import {loaderFalse, loaderTrue, saveUserProfile} from '../actions/UserActions';
 import {navigate} from '../../navigation/navigationService';
 
 export const getPositions = onSuccess => {
   return dispatch => {
     dispatch(loaderTrue());
     ApiInstanceWithJWT.get('listing/position')
+      .then(({data}) => {
+        onSuccess(data?.body);
+      })
+      .finally(() => {
+        dispatch(loaderFalse());
+      });
+  };
+};
+export const getAllProducts = onSuccess => {
+  return dispatch => {
+    dispatch(loaderTrue());
+    ApiInstanceWithJWT.get('listing/product')
+      .then(({data}) => {
+        onSuccess(data?.body);
+      })
+      .finally(() => {
+        dispatch(loaderFalse());
+      });
+  };
+};
+export const getAllBrands = onSuccess => {
+  return dispatch => {
+    dispatch(loaderTrue());
+    ApiInstanceWithJWT.get('listing/designer')
       .then(({data}) => {
         onSuccess(data?.body);
       })
@@ -46,7 +70,27 @@ export const createAgentProfile = (id, body) => {
     dispatch(loaderTrue());
     ApiInstanceWithJWT.post('profiles/agent/' + id, body)
       .then(({data}) => {
+        console.log("🚀 ~ .then ~ data:", data)
+        saveUserProfile(data?.body);
+
         successToast('Profile created successfully');
+        if (data?.status == 201) navigate('Congratulations');
+      })
+      .finally(() => {
+        dispatch(loaderFalse());
+      });
+  };
+};
+
+export const createCustomerProfile = (body, success) => {
+  return (dispatch, getState) => {
+    const userId = getState()?.user?.user?.userId;
+    dispatch(loaderTrue());
+    ApiInstanceWithJWT.post('profiles/agent/' + userId, body)
+      .then(({data}) => {
+        console.log("🚀 ~ .then ~ data:", data)
+        successToast('Profile created successfully');
+        saveUserProfile(data?.body);
         if (data?.status == 201) navigate('Congratulations');
       })
       .finally(() => {

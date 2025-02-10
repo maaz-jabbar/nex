@@ -29,7 +29,6 @@ const Contacts = ({navigation}) => {
     }),
   );
   const dispatch = useDispatch();
-  const isCustomer = userType === 'CUSTOMER';
 
   const _goBack = () => {
     navigation.goBack();

@@ -36,26 +36,23 @@ const AddInvitePopup = ({isVisible, setVisible, setContactModal}) => {
       style={[styles.popupModal, {paddingTop: top + 40}]}
       onDismiss={() => setVisible(false)}>
       <View style={styles.popup}>
-        {isSeller && (
-          <>
-            <GradientButton
-              title="New Contact"
-              onPress={moveToContacts}
-              icon={Images.newContact}
-              iconStyle={{tintColor: Colors.white}}
-              containerStyle={{height: 50, justifyContent: 'center'}}
-              buttonStyle={{width: '80%'}}
-            />
-            <GradientButton
-              title="Broadcast"
-              icon={Images.broadcast2}
-              onPress={moveToBroadcastCreation}
-              iconStyle={{tintColor: Colors.white}}
-              containerStyle={{height: 50, justifyContent: 'center'}}
-              buttonStyle={{width: '80%'}}
-            />
-          </>
-        )}
+        <GradientButton
+          title="New Contact"
+          onPress={moveToContacts}
+          icon={Images.newContact}
+          iconStyle={{tintColor: Colors.white}}
+          containerStyle={{height: 50, justifyContent: 'center'}}
+          buttonStyle={{width: '80%'}}
+        />
+        <GradientButton
+          title="Broadcast"
+          icon={Images.broadcast2}
+          onPress={moveToBroadcastCreation}
+          iconStyle={{tintColor: Colors.white}}
+          containerStyle={{height: 50, justifyContent: 'center'}}
+          buttonStyle={{width: '80%'}}
+        />
+
         <GradientButton
           title="Copy Invite Link"
           noGradient

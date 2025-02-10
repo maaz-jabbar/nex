@@ -19,8 +19,15 @@ import {
   ToggleButton,
 } from '../../components';
 import {brands, contacts} from '../../dummyData';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {baseURL} from '../../config/api';
+import {launchImageLibrary} from 'react-native-image-picker';
+import {uploadMedia} from '../../redux/middlewares/chat';
+import {
+  updateCustomer,
+  updateCustomerProfile,
+  updateSeller,
+} from '../../redux/middlewares/user';
 const socialIcons = [
   Images.instagram,
   Images.facebook,
@@ -32,6 +39,7 @@ const CustomerEditProfile = ({navigation}) => {
   const {top} = useSafeAreaInsets();
   const user = useSelector(state => state.user?.user);
   const profile = useSelector(state => state.user?.profile);
+  const dispatch = useDispatch();
   const _goBack = () => {
     navigation.goBack();
   };
@@ -40,7 +48,58 @@ const CustomerEditProfile = ({navigation}) => {
   const [name, setName] = useState(user?.fullName);
   const [phone, setPhone] = useState(user?.mobileNumber);
   const [email, setEmail] = useState(user?.email);
-  const [preferences, setPreferences] = useState([]);
+  const [preferences, setPreferences] = useState(profile?.favDesigner);
+  const [image, setImage] = React.useState('');
+  // const [bio, setBio] = React.useState('');
+
+  const onPressSave = () => {
+    if (!name || !phone || !email)
+      return errorToast({message: 'Please fill all the fields'});
+    if (
+      user?.fullName === name &&
+      user?.mobileNumber === phone &&
+      user?.email === email &&
+      image === '' &&
+      JSON.stringify(profile?.preferences) === JSON.stringify(preferences)
+    ) {
+      navigation.goBack();
+    } else {
+      if (image) {
+        dispatch(
+          uploadMedia(
+            {
+              uri: image,
+              type: 'image/' + image?.slice(image?.lastIndexOf('.') + 1),
+              name: user?.userId?.toString(),
+            },
+            undefined,
+            user?.userId,
+          ),
+        );
+      }
+      if (
+        user?.fullName !== name ||
+        user?.mobileNumber !== phone ||
+        user?.email !== email
+      )
+        dispatch(updateCustomer(name, phone, email, () => navigation.goBack()));
+      if (
+        JSON.stringify(profile?.preferences) !== JSON.stringify(preferences)
+      ) {
+        dispatch(updateCustomerProfile(preferences, () => navigation.goBack()));
+      }
+    }
+  };
+
+  const pickImage = async () => {
+    const options = {
+      mediaType: 'photo',
+      maxHeight: 400,
+      maxWidth: 400,
+    };
+    const source = await launchImageLibrary(options);
+    setImage(source?.assets[0]?.uri);
+  };
 
   return (
     <View style={[styles.container, {paddingTop: top}]}>
@@ -68,18 +127,42 @@ const CustomerEditProfile = ({navigation}) => {
         style={styles.container}>
         <View style={styles.info}>
           <View style={{alignSelf: 'center'}}>
-            <ContactAvatar
-              contact={user}
-              displayName={false}
-              size={120}
-              containerStyle={{
-                marginRight: 0,
-                zIndex: 99,
-              }}
-            />
+            {image ? (
+              <View
+                style={{
+                  padding: 2,
+                  height: 124,
+                  width: 124,
+                  borderRadius: 62,
+                  backgroundColor: Colors.lightGrey,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Image
+                  style={{
+                    width: 120,
+                    height: 120,
+                    borderRadius: 60,
+                    borderWidth: 2,
+                    borderColor: Colors.white,
+                  }}
+                  source={{uri: image}}
+                />
+              </View>
+            ) : (
+              <ContactAvatar
+                contact={user}
+                displayName={false}
+                size={120}
+                containerStyle={{
+                  marginRight: 0,
+                  zIndex: 99,
+                }}
+              />
+            )}
             <GradientButton
               icon={Images.camera}
-              onPress={() => {}}
+              onPress={pickImage}
               containerStyle={styles.cameraButtonCont}
               buttonStyle={styles.cameraButton}
               iconSize={18}
@@ -108,7 +191,7 @@ const CustomerEditProfile = ({navigation}) => {
           />
           <Text style={styles.preferences}>Preferences:</Text>
           <FlatList
-            data={brands.slice(0, 3)}
+            data={preferences}
             showsHorizontalScrollIndicator={false}
             ListFooterComponent={() => (
               <GradientButton
@@ -146,7 +229,7 @@ const CustomerEditProfile = ({navigation}) => {
         <GradientButton
           title="Save"
           buttonStyle={{width: 150, alignSelf: 'center'}}
-          onPress={_goBack}
+          onPress={onPressSave}
         />
       </ScrollView>
     </View>

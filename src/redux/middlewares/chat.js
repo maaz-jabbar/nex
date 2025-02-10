@@ -15,9 +15,7 @@ export const getChats = (loaderStop = () => {}) => {
       .then(({data}) => {
         dispatch(saveUserChats(data));
       })
-      .catch(err => {
-        console.log('🚀 ~ .catch ~ err:', err);
-      })
+      .catch(err => {})
 
       .finally(() => {
         loaderStop();
@@ -28,17 +26,14 @@ export const getChats = (loaderStop = () => {}) => {
 
 export const getBroadcasts = (loaderStop = () => {}) => {
   return (dispatch, getState) => {
-    const userId = getState().user?.user?.userId;
+    const userId = 4;
     const chatsLength = getState().user?.broadcasts?.length;
     if (!chatsLength) dispatch(loaderTrue());
     ApiInstanceWithJWT.get('/chat/broadcast/' + userId)
       .then(({data}) => {
-        console.log('🚀 ~ .then ~ data:', data);
-        dispatch(saveUserBroadcasts(data));
+        dispatch(saveUserBroadcasts([data]));
       })
-      .catch(err => {
-        console.log('🚀 ~ .catch ~ err:', err);
-      })
+      .catch(err => {})
 
       .finally(() => {
         loaderStop();
@@ -93,11 +88,12 @@ export const createChat = (userId, onSuccess) => {
   };
 };
 
-export const uploadMedia = (file, onSuccess, specialId) => {
+export const uploadMedia = (file, onSuccess = () => null, specialId) => {
   return dispatch => {
     const imageId = specialId ? specialId : Date.now();
     const formdata = new FormData();
     formdata.append('file', file);
+    console.log('/images/upload/' + imageId);
 
     dispatch(loaderTrue());
     ApiInstanceWithJWT.post('/images/upload/' + imageId, formdata, {
@@ -106,6 +102,7 @@ export const uploadMedia = (file, onSuccess, specialId) => {
       },
     })
       .then(({data}) => {
+        console.log("🚀 ~ .then ~ data:", data)
         onSuccess(imageId);
       })
       .finally(() => {
@@ -119,7 +116,6 @@ export const sendBroadcast = (body, onSuccess) => {
     dispatch(loaderTrue());
     ApiInstanceWithJWT.post('/chat/broadcast', body)
       .then(({data}) => {
-        console.log('🚀 ~ .then ~ data:', data);
         onSuccess(data);
       })
       .finally(() => {

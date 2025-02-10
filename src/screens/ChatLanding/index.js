@@ -147,7 +147,7 @@ const ChatLanding = ({navigation}) => {
                 backgroundColor: Colors.broadcastBackground,
               }}
               title="Chat"
-              indicator={1}
+              indicator={chats.length}
               buttonStyle={{width: '48%'}}
               noGradient={selectedTab !== 'Chat'}
               onPress={() => setSelectedTab('Chat')}
@@ -158,7 +158,7 @@ const ChatLanding = ({navigation}) => {
                 backgroundColor: Colors.broadcastBackground,
               }}
               buttonStyle={{width: '48%'}}
-              indicator={3}
+              indicator={broadcasts.length}
               title="Broadcast"
               noGradient={selectedTab !== 'Broadcast'}
               onPress={() => setSelectedTab('Broadcast')}

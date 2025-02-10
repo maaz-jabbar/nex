@@ -31,7 +31,14 @@ ApiInstanceWithJWT.interceptors.response.use(
     return response;
   },
   function (error) {
-    errorToast(error);
+    if (
+      error?.request?.responseURL?.includes('profiles/') &&
+      error?.request?._method === 'GET'
+    ) {
+    } else {
+      errorToast(error);
+    }
+
     return Promise.reject(error);
   },
 );
@@ -40,7 +47,6 @@ ApiInstance.interceptors.response.use(
     return response;
   },
   function (error) {
-    // console.log("🚀 ~ error:", error.response.status)
     errorToast(error);
     return Promise.reject(error);
   },

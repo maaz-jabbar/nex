@@ -1,14 +1,62 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {ScrollView, StyleSheet, Text} from 'react-native';
 import {Colors, Fonts} from '../../config';
 import {GradientButton, SelectionPill} from '../../components';
-import {brands} from '../../dummyData';
+import {
+  createCustomerProfile,
+  getAllBrands,
+} from '../../redux/middlewares/profileCreation';
+import {useDispatch} from 'react-redux';
 
 const ChooseFavoriteBrands = ({navigation}) => {
   const [selectedBrands, setSelectedBrands] = React.useState([]);
+  const dispatch = useDispatch();
+
+  const [brands, setBrands] = React.useState([]);
+
+  useEffect(() => {
+    dispatch(
+      getAllBrands(data => {
+        setBrands(data);
+      }),
+    );
+  }, []);
 
   const moveToLocation = () => {
-    navigation.navigate('Congratulations');
+    if (!selectedBrands?.length) return;
+    dispatch(
+      createCustomerProfile(
+        {
+          profileType: 'CUSTOMER',
+          favDesigner: [...selectedBrands],
+          products: [
+            {
+              gender: 'men',
+              productType: 'Shoes',
+              sizes: ['xl', 'xxl', 'ml'],
+            },
+            {
+              gender: 'women',
+              productType: 'apprel',
+              sizes: ['xl', 'xxl', 'ml'],
+            },
+            {
+              gender: 'women',
+              productType: 'Shoes',
+              sizes: ['xl', 'xxl', 'ml'],
+            },
+            {
+              gender: 'men',
+              productType: 'apprel',
+              sizes: ['xl', 'xxl', 'ml'],
+            },
+          ],
+        },
+        () => {
+          navigation.navigate('Congratulations');
+        },
+      ),
+    );
   };
 
   return (
@@ -17,31 +65,36 @@ const ChooseFavoriteBrands = ({navigation}) => {
       style={styles.container}>
       <Text style={styles.heading}>Favorite designers & brands</Text>
       <Text style={styles.smallText}>Select all that apply</Text>
-      <ScrollView
-        horizontal
-        contentContainerStyle={styles.scrollablePositionsContent}
-        style={styles.scrollablePositions}>
-        {brands.map((position, index) => {
-          const isSelected = selectedBrands.includes(position.name);
-          const onPressPill = () => {
-            if (!isSelected) {
-              setSelectedBrands([...selectedBrands, position.name]);
-            } else {
-              setSelectedBrands(
-                selectedBrands.filter(item => item !== position.name),
-              );
-            }
-          };
-          return (
-            <SelectionPill
-              key={index}
-              title={position.name}
-              isSelected={isSelected}
-              onPress={onPressPill}
-            />
-          );
-        })}
-      </ScrollView>
+      {brands?.length && (
+        <ScrollView
+          horizontal
+          contentContainerStyle={[
+            styles.scrollablePositionsContent,
+            {maxWidth: brands.length * 30},
+          ]}
+          style={styles.scrollablePositions}>
+          {brands.map((position, index) => {
+            const isSelected = selectedBrands.includes(position.designerName);
+            const onPressPill = () => {
+              if (!isSelected) {
+                setSelectedBrands([...selectedBrands, position.designerName]);
+              } else {
+                setSelectedBrands(
+                  selectedBrands.filter(item => item !== position.designerName),
+                );
+              }
+            };
+            return (
+              <SelectionPill
+                key={index}
+                title={position.designerName}
+                isSelected={isSelected}
+                onPress={onPressPill}
+              />
+            );
+          })}
+        </ScrollView>
+      )}
 
       <GradientButton
         title="Next"
@@ -71,7 +124,7 @@ const styles = StyleSheet.create({
   },
   scrollablePositionsContent: {
     minWidth: '100%',
-    maxWidth: brands.length * 30,
+
     marginLeft: 20,
     flexWrap: 'wrap',
   },

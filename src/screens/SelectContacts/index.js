@@ -14,6 +14,7 @@ import {CheckBox, ContactCard, GradientButton} from '../../components';
 import Images from '../../assets';
 import {ContactAvatar} from '../../components';
 import {useSelector} from 'react-redux';
+import { errorToast } from '../../config/api';
 
 const SelectContacts = ({navigation}) => {
   const {top} = useSafeAreaInsets();
@@ -23,6 +24,7 @@ const SelectContacts = ({navigation}) => {
   };
 
   const moveToForm = () => {
+    if(!selectedContacts.length) return errorToast({message: 'Please select atleast one contact'});
     navigation.navigate('BroadcastForm', {selectedContacts});
   };
 

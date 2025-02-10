@@ -47,6 +47,8 @@ const BroadcastForm = ({navigation, route: {params}}) => {
   const onPressAttachment = async () => {
     const result = await launchImageLibrary({
       mediaType: 'photo',
+      maxHeight: 400,
+      maxWidth: 400,
     });
     if (!result.assets?.length) return;
     setAttachments([

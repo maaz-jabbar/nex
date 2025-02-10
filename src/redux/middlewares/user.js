@@ -121,7 +121,7 @@ export const getUserContacts = id => {
     dispatch(loaderTrue());
     ApiInstanceWithJWT.get('profiles/contacts/' + id)
       .then(({data}) => {
-        console.log("🚀 ~ .then ~ data:", data)
+        console.log('🚀 ~ .then ~ data:', data);
         dispatch(saveUserContacts(data));
       })
       .finally(() => {
@@ -133,6 +133,7 @@ export const getUserContacts = id => {
 export const saveContact = (data, closeModal) => {
   return (dispatch, getState) => {
     const profileId = getState().user?.profile?.profileId;
+    console.log("🚀 ~ return ~ profileId:", profileId)
     dispatch(loaderTrue());
     ApiInstanceWithJWT.patch('profiles/contacts/' + profileId, data)
       .then(() => {
@@ -141,6 +142,108 @@ export const saveContact = (data, closeModal) => {
       .finally(() => {
         dispatch(loaderFalse());
         closeModal();
+      });
+  };
+};
+
+export const updateCustomer = (name, phone, email, goBack) => {
+  return (dispatch, getState) => {
+    const userId = getState().user?.user?.userId;
+    dispatch(loaderTrue());
+    const data = {
+      email,
+      fullName: name,
+      mobileNumber: phone,
+    };
+    ApiInstanceWithJWT.patch('users/' + userId, data)
+      .then(() => {
+        dispatch(
+          saveUser({
+            ...getState().user?.user,
+            email,
+            fullName: name,
+            mobileNumber: phone,
+          }),
+        );
+      })
+      .catch(err => {
+        goBack();
+      })
+      .finally(() => {
+        dispatch(loaderFalse());
+      });
+  };
+};
+export const updateSeller = (name, phone, email, links, goBack) => {
+  return (dispatch, getState) => {
+    const userId = getState().user?.user?.userId;
+    dispatch(loaderTrue());
+    ApiInstanceWithJWT.patch('users/' + userId, {
+      email,
+      fullName: name,
+      mobileNumber: phone,
+    })
+      .then(() => {
+        dispatch(
+          saveUser({
+            ...getState().user?.user,
+            email,
+            fullName: name,
+            mobileNumber: phone,
+          }),
+        );
+        dispatch(updateSellerProfile(links, goBack));
+      })
+      .catch(err => {
+        console.log('🚀 ~ .catch ~ err:', err);
+        goBack();
+      })
+      .finally(() => {
+        dispatch(loaderFalse());
+      });
+  };
+};
+
+export const updateCustomerProfile = (preferences, goBack) => {
+  return (dispatch, getState) => {
+    const profileId = getState().user?.profile?.profileId;
+    console.log("🚀 ~ return ~ profileId:", profileId)
+    dispatch(loaderTrue());
+    ApiInstanceWithJWT.patch('profiles/customer/' + profileId, {
+      preferences,
+    })
+      .then(() => {
+        dispatch(
+          saveUserProfile({
+            ...getState().user?.profile,
+            preferences,
+          }),
+        );
+      })
+      .finally(() => {
+        dispatch(loaderFalse());
+        goBack();
+      });
+  };
+};
+export const updateSellerProfile = (links, goBack) => {
+  return (dispatch, getState) => {
+    const profileId = getState().user?.profile?.profileId;
+    dispatch(loaderTrue());
+    ApiInstanceWithJWT.patch('profiles/agent/' + profileId, {
+      links,
+    })
+      .then(() => {
+        dispatch(
+          saveUserProfile({
+            ...getState().user?.profile,
+            links,
+          }),
+        );
+      })
+      .finally(() => {
+        dispatch(loaderFalse());
+        goBack();
       });
   };
 };
