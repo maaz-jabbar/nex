@@ -1,6 +1,8 @@
 export default {
   primary: '#FE5757',
+  primaryOpacity: 'rgba(254,87,87,0.8)',
   secondary: '#8D52FD',
+  secondaryOpacity: 'rgba(141,82,253,0.8)',
   secondaryOpacityLight: '#F1E9FF',
   black: '#000000',
   white: '#FFFFFF',
