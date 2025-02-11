@@ -133,7 +133,6 @@ export const getUserContacts = id => {
 export const saveContact = (data, closeModal) => {
   return (dispatch, getState) => {
     const profileId = getState().user?.profile?.profileId;
-    console.log("🚀 ~ return ~ profileId:", profileId)
     dispatch(loaderTrue());
     ApiInstanceWithJWT.patch('profiles/contacts/' + profileId, data)
       .then(() => {
@@ -146,29 +145,19 @@ export const saveContact = (data, closeModal) => {
   };
 };
 
-export const updateCustomer = (name, phone, email, goBack) => {
-  console.log("🚀 ~ updateCustomer ~ name:", name)
+export const updateCustomer = (data, onSuccess) => {
   return (dispatch, getState) => {
     const userId = getState().user?.user?.userId;
     dispatch(loaderTrue());
-    const data = {
-      email,
-      fullName: name,
-      mobileNumber: phone,
-    };
     ApiInstanceWithJWT.patch('users/' + userId, data)
       .then(() => {
         dispatch(
           saveUser({
             ...getState().user?.user,
-            email,
-            fullName: name,
-            mobileNumber: phone,
+            ...data,
           }),
         );
-      })
-      .catch(err => {
-        goBack();
+        onSuccess();
       })
       .finally(() => {
         dispatch(loaderFalse());
@@ -206,10 +195,10 @@ export const updateSeller = (name, phone, email, links, goBack) => {
 };
 
 export const updateCustomerProfile = (preferences, goBack) => {
-  console.log("🚀 ~ updateCustomerProfile ~ preferences:", preferences)
+  console.log('🚀 ~ updateCustomerProfile ~ preferences:', preferences);
   return (dispatch, getState) => {
     const profileId = getState().user?.profile?.profileId;
-    console.log("🚀 ~ return ~ profileId:", profileId)
+    console.log('🚀 ~ return ~ profileId:', profileId);
     dispatch(loaderTrue());
     ApiInstanceWithJWT.patch('profiles/customer/' + profileId, {
       preferences,
@@ -229,10 +218,10 @@ export const updateCustomerProfile = (preferences, goBack) => {
   };
 };
 export const updateSellerProfile = (links, goBack) => {
-  console.log("🚀 ~ updateSellerProfile ~ links:", links)
+  console.log('🚀 ~ updateSellerProfile ~ links:', links);
   return (dispatch, getState) => {
     const profileId = getState().user?.profile?.profileId;
-    console.log("🚀 ~ return ~ profileId:", 'profiles/agent/' + profileId)
+    console.log('🚀 ~ return ~ profileId:', 'profiles/agent/' + profileId);
     dispatch(loaderTrue());
     ApiInstanceWithJWT.patch('profiles/agent/' + profileId, {
       links,

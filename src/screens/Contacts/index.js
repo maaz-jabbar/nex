@@ -103,6 +103,20 @@ const Contacts = ({navigation}) => {
                 ?.toLowerCase()
                 .includes(search?.toLowerCase());
             })}
+            ListEmptyComponent={() => {
+              return (
+                <View style={{}}>
+                  <Text
+                    style={{
+                      fontFamily: Fonts.RobotoRegular,
+                      color: Colors.black,
+                      fontSize: 16,
+                    }}>
+                    No contacts to show.
+                  </Text>
+                </View>
+              );
+            }}
             horizontal
             style={styles.list}
             ListHeaderComponent={() => (

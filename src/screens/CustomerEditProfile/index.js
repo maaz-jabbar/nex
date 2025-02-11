@@ -20,7 +20,7 @@ import {
 } from '../../components';
 import {brands, contacts} from '../../dummyData';
 import {useDispatch, useSelector} from 'react-redux';
-import {baseURL} from '../../config/api';
+import {baseURL, successToast} from '../../config/api';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {uploadMedia} from '../../redux/middlewares/chat';
 import {
@@ -28,6 +28,7 @@ import {
   updateCustomerProfile,
   updateSeller,
 } from '../../redux/middlewares/user';
+import {saveUser} from '../../redux/actions/UserActions';
 const socialIcons = [
   Images.instagram,
   Images.facebook,
@@ -72,7 +73,16 @@ const CustomerEditProfile = ({navigation}) => {
               type: 'image/' + image?.slice(image?.lastIndexOf('.') + 1),
               name: user?.userId?.toString(),
             },
-            undefined,
+            () => {
+              successToast('Profile updated successfully');
+              navigation.goBack();
+              setImage('');
+              const userId = user?.userId;
+              dispatch(saveUser({...user, userId: null}));
+              setTimeout(() => {
+                dispatch(saveUser({...user, userId: userId}));
+              }, 1000);
+            },
             user?.userId,
           ),
         );
@@ -81,12 +91,27 @@ const CustomerEditProfile = ({navigation}) => {
         user?.fullName !== name ||
         user?.mobileNumber !== phone ||
         user?.email !== email
-      )
-        dispatch(updateCustomer(name, phone, email, () => navigation.goBack()));
+      ) {
+        const data = {};
+        if (user?.fullName !== name) data.fullName = name;
+        if (user?.mobileNumber !== phone) data.mobileNumber = phone;
+        if (user?.email !== email) data.email = email;
+        dispatch(
+          updateCustomer(data, () => {
+            successToast('Profile updated successfully');
+            navigation.goBack();
+          }),
+        );
+      }
       if (
         JSON.stringify(profile?.favDesigner) !== JSON.stringify(preferences)
       ) {
-        dispatch(updateCustomerProfile(preferences, () => navigation.goBack()));
+        dispatch(
+          updateCustomerProfile(preferences, () => {
+            successToast('Profile updated successfully');
+            navigation.goBack();
+          }),
+        );
       }
     }
   };

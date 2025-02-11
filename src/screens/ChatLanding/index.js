@@ -120,6 +120,20 @@ const ChatLanding = ({navigation}) => {
                 iconStyle={{tintColor: Colors.secondary}}
               />
             )}
+            ListEmptyComponent={() => {
+              return (
+                <View style={{}}>
+                  <Text
+                    style={{
+                      fontFamily: Fonts.RobotoRegular,
+                      color: Colors.black,
+                      fontSize: 16,
+                    }}>
+                    No contacts to show
+                  </Text>
+                </View>
+              );
+            }}
             contentContainerStyle={styles.listContent}
             showsHorizontalScrollIndicator={false}
             renderItem={({item, index}) => {

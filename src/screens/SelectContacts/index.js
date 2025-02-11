@@ -14,7 +14,7 @@ import {CheckBox, ContactCard, GradientButton} from '../../components';
 import Images from '../../assets';
 import {ContactAvatar} from '../../components';
 import {useSelector} from 'react-redux';
-import { errorToast } from '../../config/api';
+import {errorToast} from '../../config/api';
 
 const SelectContacts = ({navigation}) => {
   const {top} = useSafeAreaInsets();
@@ -24,7 +24,8 @@ const SelectContacts = ({navigation}) => {
   };
 
   const moveToForm = () => {
-    if(!selectedContacts.length) return errorToast({message: 'Please select atleast one contact'});
+    if (!selectedContacts.length)
+      return errorToast({message: 'Please select atleast one contact'});
     navigation.navigate('BroadcastForm', {selectedContacts});
   };
 
@@ -73,6 +74,20 @@ const SelectContacts = ({navigation}) => {
           <FlatList
             data={contacts}
             horizontal
+            ListEmptyComponent={() => {
+              return (
+                <View style={{}}>
+                  <Text
+                    style={{
+                      fontFamily: Fonts.RobotoRegular,
+                      color: Colors.black,
+                      fontSize: 16,
+                    }}>
+                    No contacts to show.
+                  </Text>
+                </View>
+              );
+            }}
             style={styles.list}
             ListHeaderComponent={() => (
               <GradientButton
@@ -158,6 +173,24 @@ const SelectContacts = ({navigation}) => {
         </TouchableOpacity>
       </View>
       <FlatList
+        ListEmptyComponent={() => {
+          return (
+            <View
+              style={{
+                alignItems: 'center',
+                marginTop: 100,
+              }}>
+              <Text
+                style={{
+                  fontFamily: Fonts.RobotoRegular,
+                  color: Colors.black,
+                  fontSize: 16,
+                }}>
+                Please add contacts to proceed.
+              </Text>
+            </View>
+          );
+        }}
         data={contacts}
         renderItem={_renderItem}
         ListHeaderComponent={_listHeader}

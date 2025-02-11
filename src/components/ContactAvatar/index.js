@@ -33,6 +33,7 @@ const ContactAvatar = ({
         style={{borderRadius: (size + 4) / 2, padding: 2}}>
         <Image
           source={{
+            cache: 'reload',
             uri: contact?.userId
               ? `${baseURL}/images/upload/${contact?.userId}`
               : 'https://thumbs.dreamstime.com/b/person-gray-photo-placeholder-man-shirt-white-background-person-gray-photo-placeholder-man-136701243.jpg',

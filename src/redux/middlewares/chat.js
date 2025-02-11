@@ -5,18 +5,19 @@ import {
   saveUserBroadcasts,
   saveUserChats,
 } from '../actions/UserActions';
-import {navigate} from '../../navigation/navigationService';
 
 export const getChats = (loaderStop = () => {}) => {
   return (dispatch, getState) => {
     const chatsLength = getState().user?.chats?.length;
+    const user = getState().user?.user;
     if (!chatsLength) dispatch(loaderTrue());
-    ApiInstanceWithJWT.get('/chat/conversation')
+    ApiInstanceWithJWT.get('/chat/conversations/' + user?.userId)
       .then(({data}) => {
-        dispatch(saveUserChats(data));
+        dispatch(saveUserChats([...data]));
       })
-      .catch(err => {})
-
+      .catch(err => {
+        dispatch(saveUserChats([]));
+      })
       .finally(() => {
         loaderStop();
         dispatch(loaderFalse());
@@ -27,19 +28,17 @@ export const getChats = (loaderStop = () => {}) => {
 export const getBroadcasts = (loaderStop = () => {}) => {
   return (dispatch, getState) => {
     const userId = getState().user?.user?.userId;
-    console.log("🚀 ~ return ~ userId:", userId)
+    console.log('🚀 ~ return ~ userId:', userId);
     const chatsLength = getState().user?.broadcasts?.length;
     if (!chatsLength) dispatch(loaderTrue());
     ApiInstanceWithJWT.get('/chat/broadcast/receiver/' + userId)
       .then(({data}) => {
-        console.log("🚀 ~ .then ~ data:", data)
+        console.log('🚀 ~ .then ~ data:', data);
         dispatch(saveUserBroadcasts(data));
       })
       .catch(err => {
-        console.log("🚀 ~ return ~ sserr:", err)
-        
+        dispatch(saveUserBroadcasts([]));
       })
-
       .finally(() => {
         loaderStop();
         dispatch(loaderFalse());
@@ -60,14 +59,9 @@ export const getMessages = (conversationId, offset, onSuccess) => {
 };
 export const sendMessageAsync = (messageObj, onSuccess) => {
   return dispatch => {
-    // dispatch(loaderTrue());
-    ApiInstanceWithJWT.post('/chat/message', messageObj)
-      .then(({data}) => {
-        onSuccess();
-      })
-      .finally(() => {
-        dispatch(loaderFalse());
-      });
+    ApiInstanceWithJWT.post('/chat/message', messageObj).then(() => {
+      onSuccess();
+    });
   };
 };
 export const createChat = (userId, onSuccess) => {
@@ -107,7 +101,7 @@ export const uploadMedia = (file, onSuccess = () => null, specialId) => {
       },
     })
       .then(({data}) => {
-        console.log("🚀 ~ .then ~ data:", data)
+        console.log('🚀 ~ .then ~ data:', data);
         onSuccess(imageId);
       })
       .finally(() => {
