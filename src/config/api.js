@@ -2,9 +2,9 @@ import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import {store} from '../redux';
 
-// export const baseURL = 'https://5759-39-35-208-167.ngrok-free.app';
-export const baseURL = 'http://18.227.107.142';
-// export const baseURL = 'http://110.93.217.235:9092';
+// export const baseURL = 'https://5759-39-35-208-167.ngrok-free.app'; //ngrok
+export const baseURL = 'http://18.227.107.142'; //uat
+// export const baseURL = 'http://110.93.217.235:9092'; // staging
 
 export const ApiInstance = axios.create({
   baseURL,
