@@ -6,11 +6,22 @@ import {brands, positions, productFor, productType} from '../../dummyData';
 import {useDispatch} from 'react-redux';
 import {getAllProducts} from '../../redux/middlewares/profileCreation';
 
+const makeUnique = array => {
+  const newArray = [];
+  array.forEach(item => {
+    if (!newArray.filter(item1 => item1.gender === item.gender).length) {
+      newArray.push(item);
+    }
+  });
+  return newArray;
+};
+
 const ChooseProduct = ({navigation}) => {
   const [selectedProductFor, setSelectedProductFor] = React.useState([]);
   const [selectedProductType, setSelectedProductType] = React.useState([]);
   const dispatch = useDispatch();
   const [products, setProducts] = React.useState([]);
+  const uniqueProducts = makeUnique(products);
 
   useEffect(() => {
     dispatch(
@@ -21,8 +32,8 @@ const ChooseProduct = ({navigation}) => {
   }, []);
 
   const moveToLocation = () => {
-    if (!selectedProductType?.length) return
-      navigation.navigate('ChooseFavoriteBrands');
+    if (!selectedProductType?.length) return;
+    navigation.navigate('ChooseFavoriteBrands');
   };
 
   return (
@@ -33,18 +44,16 @@ const ChooseProduct = ({navigation}) => {
         <Text style={styles.heading}>Show me product for</Text>
         <Text style={styles.smallText}>Select all that apply</Text>
         <View style={styles.positions}>
-          {products.map((position, index) => {
+          {uniqueProducts.map((position, index) => {
             const isSelected = selectedProductFor.filter(
-              item => item.gender == position.gender,
+              item => item == position.gender,
             )?.length;
             const onPressPill = () => {
               if (!isSelected) {
-                setSelectedProductFor([...selectedProductFor, position]);
+                setSelectedProductFor([...selectedProductFor, position.gender]);
               } else {
                 setSelectedProductFor(
-                  selectedProductFor.filter(
-                    item => item.gender !== position.gender,
-                  ),
+                  selectedProductFor.filter(item => item !== position.gender),
                 );
               }
             };
@@ -62,32 +71,43 @@ const ChooseProduct = ({navigation}) => {
         <Text style={styles.smallText}>Select all that apply</Text>
         <View style={styles.positions}>
           {selectedProductFor.map((position, index) => {
-            const isSelected = selectedProductType.filter(
-              item =>
-                item.gender + ' ' + item.variation ===
-                position.gender + ' ' + position.variation,
-            )?.length;
-            const onPressPill = () => {
-              if (!isSelected) {
-                setSelectedProductType([...selectedProductType, position]);
-              } else {
-                setSelectedProductType(
-                  selectedProductType.filter(
-                    item =>
-                      item.gender + ' ' + item.variation !==
-                      position.gender + ' ' + position.variation,
-                  ),
-                );
-              }
-            };
-            return (
-              <SelectionPill
-                key={index}
-                title={position.gender + ' ' + position.variation}
-                isSelected={isSelected}
-                onPress={onPressPill}
-              />
+            console.log(
+              '🚀 ~ {selectedProductFor.map ~ position:',
+              products
+                .filter(item => item.gender == position)
+                .map(gender => gender.variation),
             );
+
+            return products
+              .filter(item => item.gender == position)
+              .map((gender, genderIndex) => {
+                const isSelected = selectedProductType.filter(
+                  filtered =>
+                    filtered.gender + ' ' + filtered.variation ===
+                    gender.gender + ' ' + gender.variation,
+                ).length;
+                const onPressPill = () => {
+                  if (!isSelected) {
+                    setSelectedProductType([...selectedProductType, gender]);
+                  } else {
+                    setSelectedProductType(
+                      selectedProductType.filter(
+                        filtered =>
+                          filtered.gender + ' ' + filtered.variation !==
+                          gender.gender + ' ' + gender.variation,
+                      ),
+                    );
+                  }
+                };
+                return (
+                  <SelectionPill
+                    key={genderIndex}
+                    title={gender.gender + ' ' + gender.variation}
+                    isSelected={isSelected}
+                    onPress={onPressPill}
+                  />
+                );
+              });
           })}
         </View>
       </View>

@@ -153,7 +153,7 @@ const SellerProfile = ({navigation}) => {
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. 
           </Text>
-          {profile?.links.map((link, index) => {
+          {profile?.links?.length && profile?.links.map((link, index) => {
             return (
               <GradientButton
                 key={index}

@@ -83,10 +83,19 @@ const SellerEditProfile = ({navigation}) => {
         user?.fullName !== name ||
         user?.mobileNumber !== phone ||
         user?.email !== email
-      )
-        dispatch(updateSeller(name, phone, email, () => navigation.goBack()));
+      ) {
+        const data = {};
+        if (user?.fullName !== name) data.fullName = name;
+        if (user?.mobileNumber !== phone) data.mobileNumber = phone;
+        if (user?.email !== email) data.email = email;
+        dispatch(updateSeller(data, () => navigation.goBack()));
+      }
       if (JSON.stringify(profile?.links) !== JSON.stringify(links)) {
-        dispatch(updateSellerProfile(links, () => {}));
+        dispatch(
+          updateSellerProfile(links, () => {
+            navigation.goBack();
+          }),
+        );
       }
     }
   };

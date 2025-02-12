@@ -164,32 +164,25 @@ export const updateCustomer = (data, onSuccess) => {
       });
   };
 };
-export const updateSeller = (name, phone, email, links, goBack) => {
+export const updateSeller = (data, goBack) => {
   return (dispatch, getState) => {
     const userId = getState().user?.user?.userId;
     dispatch(loaderTrue());
-    ApiInstanceWithJWT.patch('users/' + userId, {
-      email,
-      fullName: name,
-      mobileNumber: phone,
-    })
+    ApiInstanceWithJWT.patch('users/' + userId, data)
       .then(() => {
         dispatch(
           saveUser({
             ...getState().user?.user,
-            email,
-            fullName: name,
-            mobileNumber: phone,
+            ...data,
           }),
         );
-        dispatch(updateSellerProfile(links, goBack));
       })
       .catch(err => {
-        console.log('🚀 ~ .catch ~ err:', err);
-        goBack();
+        console.log('🚀 ~ .catch ~ err:', err.response);
       })
       .finally(() => {
         dispatch(loaderFalse());
+        goBack();
       });
   };
 };

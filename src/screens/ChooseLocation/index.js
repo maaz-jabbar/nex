@@ -24,7 +24,7 @@ const ChooseLocation = ({route}) => {
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
       getValues(search);
-    }, 2000);
+    }, 500);
     return () => {
       clearTimeout(debounceTimer);
     };
