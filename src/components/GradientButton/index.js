@@ -40,14 +40,14 @@ const GradientButton = ({
           containerStyle,
         ]}>
         {customComp}
-        {icon && (
+        {!!icon && (
           <Image
             source={icon}
             resizeMode="contain"
             style={[{width: iconSize, height: iconSize}, iconStyle]}
           />
         )}
-        {title && (
+        {!!title && (
           <Text
             numberOfLines={1}
             style={[styles.buttonText, !icon && {marginLeft: 0}, textStyle]}>

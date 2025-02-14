@@ -65,7 +65,7 @@ const ChooseFavoriteBrands = ({navigation}) => {
       style={styles.container}>
       <Text style={styles.heading}>Favorite designers & brands</Text>
       <Text style={styles.smallText}>Select all that apply</Text>
-      {brands?.length && (
+      {!!brands?.length && (
         <ScrollView
           horizontal
           contentContainerStyle={[

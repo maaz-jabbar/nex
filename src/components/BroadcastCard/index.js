@@ -102,7 +102,7 @@ const BroadcastCard = ({chat, onPress}) => {
             flexDirection: 'row',
             alignItems: 'center',
           }}>
-          {chat?.attachmentId?.length &&
+          {!!chat?.attachmentId?.length &&
             chat?.attachmentId?.map(data => {
               return (
                 <TouchableOpacity
