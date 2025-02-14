@@ -7,21 +7,27 @@ import ProfileCreationStack from './ProfileCreationStack';
 import AppStack from './AppStack';
 import CustomerProfileCreationStack from './CustomerProfileCreationStack';
 import {setTopLevelNavigator} from './navigationService';
+import {useSelector} from 'react-redux';
 
 const Stack = createNativeStackNavigator();
 
 export default function Navigation() {
+  const user = useSelector(state => state.user?.user);
   useEffect(() => {
     setTimeout(() => {
       SplashScreen.hide();
+      setReady(true);
     }, 3000);
   }, []);
+  const [ready, setReady] = React.useState(false);
+
+  if (!ready) return null;
   return (
     <NavigationContainer
       ref={navigationRef => setTopLevelNavigator(navigationRef)}>
       <Stack.Navigator
         screenOptions={{headerShown: false}}
-        initialRouteName="Auth">
+        initialRouteName={user ? 'AppStack' : 'Auth'}>
         <Stack.Screen name="Auth" component={AuthStack} />
         <Stack.Screen name="ProfileCreation" component={ProfileCreationStack} />
         <Stack.Screen

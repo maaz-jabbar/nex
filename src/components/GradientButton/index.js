@@ -54,7 +54,7 @@ const GradientButton = ({
             {title}
           </Text>
         )}
-        {indicator && (
+        {!!indicator && (
           <View style={[styles.indicator, customIndicatorStyles]}>
             <Text
               style={[
