@@ -32,6 +32,7 @@ export default {
   tiktok: require('./tiktok.png'),
   twitterX: require('./twitterX.png'),
   camera: require('./camera.png'),
+  camera2: require('./camera2.png'),
   idea: require('./idea.png'),
   link2: require('./link2.png'),
   broadcast2: require('./broadcast2.png'),
@@ -39,4 +40,10 @@ export default {
   block: require('./block.png'),
   star: require('./star.png'),
   eye: require('./eye.png'),
+  saleBanner: require('./saleBanner.png'),
+  saleBanner2: require('./saleBanner2.png'),
+  delete: require('./delete.png'),
+  productCount: require('./productCount.png'),
+  galleryCount: require('./galleryCount.png'),
+  share: require('./share.png'),
 };

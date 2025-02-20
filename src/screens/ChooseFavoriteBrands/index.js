@@ -7,6 +7,8 @@ import {
   getAllBrands,
 } from '../../redux/middlewares/profileCreation';
 import {useDispatch} from 'react-redux';
+import {ApiInstanceWithJWT} from '../../config/api';
+import {brands as sdsd} from '../../dummyData';
 
 const ChooseFavoriteBrands = ({navigation}) => {
   const [selectedBrands, setSelectedBrands] = React.useState([]);

@@ -20,13 +20,14 @@ import {
 } from '../../components';
 import {useDispatch, useSelector} from 'react-redux';
 import {launchImageLibrary} from 'react-native-image-picker';
-import {errorToast} from '../../config/api';
+import {errorToast, successToast} from '../../config/api';
 import {uploadMedia} from '../../redux/middlewares/chat';
 import {
   updateCustomerProfile,
   updateSeller,
   updateSellerProfile,
 } from '../../redux/middlewares/user';
+import { saveUser } from '../../redux/actions/UserActions';
 
 const urlRegex =
   /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
@@ -70,11 +71,17 @@ const SellerEditProfile = ({navigation}) => {
               uri: image,
               type: 'image/' + image?.slice(image?.lastIndexOf('.') + 1),
               name: user?.userId?.toString(),
-              onSuccess: data => {
-                console.log('🚀 ~ onPressSave ~ data:', data);
-              },
             },
-            null,
+            () => {
+              successToast('Profile updated successfully');
+              navigation.goBack();
+              setImage('');
+              const userId = user?.userId;
+              dispatch(saveUser({...user, userId: null}));
+              setTimeout(() => {
+                dispatch(saveUser({...user, userId: userId}));
+              }, 1000);
+            },
             user?.userId,
           ),
         );

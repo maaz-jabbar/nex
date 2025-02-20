@@ -134,7 +134,7 @@ export const chats = [
         'https://images.squarespace-cdn.com/content/v1/5c7c30767980b31affc87b09/1602396079712-4JS2RJYHTAP5OXOUQ1SB/image-asset.jpeg',
       name: 'Emily',
       email: 'janetsmith@nexsa.com',
-    phone: '+1 (202) 555 0142 ',
+      phone: '+1 (202) 555 0142 ',
       storyAvailable: false,
     },
     lastMessage: {
@@ -214,7 +214,7 @@ export const chats = [
         'https://images.squarespace-cdn.com/content/v1/5c7c30767980b31affc87b09/1602396079712-4JS2RJYHTAP5OXOUQ1SB/image-asset.jpeg',
       name: 'Emily',
       email: 'janetsmith@nexsa.com',
-    phone: '+1 (202) 555 0142 ',
+      phone: '+1 (202) 555 0142 ',
       storyAvailable: false,
     },
     lastMessage: {
@@ -294,7 +294,7 @@ export const chats = [
         'https://images.squarespace-cdn.com/content/v1/5c7c30767980b31affc87b09/1602396079712-4JS2RJYHTAP5OXOUQ1SB/image-asset.jpeg',
       name: 'Emily',
       email: 'janetsmith@nexsa.com',
-    phone: '+1 (202) 555 0142 ',
+      phone: '+1 (202) 555 0142 ',
       storyAvailable: false,
     },
     lastMessage: {
@@ -455,7 +455,7 @@ export const broadcasts = [
           'https://images.squarespace-cdn.com/content/v1/5c7c30767980b31affc87b09/1602396079712-4JS2RJYHTAP5OXOUQ1SB/image-asset.jpeg',
         name: 'Emily Clark',
         email: 'janetsmith@nexsa.com',
-    phone: '+1 (202) 555 0142 ',
+        phone: '+1 (202) 555 0142 ',
         storyAvailable: false,
       },
       {
@@ -491,7 +491,7 @@ export const broadcasts = [
           'https://images.squarespace-cdn.com/content/v1/5c7c30767980b31affc87b09/1602396079712-4JS2RJYHTAP5OXOUQ1SB/image-asset.jpeg',
         name: 'Emily',
         email: 'janetsmith@nexsa.com',
-    phone: '+1 (202) 555 0142 ',
+        phone: '+1 (202) 555 0142 ',
         storyAvailable: false,
       },
       {
@@ -547,7 +547,7 @@ export const broadcasts = [
           'https://images.squarespace-cdn.com/content/v1/5c7c30767980b31affc87b09/1602396079712-4JS2RJYHTAP5OXOUQ1SB/image-asset.jpeg',
         name: 'Emily',
         email: 'janetsmith@nexsa.com',
-    phone: '+1 (202) 555 0142 ',
+        phone: '+1 (202) 555 0142 ',
         storyAvailable: false,
       },
       {
@@ -612,7 +612,7 @@ export const broadcasts = [
           'https://images.squarespace-cdn.com/content/v1/5c7c30767980b31affc87b09/1602396079712-4JS2RJYHTAP5OXOUQ1SB/image-asset.jpeg',
         name: 'Emily Clark',
         email: 'janetsmith@nexsa.com',
-    phone: '+1 (202) 555 0142 ',
+        phone: '+1 (202) 555 0142 ',
         storyAvailable: false,
       },
       {
@@ -648,7 +648,7 @@ export const broadcasts = [
           'https://images.squarespace-cdn.com/content/v1/5c7c30767980b31affc87b09/1602396079712-4JS2RJYHTAP5OXOUQ1SB/image-asset.jpeg',
         name: 'Emily',
         email: 'janetsmith@nexsa.com',
-    phone: '+1 (202) 555 0142 ',
+        phone: '+1 (202) 555 0142 ',
         storyAvailable: false,
       },
       {
@@ -720,5 +720,111 @@ export const chat = [
       phone: '+1 (202) 555 0142 ',
       storyAvailable: true,
     },
+  },
+];
+
+export const galleries = [
+  {
+    image:
+      'https://img.freepik.com/free-vector/black-friday-sale-hanging-tag-red-background_1017-28715.jpg?t=st=1739873415~exp=1739877015~hmac=9d9404424e8be868709c03911ecf083df8ff3914ec0b880d970cdf252d63e11d&w=1380',
+    name: 'Black Friday',
+    description: 'Shirts, Shoes, Pants, Mobile, Laptops, Tablets and more',
+    products: [
+      {
+        price: '',
+        isSale: false,
+        image:
+          'https://audaces.com/wp-content/uploads/2022/12/fashion-product-mix-pyramid.jpg',
+      },
+      {
+        price: '',
+        isSale: false,
+        image:
+          'https://thumbs.dreamstime.com/b/men-shirt-display-mannequin-clothes-shop-trendy-cotton-summer-collection-fashion-product-samples-clothing-store-selling-177634234.jpg',
+      },
+      {
+        price: '',
+        isSale: false,
+        image:
+          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT250xpq9WTX9xckOgCMXYn2J_Iy7QlZj7gcA&s',
+      },
+    ],
+  },
+  {
+    image:
+      'https://blog.contactpigeon.com/wp-content/uploads/2022/10/cyber-monday-statistics.jpg',
+    name: 'Cyber Monday',
+    description: 'Shirts, Shoes, Pants, Mobile, Laptops, Tablets and more',
+    products: [
+      {
+        price: '',
+        isSale: false,
+        image:
+          'https://audaces.com/wp-content/uploads/2022/12/fashion-product-mix-pyramid.jpg',
+      },
+      {
+        price: '',
+        isSale: false,
+        image:
+          'https://thumbs.dreamstime.com/b/men-shirt-display-mannequin-clothes-shop-trendy-cotton-summer-collection-fashion-product-samples-clothing-store-selling-177634234.jpg',
+      },
+      {
+        price: '',
+        isSale: false,
+        image:
+          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT250xpq9WTX9xckOgCMXYn2J_Iy7QlZj7gcA&s',
+      },
+      {
+        price: '',
+        isSale: false,
+        image:
+          'https://audaces.com/wp-content/uploads/2022/12/fashion-product-mix-pyramid.jpg',
+      },
+      {
+        price: '',
+        isSale: false,
+        image:
+          'https://thumbs.dreamstime.com/b/men-shirt-display-mannequin-clothes-shop-trendy-cotton-summer-collection-fashion-product-samples-clothing-store-selling-177634234.jpg',
+      },
+      {
+        price: '',
+        isSale: false,
+        image:
+          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT250xpq9WTX9xckOgCMXYn2J_Iy7QlZj7gcA&s',
+      },
+    ],
+  },
+  {
+    image:
+      'https://i.pinimg.com/736x/94/fc/cc/94fcccf4104388229d653f9886713bdc.jpg',
+    name: 'Green Monday',
+    description: 'Shirts, Shoes, Pants, Mobile, Laptops, Tablets and more',
+    products: [],
+  },
+  {
+    image:
+      'https://static.vecteezy.com/system/resources/thumbnails/026/304/994/small_2x/outdoor-christmas-decorations-and-a-beautifully-decorated-christmas-tree-ai-generated-photo.jpg',
+    name: 'Christmas Day',
+    description: 'Shirts, Shoes, Pants, Mobile, Laptops, Tablets and more',
+    products: [
+      {
+        price: '',
+        isSale: false,
+        image:
+          'https://audaces.com/wp-content/uploads/2022/12/fashion-product-mix-pyramid.jpg',
+      },
+      {
+        price: '299',
+        isSale: true,
+        image:
+          'https://thumbs.dreamstime.com/b/men-shirt-display-mannequin-clothes-shop-trendy-cotton-summer-collection-fashion-product-samples-clothing-store-selling-177634234.jpg',
+      },
+      {
+        price: '',
+        isSale: true,
+        image:
+          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT250xpq9WTX9xckOgCMXYn2J_Iy7QlZj7gcA&s',
+      },
+    ],
   },
 ];

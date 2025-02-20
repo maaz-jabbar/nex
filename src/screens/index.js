@@ -20,8 +20,13 @@ import SellerProfile from './SellerProfile';
 import SellerEditProfile from './SellerEditProfile';
 import ViewSellerProfile from './ViewSellerProfile';
 import ViewCustomerProfile from './ViewCustomerProfile';
+import ViewGallery from './ViewGallery';
+import GalleryPhotoView from './GalleryPhotoView';
+import GalleryContacts from './GalleryContacts';
 
 export {
+  GalleryPhotoView,
+  GalleryContacts,
   BeforeSignUp,
   Onboarding,
   LoginSignup,
@@ -44,4 +49,5 @@ export {
   SellerEditProfile,
   ViewSellerProfile,
   ViewCustomerProfile,
+  ViewGallery,
 };

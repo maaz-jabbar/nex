@@ -88,6 +88,7 @@ export const createChat = (userId, onSuccess) => {
 };
 
 export const uploadMedia = (file, onSuccess = () => null, specialId) => {
+  console.log('🚀 ~ file:', file);
   return dispatch => {
     const imageId = specialId ? specialId : Date.now();
     const formdata = new FormData();
@@ -108,6 +109,18 @@ export const uploadMedia = (file, onSuccess = () => null, specialId) => {
         dispatch(loaderFalse());
       });
   };
+};
+export const uploadMediaAsync = async (file, specialId) => {
+  const imageId = specialId ? specialId : Date.now();
+  const formdata = new FormData();
+  formdata.append('file', file);
+  return ApiInstanceWithJWT.post('/images/upload/' + imageId, formdata, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }).then(({data}) => {
+    return imageId;
+  });
 };
 
 export const sendBroadcast = (body, onSuccess) => {
