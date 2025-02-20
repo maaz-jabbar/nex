@@ -50,7 +50,7 @@ const Gallery = ({route: {params}, navigation: {goBack, navigate}}) => {
           setShowPopup(true);
           setTempData(item);
         }}
-        onPress={() => navigate('ViewGallery', {item})}
+        onPress={() => navigate('ViewGallery', {item, ownerId: owner?.profileId})}
         key={index}
         activeOpacity={0.8}
         style={styles.galleryItem}>

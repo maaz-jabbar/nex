@@ -32,8 +32,8 @@ const LoginSignup = ({route, navigation}) => {
   const userType = useSelector(state => state.user?.userType);
   const isCustomer = userType === 'CUSTOMER';
 
-  const [email, setEmail] = React.useState('seller@gmail.com');
-  const [password, setPassword] = React.useState('12345678');
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
   const [phone, setPhone] = React.useState('');
   const [fullName, setfullName] = React.useState('');
 

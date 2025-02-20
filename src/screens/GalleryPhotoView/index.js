@@ -4,7 +4,7 @@ import {
   StyleSheet,
   Text,
   View,
-  FlatList,
+  ActivityIndicator,
   TouchableOpacity,
   Dimensions,
   ScrollView,
@@ -17,25 +17,31 @@ import {GradientButton, ToggleButton} from '../../components';
 import Images from '../../assets';
 import LinearGradient from 'react-native-linear-gradient';
 import {launchImageLibrary} from 'react-native-image-picker';
-import {baseURL} from '../../config/api';
+import {baseURL, successToast} from '../../config/api';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   addItemsToServerGallery,
   deleteItemsFromServerGallery,
   editItemsFromServerGallery,
 } from '../../redux/middlewares/gallery';
+import {createChat, sendMessageAsync} from '../../redux/middlewares/chat';
 
 const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
   const {top} = useSafeAreaInsets();
+  const ownerId = params?.ownerId;
   const item = params?.item;
   const product = params?.product;
+  console.log('🚀 ~ ViewGallery ~ product:', product);
   const [store, setStore] = useState(item);
+  console.log('🚀 ~ ViewGallery ~ store:', store);
+  const [loader, setLoader] = React.useState(false);
+  const [message, setMessage] = React.useState('');
   const [showPopup, setShowPopup] = useState(false);
   const [dropDownActive, setDropDownActive] = useState(false);
   const [addPrice, setAddPrice] = useState(product?.price ? true : false);
   const [price, setPrice] = useState(product?.price?.toString());
   const [addSale, setAddSale] = useState(product?.sale);
-  const {jwt, userType} = useSelector(state => state?.user?.user);
+  const {jwt, userType, userId} = useSelector(state => state?.user?.user);
   const isCustomer = userType === 'CUSTOMER';
   const dispatch = useDispatch();
   const onPressSave = () => {
@@ -50,7 +56,6 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
           price: addPrice ? Number(price) : 0,
         },
         data => {
-          console.log('🚀 ~ edittttttt ~ data:', data);
           navigate('ViewGallery', {item: data});
         },
       ),
@@ -60,8 +65,27 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
   const onPressDelete = () => {
     dispatch(
       deleteItemsFromServerGallery(product?.itemId, store?.galleryId, data => {
-        console.log('🚀 ~ onPressDelete ~ data:', data);
         navigate('ViewGallery', {item: data});
+      }),
+    );
+  };
+
+  const sendMessage = () => {
+    if (message === '') return;
+    dispatch(
+      createChat(ownerId, data => {
+        const conversationId = data?.id || data?.conversationId;
+        const messageObj = {
+          conversationId: conversationId,
+          content: message,
+          senderId: userId,
+        };
+        setLoader(true);
+        setMessage('');
+        dispatch(sendMessageAsync(messageObj, () => {
+          successToast('Message sent successfully');
+          setLoader(false)
+        }));
       }),
     );
   };
@@ -153,7 +177,39 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
             )}
           </ImageBackground>
         </LinearGradient>
-        {isCustomer ? null : (
+        {isCustomer ? (
+          <View style={styles.chatCont}>
+            <View style={styles.sendMessCont}>
+              <Image
+                source={Images.attachment}
+                resizeMode="contain"
+                style={styles.backIcon}
+              />
+              <TextInput
+                value={message}
+                onChangeText={setMessage}
+                style={{
+                  flex: 1,
+                  color: Colors.black,
+                  height: 48,
+                  fontFamily: Fonts.RobotoRegular,
+                  paddingHorizontal: 10,
+                }}
+                placeholder="Type your message here..."
+              />
+              <GradientButton
+                icon={loader ? null : Images.send}
+                customComp={
+                  loader ? <ActivityIndicator color={Colors.white} /> : null
+                }
+                onPress={sendMessage}
+                containerStyle={styles.sendButtonCont}
+                buttonStyle={styles.sendButton}
+                iconSize={24}
+              />
+            </View>
+          </View>
+        ) : (
           <View>
             <View style={styles.listItem}>
               <Text style={styles.listTitle}>Add Price</Text>
@@ -182,6 +238,36 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
 export default ViewGallery;
 
 const styles = StyleSheet.create({
+  backIcon: {
+    width: 25,
+    height: 25,
+    marginRight: 5,
+    tintColor: Colors.secondary,
+  },
+  sendMessCont: {
+    padding: 10,
+    paddingVertical: 5,
+    marginVertical: 20,
+    borderRadius: 50,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.background,
+  },
+  chatCont: {
+    marginBottom: '25%',
+  },
+  sendButton: {
+    marginBottom: 0,
+    width: undefined,
+  },
+  sendButtonCont: {
+    height: 40,
+    width: 40,
+    paddingHorizontal: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+  },
   dropDown: {
     position: 'absolute',
     top: 70,

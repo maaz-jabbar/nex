@@ -26,6 +26,7 @@ import {baseURL} from '../../config/api';
 const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
   const {top} = useSafeAreaInsets();
   const item = params?.item;
+  const ownerId = params?.ownerId;
   const [store, setStore] = useState(item);
   const [showPopup, setShowPopup] = useState(false);
   const {jwt, userType} = useSelector(state => state?.user?.user);
@@ -85,6 +86,7 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
           navigate('GalleryPhotoView', {
             item,
             product,
+            ownerId
           });
         }}
         style={styles.galleryItem}>
