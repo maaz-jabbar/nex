@@ -17,6 +17,8 @@ const TextInputCustom = ({
   containerStyle = {},
   hideLabel = false,
   isPassword = false,
+  icon = null,
+  iconStyles = {},
 }) => {
   const [isSecureText, setIsSecureText] = React.useState(
     textInputProps.secureTextEntry,
@@ -25,8 +27,11 @@ const TextInputCustom = ({
     <View style={[styles.container, containerStyle]}>
       {!hideLabel && <Text style={styles.title}>{title}</Text>}
       <TextInput
-        style={[styles.input, isPassword && {paddingRight: 50}, textInputStyle]}
-        placeholder={title}
+        style={[
+          styles.input,
+          (isPassword || icon) && {paddingRight: 50},
+          textInputStyle,
+        ]}
         {...textInputProps}
         secureTextEntry={isSecureText}
       />
@@ -40,6 +45,20 @@ const TextInputCustom = ({
             style={{width: 24, height: 24, tintColor: Colors.lightGrey}}
           />
         </TouchableOpacity>
+      )}
+      {icon && (
+        <Image
+          source={icon}
+          style={{
+            position: 'absolute',
+            right: 15,
+            bottom: 22,
+            width: 24,
+            height: 24,
+            tintColor: Colors.lightGrey,
+            ...iconStyles,
+          }}
+        />
       )}
     </View>
   );

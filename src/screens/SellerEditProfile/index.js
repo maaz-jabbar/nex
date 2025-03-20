@@ -20,14 +20,14 @@ import {
 } from '../../components';
 import {useDispatch, useSelector} from 'react-redux';
 import {launchImageLibrary} from 'react-native-image-picker';
-import {errorToast, successToast} from '../../config/api';
+import {errorToast} from '../../config/api';
 import {uploadMedia} from '../../redux/middlewares/chat';
 import {
   updateCustomerProfile,
   updateSeller,
   updateSellerProfile,
 } from '../../redux/middlewares/user';
-import { saveUser } from '../../redux/actions/UserActions';
+import {saveUser} from '../../redux/actions/UserActions';
 
 const urlRegex =
   /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
@@ -60,7 +60,8 @@ const SellerEditProfile = ({navigation}) => {
       user?.mobileNumber === phone &&
       user?.email === email &&
       image === '' &&
-      JSON.stringify(profile?.links) === JSON.stringify(links)
+      JSON.stringify(profile?.links) === JSON.stringify(links) &&
+      bio === profile?.bio
     ) {
       navigation.goBack();
     } else {
@@ -73,7 +74,6 @@ const SellerEditProfile = ({navigation}) => {
               name: user?.userId?.toString(),
             },
             () => {
-              successToast('Profile updated successfully');
               navigation.goBack();
               setImage('');
               const userId = user?.userId;
@@ -97,9 +97,9 @@ const SellerEditProfile = ({navigation}) => {
         if (user?.email !== email) data.email = email;
         dispatch(updateSeller(data, () => navigation.goBack()));
       }
-      if (JSON.stringify(profile?.links) !== JSON.stringify(links)) {
+      if (JSON.stringify(profile?.links) !== JSON.stringify(links) || bio !== profile?.bio) {
         dispatch(
-          updateSellerProfile(links, () => {
+          updateSellerProfile(links, bio, () => {
             navigation.goBack();
           }),
         );
@@ -109,11 +109,11 @@ const SellerEditProfile = ({navigation}) => {
   const [sendSMS, setSendSMS] = React.useState(false);
   const [pushNotifications, setPushNotifications] = React.useState(false);
   const [name, setName] = React.useState(user?.fullName);
+  const [bio, setBio] = React.useState(profile?.bio);
   const [phone, setPhone] = React.useState(user?.mobileNumber);
   const [email, setEmail] = React.useState(user?.email);
   const [link, setLink] = React.useState('');
   const [image, setImage] = React.useState('');
-  // const [bio, setBio] = React.useState('');
 
   const pickImage = async () => {
     const options = {
@@ -219,15 +219,21 @@ const SellerEditProfile = ({navigation}) => {
             }}
             title="Email"
           />
-          {/* <TextInputCustom
+          <TextInputCustom
             title="Bio"
-            textInputProps={{multiline: true}}
+            textInputProps={{
+              multiline: true,
+              value: bio,
+              onChangeText: text => {
+                setBio(text);
+              },
+            }}
             textInputStyle={{
               height: 100,
               textAlignVertical: 'top',
               paddingTop: 10,
             }}
-          /> */}
+          />
           {links.map((link, index) => {
             return (
               <GradientButton
@@ -267,7 +273,7 @@ const SellerEditProfile = ({navigation}) => {
             }}
           />
           {linkAdd && (
-            <>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <TextInputCustom
                 textInputProps={{
                   value: link,
@@ -275,14 +281,19 @@ const SellerEditProfile = ({navigation}) => {
                     setLink(text);
                   },
                 }}
+                containerStyle={{flex: 1}}
                 title="Link"
+                icon={Images.link}
               />
               <GradientButton
-                title="Save"
-                buttonStyle={{width: 150, alignSelf: 'center', marginTop: 20}}
+                icon={Images.check}
+                iconStyle={{tintColor: Colors.white}}
                 onPress={onPressSaveLink}
+                containerStyle={styles.sendButtonCont}
+                buttonStyle={styles.sendButton}
+                iconSize={24}
               />
-            </>
+            </View>
           )}
         </View>
         <GradientButton
@@ -298,18 +309,18 @@ const SellerEditProfile = ({navigation}) => {
 export default SellerEditProfile;
 
 const styles = StyleSheet.create({
-  listPlusButton: {
+  sendButton: {
     marginBottom: 0,
     width: undefined,
-    marginRight: 20,
   },
-  listPlusButtonCont: {
-    height: 30,
-    width: 30,
+  sendButtonCont: {
+    height: 40,
+    width: 40,
     paddingHorizontal: 0,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 20,
+    marginLeft: 10,
   },
   cameraButton: {
     marginBottom: 0,

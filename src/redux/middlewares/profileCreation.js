@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {ApiInstanceWithJWT, successToast} from '../../config/api';
+import {ApiInstanceWithJWT} from '../../config/api';
 import {loaderFalse, loaderTrue, saveUserProfile} from '../actions/UserActions';
 import {navigate} from '../../navigation/navigationService';
 import {getProfile} from './user';
@@ -71,10 +71,7 @@ export const createAgentProfile = (id, body) => {
     dispatch(loaderTrue());
     ApiInstanceWithJWT.post('profiles/agent/' + id, body)
       .then(({data}) => {
-        console.log('🚀 ~ .then ~ data:', data);
         dispatch(getProfile(getState()?.user?.user));
-
-        successToast('Profile created successfully');
         if (data?.status == 201) navigate('Congratulations');
       })
       .finally(() => {
@@ -89,10 +86,7 @@ export const createCustomerProfile = (body, success) => {
     dispatch(loaderTrue());
     ApiInstanceWithJWT.post('profiles/customer/' + userId, body)
       .then(({data}) => {
-        console.log('🚀 ~ .then ~ data:', data);
         dispatch(getProfile(getState()?.user?.user));
-
-        successToast('Profile created successfully');
         if (data?.status == 201) navigate('Congratulations');
       })
       .finally(() => {

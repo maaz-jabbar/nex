@@ -1,6 +1,6 @@
 import axios from 'axios';
-import {ApiInstanceWithJWT, successToast} from '../../config/api';
-import {loaderFalse, loaderTrue, saveUserProfile} from '../actions/UserActions';
+import {ApiInstanceWithJWT} from '../../config/api';
+import {loaderFalse, loaderTrue} from '../actions/UserActions';
 import {navigate} from '../../navigation/navigationService';
 import {getProfile} from './user';
 import {saveGalleries} from '../actions/GalleryActions';

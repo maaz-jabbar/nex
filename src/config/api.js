@@ -33,8 +33,10 @@ ApiInstanceWithJWT.interceptors.response.use(
     return response;
   },
   function (error) {
+    console.log("🚀 ~ error:", JSON.stringify(error))
     if (
       (error?.request?.responseURL?.includes('profiles/') ||
+        error?.request?.responseURL?.includes('invites/') ||
         error?.request?.responseURL?.includes('contacts/') ||
         error?.request?.responseURL?.includes('chat/')) &&
       error?.request?._method === 'GET'

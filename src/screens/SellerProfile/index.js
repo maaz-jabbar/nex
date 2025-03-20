@@ -149,33 +149,31 @@ const SellerProfile = ({navigation}) => {
             />
           </View>
           <Text style={styles.preferences}>Bio</Text>
-          <Text style={styles.bio}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-          </Text>
-          {!!profile?.links?.length && profile?.links.map((link, index) => {
-            return (
-              <GradientButton
-                key={index}
-                noGradient
-                onPress={() => {
-                  Linking.openURL(link);
-                }}
-                icon={Images.link}
-                iconSize={20}
-                iconStyle={{tintColor: Colors.secondary}}
-                title={link}
-                textStyle={{color: Colors.secondary, flex: 1, marginLeft: 10}}
-                buttonStyle={{marginBottom: 0}}
-                containerStyle={{
-                  borderWidth: 0,
-                  height: undefined,
-                  paddingVertical: 5,
-                  paddingHorizontal: 0,
-                }}
-              />
-            );
-          })}
+          <Text style={styles.bio}>{profile?.bio}</Text>
+          {!!profile?.links?.length &&
+            profile?.links.map((link, index) => {
+              return (
+                <GradientButton
+                  key={index}
+                  noGradient
+                  onPress={() => {
+                    Linking.openURL(link);
+                  }}
+                  icon={Images.link}
+                  iconSize={20}
+                  iconStyle={{tintColor: Colors.secondary}}
+                  title={link}
+                  textStyle={{color: Colors.secondary, flex: 1, marginLeft: 10}}
+                  buttonStyle={{marginBottom: 0}}
+                  containerStyle={{
+                    borderWidth: 0,
+                    height: undefined,
+                    paddingVertical: 5,
+                    paddingHorizontal: 0,
+                  }}
+                />
+              );
+            })}
         </View>
         <GradientButton
           title="Edit Profile"
@@ -214,6 +212,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.black,
     marginVertical: 10,
+    alignSelf: 'flex-start',
   },
   listContent: {
     paddingVertical: 10,

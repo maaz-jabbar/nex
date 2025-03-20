@@ -75,7 +75,7 @@ const ChoosePosition = ({navigation}) => {
               contentContainerStyle={[
                 styles.scrollablePositionsContent,
                 {
-                  maxWidth: positionDetails.length * 30,
+                  maxWidth: positionDetails.length * 25,
                 },
               ]}
               style={styles.scrollablePositions}>

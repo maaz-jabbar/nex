@@ -1,4 +1,4 @@
-import {ApiInstanceWithJWT, successToast} from '../../config/api';
+import {ApiInstanceWithJWT} from '../../config/api';
 import {
   loaderFalse,
   loaderTrue,
@@ -10,10 +10,23 @@ export const getChats = (loaderStop = () => {}) => {
   return (dispatch, getState) => {
     const chatsLength = getState().user?.chats?.length;
     const user = getState().user?.user;
+    const userType = getState().user?.userType
+    const isCustomer = userType === 'CUSTOMER';
+    console.log("🚀 ~ getChats ~ loaderStop:")
+  
     if (!chatsLength) dispatch(loaderTrue());
     ApiInstanceWithJWT.get('/chat/conversations/' + user?.userId)
       .then(({data}) => {
-        dispatch(saveUserChats([...data]));
+        console.log("🚀 ~ .then ~ data:", data)
+        const filteredData = data?.filter(chat => {
+          if (isCustomer) {
+            return true;
+          } else {
+            return !chat?.broadcasted;
+          }
+        })
+        
+        dispatch(saveUserChats(filteredData));
       })
       .catch(err => {
         dispatch(saveUserChats([]));
@@ -28,10 +41,9 @@ export const getChats = (loaderStop = () => {}) => {
 export const getBroadcasts = (loaderStop = () => {}) => {
   return (dispatch, getState) => {
     const userId = getState().user?.user?.userId;
-    console.log('🚀 ~ return ~ userId:', userId);
     const chatsLength = getState().user?.broadcasts?.length;
     if (!chatsLength) dispatch(loaderTrue());
-    ApiInstanceWithJWT.get('/chat/broadcast/receiver/' + userId)
+    ApiInstanceWithJWT.get('/chat/broadcast/sender/' + userId)
       .then(({data}) => {
         console.log('🚀 ~ .then ~ data:', data);
         dispatch(saveUserBroadcasts(data));

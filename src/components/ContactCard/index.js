@@ -10,6 +10,7 @@ const ContactCard = ({
   selectable = false,
   selected = false,
   onSelect = () => {},
+  customComp = null
 }) => {
   return (
     <TouchableOpacity
@@ -40,6 +41,7 @@ const ContactCard = ({
         {selectable && (
           <CheckBox isChecked={selected} setIsChecked={onSelect} rounded />
         )}
+        {customComp}
       </View>
     </TouchableOpacity>
   );

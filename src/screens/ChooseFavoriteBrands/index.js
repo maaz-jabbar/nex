@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {ScrollView, StyleSheet, Text} from 'react-native';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {Colors, Fonts} from '../../config';
 import {GradientButton, SelectionPill} from '../../components';
 import {
@@ -67,15 +67,14 @@ const ChooseFavoriteBrands = ({navigation}) => {
       style={styles.container}>
       <Text style={styles.heading}>Favorite designers & brands</Text>
       <Text style={styles.smallText}>Select all that apply</Text>
-      {!!brands?.length && (
-        <ScrollView
-          horizontal
-          contentContainerStyle={[
-            styles.scrollablePositionsContent,
-            {maxWidth: brands.length * 30},
-          ]}
-          style={styles.scrollablePositions}>
-          {brands.map((position, index) => {
+      <View
+        style={{
+          flexWrap: 'wrap',
+          flexDirection: 'row',
+          paddingHorizontal: 20,
+        }}>
+        {!!brands?.length &&
+          brands.map((position, index) => {
             const isSelected = selectedBrands.includes(position.designerName);
             const onPressPill = () => {
               if (!isSelected) {
@@ -95,9 +94,7 @@ const ChooseFavoriteBrands = ({navigation}) => {
               />
             );
           })}
-        </ScrollView>
-      )}
-
+      </View>
       <GradientButton
         title="Next"
         onPress={moveToLocation}
@@ -150,6 +147,5 @@ const styles = StyleSheet.create({
   scrollablePositions: {},
   mainContentContainer: {
     flexGrow: 1,
-    justifyContent: 'space-between',
   },
 });

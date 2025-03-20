@@ -26,7 +26,6 @@ const NewContactModal = ({isVisible, setVisible}) => {
           name,
           email,
           number: phone,
-          isJoined: false,
         },
         () => {
           setVisible(false);

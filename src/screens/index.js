@@ -23,8 +23,10 @@ import ViewCustomerProfile from './ViewCustomerProfile';
 import ViewGallery from './ViewGallery';
 import GalleryPhotoView from './GalleryPhotoView';
 import GalleryContacts from './GalleryContacts';
+import ForgotPassword from './ForgotPassword';
 
 export {
+  ForgotPassword,
   GalleryPhotoView,
   GalleryContacts,
   BeforeSignUp,

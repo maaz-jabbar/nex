@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,18 +9,16 @@ import {
   FlatList,
 } from 'react-native';
 import {Colors, Fonts} from '../../config';
-import LinearGradient from 'react-native-linear-gradient';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Images from '../../assets';
 import {
   ContactAvatar,
   GradientButton,
+  SelectionPill,
   TextInputCustom,
   ToggleButton,
 } from '../../components';
-import {brands, contacts} from '../../dummyData';
 import {useDispatch, useSelector} from 'react-redux';
-import {baseURL, successToast} from '../../config/api';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {uploadMedia} from '../../redux/middlewares/chat';
 import {
@@ -29,6 +27,8 @@ import {
   updateSeller,
 } from '../../redux/middlewares/user';
 import {saveUser} from '../../redux/actions/UserActions';
+import {getAllBrands} from '../../redux/middlewares/profileCreation';
+import ReactNativeModal from 'react-native-modal';
 const socialIcons = [
   Images.instagram,
   Images.facebook,
@@ -44,6 +44,7 @@ const CustomerEditProfile = ({navigation}) => {
   const _goBack = () => {
     navigation.goBack();
   };
+  const [preferencesModal, setPreferencesModal] = useState(false);
   const [sendSMS, setSendSMS] = useState(false);
   const [pushNotifications, setPushNotifications] = useState(false);
   const [name, setName] = useState(user?.fullName);
@@ -52,6 +53,16 @@ const CustomerEditProfile = ({navigation}) => {
   const [preferences, setPreferences] = useState(profile?.favDesigner);
   const [image, setImage] = React.useState('');
   // const [bio, setBio] = React.useState('');
+
+  const [brands, setBrands] = React.useState([]);
+
+  useEffect(() => {
+    dispatch(
+      getAllBrands(data => {
+        setBrands(data);
+      }),
+    );
+  }, []);
 
   const onPressSave = () => {
     if (!name || !phone || !email)
@@ -74,7 +85,6 @@ const CustomerEditProfile = ({navigation}) => {
               name: user?.userId?.toString(),
             },
             () => {
-              successToast('Profile updated successfully');
               navigation.goBack();
               setImage('');
               const userId = user?.userId;
@@ -98,7 +108,6 @@ const CustomerEditProfile = ({navigation}) => {
         if (user?.email !== email) data.email = email;
         dispatch(
           updateCustomer(data, () => {
-            successToast('Profile updated successfully');
             navigation.goBack();
           }),
         );
@@ -108,7 +117,6 @@ const CustomerEditProfile = ({navigation}) => {
       ) {
         dispatch(
           updateCustomerProfile(preferences, () => {
-            successToast('Profile updated successfully');
             navigation.goBack();
           }),
         );
@@ -128,6 +136,51 @@ const CustomerEditProfile = ({navigation}) => {
 
   return (
     <View style={[styles.container, {paddingTop: top}]}>
+      <ReactNativeModal isVisible={preferencesModal}>
+        <View style={styles.container}>
+          <Text style={styles.heading}>Edit Preferences</Text>
+          <Text style={styles.smallText}>Select all that apply</Text>
+          {!!brands?.length && (
+            <ScrollView
+              contentContainerStyle={[styles.scrollablePositionsContent]}
+              style={styles.scrollablePositions}>
+              <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+                {brands.map((position, index) => {
+                  const isSelected = preferences.includes(
+                    position.designerName,
+                  );
+                  const onPressPill = () => {
+                    if (!isSelected) {
+                      setPreferences([...preferences, position.designerName]);
+                    } else {
+                      setPreferences(
+                        preferences.filter(
+                          item => item !== position.designerName,
+                        ),
+                      );
+                    }
+                  };
+                  return (
+                    <SelectionPill
+                      key={index}
+                      title={position.designerName}
+                      isSelected={isSelected}
+                      onPress={onPressPill}
+                    />
+                  );
+                })}
+              </View>
+            </ScrollView>
+          )}
+
+          <GradientButton
+            title="Done"
+            onPress={() => setPreferencesModal(false)}
+            buttonStyle={styles.nextButton}
+            containerStyle={{backgroundColor: Colors.darkGrey, borderWidth: 0}}
+          />
+        </View>
+      </ReactNativeModal>
       <View style={styles.header}>
         <TouchableOpacity
           onPress={_goBack}
@@ -214,7 +267,19 @@ const CustomerEditProfile = ({navigation}) => {
               onChangeText: setEmail,
             }}
           />
-          <Text style={styles.preferences}>Preferences:</Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+            <Text style={styles.preferences}>Preferences:</Text>
+            <Text
+              onPress={() => setPreferencesModal(true)}
+              style={styles.preferences}>
+              Edit
+            </Text>
+          </View>
           <FlatList
             data={preferences}
             showsHorizontalScrollIndicator={false}
@@ -225,6 +290,7 @@ const CustomerEditProfile = ({navigation}) => {
                 buttonStyle={styles.listPlusButton}
                 iconSize={24}
                 noGradient
+                onPress={()=>setPreferencesModal(true)}
                 iconStyle={{tintColor: Colors.secondary}}
               />
             )}
@@ -264,6 +330,40 @@ const CustomerEditProfile = ({navigation}) => {
 export default CustomerEditProfile;
 
 const styles = StyleSheet.create({
+  smallText: {
+    fontFamily: Fonts.RobotoRegular,
+    fontSize: 12,
+    color: Colors.lightGrey,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  nextButton: {
+    alignSelf: 'center',
+    width: 150,
+    marginVertical: 20,
+    marginBottom: 40,
+  },
+  scrollablePositionsContent: {
+    paddingHorizontal: 20,
+  },
+  heading: {
+    fontSize: 24,
+    textAlign: 'center',
+    color: Colors.black,
+    fontFamily: Fonts.JosefinSansSemiBold,
+    marginVertical: 10,
+  },
+  positions: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    marginHorizontal: 20,
+  },
+  scrollablePositions: {},
+  mainContentContainer: {
+    flexGrow: 1,
+    justifyContent: 'space-between',
+  },
   listPlusButton: {
     marginBottom: 0,
     width: undefined,

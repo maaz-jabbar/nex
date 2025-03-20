@@ -4,7 +4,8 @@ const INITIAL_STATES = {
   profile: null,
   contacts: [],
   chats: [],
-  broadcasts: []
+  broadcasts: [],
+  rememberMe: false,
 };
 
 export default function (state = INITIAL_STATES, action) {
@@ -13,6 +14,11 @@ export default function (state = INITIAL_STATES, action) {
       return {
         ...state,
         userType: action.payload,
+      };
+    case 'SAVE_REMEMBER_ME':
+      return {
+        ...state,
+        rememberMe: action.payload,
       };
     case 'SAVE_USER':
       return {
@@ -33,12 +39,12 @@ export default function (state = INITIAL_STATES, action) {
       return {
         ...state,
         chats: action.payload,
-      }
+      };
     case 'SAVE_USER_BROADCASTS':
       return {
         ...state,
         broadcasts: action.payload,
-      }
+      };
     case 'LOGOUT':
       return {
         ...INITIAL_STATES,

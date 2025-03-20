@@ -33,7 +33,7 @@ const ChatLanding = ({navigation}) => {
   const isCustomer = userType === 'CUSTOMER';
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', e => {
+    const unsubscribe = navigation.addListener('focus', () => {
       dispatch(getChats());
       dispatch(getBroadcasts());
     });
@@ -162,21 +162,23 @@ const ChatLanding = ({navigation}) => {
               }}
               title="Chat"
               indicator={chats.length}
-              buttonStyle={{width: '48%'}}
+              buttonStyle={{width: isCustomer ? '100%' : '48%'}}
               noGradient={selectedTab !== 'Chat'}
               onPress={() => setSelectedTab('Chat')}
             />
-            <GradientButton
-              containerStyle={{
-                borderWidth: 0,
-                backgroundColor: Colors.broadcastBackground,
-              }}
-              buttonStyle={{width: '48%'}}
-              indicator={broadcasts.length}
-              title="Broadcast"
-              noGradient={selectedTab !== 'Broadcast'}
-              onPress={() => setSelectedTab('Broadcast')}
-            />
+            {!isCustomer && (
+              <GradientButton
+                containerStyle={{
+                  borderWidth: 0,
+                  backgroundColor: Colors.broadcastBackground,
+                }}
+                buttonStyle={{width: '48%'}}
+                indicator={broadcasts.length}
+                title="Broadcast"
+                noGradient={selectedTab !== 'Broadcast'}
+                onPress={() => setSelectedTab('Broadcast')}
+              />
+            )}
           </View>
         </>
         <FlatList

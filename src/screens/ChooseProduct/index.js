@@ -71,13 +71,6 @@ const ChooseProduct = ({navigation}) => {
         <Text style={styles.smallText}>Select all that apply</Text>
         <View style={styles.positions}>
           {selectedProductFor.map((position, index) => {
-            console.log(
-              '🚀 ~ {selectedProductFor.map ~ position:',
-              products
-                .filter(item => item.gender == position)
-                .map(gender => gender.variation),
-            );
-
             return products
               .filter(item => item.gender == position)
               .map((gender, genderIndex) => {
@@ -102,7 +95,7 @@ const ChooseProduct = ({navigation}) => {
                 return (
                   <SelectionPill
                     key={genderIndex}
-                    title={gender.gender + ' ' + gender.variation}
+                    title={gender.gender + "'s " + gender.variation}
                     isSelected={isSelected}
                     onPress={onPressPill}
                   />

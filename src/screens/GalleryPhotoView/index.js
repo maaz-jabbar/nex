@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   Image,
   StyleSheet,
@@ -6,8 +6,6 @@ import {
   View,
   ActivityIndicator,
   TouchableOpacity,
-  Dimensions,
-  ScrollView,
   ImageBackground,
   TextInput,
 } from 'react-native';
@@ -16,11 +14,9 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {GradientButton, ToggleButton} from '../../components';
 import Images from '../../assets';
 import LinearGradient from 'react-native-linear-gradient';
-import {launchImageLibrary} from 'react-native-image-picker';
-import {baseURL, successToast} from '../../config/api';
+import {baseURL} from '../../config/api';
 import {useDispatch, useSelector} from 'react-redux';
 import {
-  addItemsToServerGallery,
   deleteItemsFromServerGallery,
   editItemsFromServerGallery,
 } from '../../redux/middlewares/gallery';
@@ -31,12 +27,9 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
   const ownerId = params?.ownerId;
   const item = params?.item;
   const product = params?.product;
-  console.log('🚀 ~ ViewGallery ~ product:', product);
   const [store, setStore] = useState(item);
-  console.log('🚀 ~ ViewGallery ~ store:', store);
   const [loader, setLoader] = React.useState(false);
   const [message, setMessage] = React.useState('');
-  const [showPopup, setShowPopup] = useState(false);
   const [dropDownActive, setDropDownActive] = useState(false);
   const [addPrice, setAddPrice] = useState(product?.price ? true : false);
   const [price, setPrice] = useState(product?.price?.toString());
@@ -83,7 +76,6 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
         setLoader(true);
         setMessage('');
         dispatch(sendMessageAsync(messageObj, () => {
-          successToast('Message sent successfully');
           setLoader(false)
         }));
       }),
@@ -141,7 +133,7 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
         <LinearGradient
           start={{x: 0, y: 0}}
           end={{x: 1, y: 0}}
-          colors={[Colors.primary, Colors.secondary]}
+          colors={[Colors.transparent, Colors.transparent]}
           style={{flex: 1, borderRadius: 10, padding: 2}}>
           <ImageBackground
             source={{

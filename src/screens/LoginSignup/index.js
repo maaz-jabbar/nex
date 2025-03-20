@@ -14,29 +14,34 @@ import {Colors, Fonts} from '../../config';
 import Images from '../../assets';
 import {CheckBox, GradientButton, TextInputCustom} from '../../components';
 import {useDispatch, useSelector} from 'react-redux';
-import {login, signup} from '../../redux/middlewares/user';
+import {login, signup, sendOTP, verifyOTP} from '../../redux/middlewares/user';
 import * as EmailValidator from 'email-validator';
 import {errorToast} from '../../config/api';
 
+const otpError = 'Please enter a valid OTP code.';
 const emailError = 'Please enter a valid email.';
 const passwordError = 'Password must be at least 8 characters.';
 const phoneError = 'Please enter a valid phone number.';
 const nameError = 'Please enter a valid name (at least 3 characters).';
 
-const LoginSignup = ({route, navigation}) => {
+const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
   const dispatch = useDispatch();
 
   const [loginActive, setLoginActive] = React.useState(
     route?.params?.loginActive || true,
   );
   const userType = useSelector(state => state.user?.userType);
+  const rememberMe = useSelector(state => state.user?.rememberMe);
   const isCustomer = userType === 'CUSTOMER';
 
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [phone, setPhone] = React.useState('');
   const [fullName, setfullName] = React.useState('');
+  const [otp, setOtp] = React.useState('');
+  const [otpSent, setOtpSent] = React.useState(false);
 
+  const otpInput = React.useRef(null);
   const phoneInput = React.useRef(null);
   const emailInput = React.useRef(null);
   const passwordInput = React.useRef(null);
@@ -49,6 +54,9 @@ const LoginSignup = ({route, navigation}) => {
     if (phone.length < 10 && !loginActive) {
       message.push(phoneError);
     }
+    if (!otp && otpSent) {
+      message.push(otpError);
+    }
     if (!EmailValidator.validate(email)) {
       message.push(emailError);
     }
@@ -59,16 +67,34 @@ const LoginSignup = ({route, navigation}) => {
     if (message) return errorToast({message});
     if (loginActive) {
       dispatch(login(email, password));
+      return;
+    }
+    if (!otpSent) {
+      dispatch(
+        sendOTP(phone, isSent => {
+          setOtpSent(isSent);
+        }),
+      );
+      return;
     } else {
       dispatch(
-        signup(
-          fullName,
-          phone,
-          email,
-          password,
-          isCustomer ? 'CUSTOMER' : 'AGENT',
-          () => setLoginActive(true),
-        ),
+        verifyOTP(phone, otp, isSuccess => {
+          console.log(isSuccess, 'issuccess');
+          if (true) {
+            dispatch(
+              signup(
+                fullName,
+                phone,
+                email,
+                password,
+                isCustomer ? 'CUSTOMER' : 'AGENT',
+                () => {
+                  dispatch(login(email, password));
+                },
+              ),
+            );
+          }
+        }),
       );
     }
   };
@@ -95,6 +121,12 @@ const LoginSignup = ({route, navigation}) => {
             height: 100,
           }}
         />
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={goBack}
+          style={styles.backIconContainer}>
+          <Image source={Images.back} style={styles.back} />
+        </TouchableOpacity>
       </ImageBackground>
       <View
         style={{
@@ -157,11 +189,10 @@ const LoginSignup = ({route, navigation}) => {
               <>
                 <TextInputCustom
                   title="Full Name"
+                  icon={Images.name}
                   textInputProps={{
-                    placeholder: 'Full Name',
                     value: fullName,
                     onChangeText: setfullName,
-                    placeholderTextColor: Colors.lightGrey,
                     keyboardType: 'default',
                     returnKeyType: 'next',
                     onSubmitEditing: () => {
@@ -171,31 +202,46 @@ const LoginSignup = ({route, navigation}) => {
                 />
                 <TextInputCustom
                   title="Phone Number"
+                  icon={Images.phone}
                   textInputProps={{
-                    placeholder: 'Phone Number',
                     value: phone,
+                    editable: !otpSent,
                     onChangeText: setPhone,
-                    placeholderTextColor: Colors.lightGrey,
                     keyboardType: 'number-pad',
                     returnKeyType: 'next',
                     ref: phoneInput,
                     onSubmitEditing: () => {
-                      emailInput.current.focus();
+                      otpInput.current.focus();
                     },
                   }}
                 />
+                {otpSent && (
+                  <TextInputCustom
+                    title="OTP"
+                    icon={Images.otp}
+                    textInputProps={{
+                      value: otp,
+                      onChangeText: setOtp,
+                      keyboardType: 'number-pad',
+                      returnKeyType: 'next',
+                      ref: otpInput,
+                      onSubmitEditing: () => {
+                        emailInput.current.focus();
+                      },
+                    }}
+                  />
+                )}
               </>
             )}
             <TextInputCustom
               title="Email Address"
+              icon={Images.email}
               textInputProps={{
-                placeholder: 'Email Address',
                 autoCapitalize: 'none',
                 autoCorrect: false,
                 textContentType: 'emailAddress',
                 value: email,
                 onChangeText: setEmail,
-                placeholderTextColor: Colors.lightGrey,
                 keyboardType: 'email-address',
                 returnKeyType: 'next',
                 ref: emailInput,
@@ -210,8 +256,6 @@ const LoginSignup = ({route, navigation}) => {
               textInputProps={{
                 value: password,
                 onChangeText: setPassword,
-                placeholder: 'Password',
-                placeholderTextColor: Colors.lightGrey,
                 keyboardType: 'default',
                 returnKeyType: 'done',
                 secureTextEntry: true,
@@ -219,7 +263,23 @@ const LoginSignup = ({route, navigation}) => {
               }}
             />
             {loginActive ? (
-              <CheckBox title="Remember me" />
+              <View style={styles.options}>
+                <CheckBox
+                  title="Remember me"
+                  isChecked={rememberMe}
+                  setIsChecked={() => {
+                    dispatch({type: 'SAVE_REMEMBER_ME', payload: !rememberMe});
+                  }}
+                />
+                <Text
+                  suppressHighlighting
+                  onPress={() => {
+                    navigate('ForgotPassword');
+                  }}
+                  style={styles.forgotPassword}>
+                  Forgot Password
+                </Text>
+              </View>
             ) : (
               <Text
                 style={{
@@ -259,10 +319,32 @@ const LoginSignup = ({route, navigation}) => {
 export default LoginSignup;
 
 const styles = StyleSheet.create({
+  options: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  forgotPassword: {
+    marginRight: 15,
+    color: Colors.secondary,
+    fontFamily: Fonts.RobotoMedium,
+  },
   topBar: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',
     padding: 30,
+  },
+  back: {
+    width: 25,
+    height: 25,
+  },
+  backIconContainer: {
+    position: 'absolute',
+    left: 20,
+    top: 20,
+    backgroundColor: Colors.white,
+    padding: 5,
+    borderRadius: 40,
   },
 });

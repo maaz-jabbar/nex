@@ -3,5 +3,6 @@ import AddInvitePopup from './AddInvitePopup';
 import NewContactModal from './NewContactModal';
 import NewGalleryModal from './NewGalleryModal'
 import DeleteGalleryModal from './DeleteGalleryModal'
+import InvitesModal from './InvitesModal'
 
-export {AddChatModal, AddInvitePopup, NewContactModal, NewGalleryModal, DeleteGalleryModal};
+export {InvitesModal, AddChatModal, AddInvitePopup, NewContactModal, NewGalleryModal, DeleteGalleryModal};

@@ -1,9 +1,4 @@
-import {
-  ApiInstance,
-  ApiInstanceWithJWT,
-  errorToast,
-  successToast,
-} from '../../config/api';
+import {ApiInstance, ApiInstanceWithJWT, errorToast} from '../../config/api';
 import {navigate} from '../../navigation/navigationService';
 import {
   loaderFalse,
@@ -13,6 +8,34 @@ import {
   saveUserProfile,
   saveUserType,
 } from '../actions/UserActions';
+
+export const sendOTP = (phone, onSuccess) => {
+  return dispatch => {
+    dispatch(loaderTrue());
+    ApiInstanceWithJWT.post('/twilio/send-otp?phoneNumber=' + phone)
+      .then(({data}) => {
+        console.log("🚀 ~ .then ~ data:", data)
+        onSuccess(true);
+      })
+      .finally(() => {
+        dispatch(loaderFalse());
+      });
+  };
+};
+
+export const verifyOTP = (phone, otp, onSuccess) => {
+  return dispatch => {
+    dispatch(loaderTrue());
+    ApiInstanceWithJWT.post('/twilio/verify-otp?phoneNumber=' + phone + '&otp=' + otp)
+      .then(({data}) => {
+        console.log("🚀 ~ .then ~sss data:", data)
+        onSuccess(data);
+      })
+      .finally(() => {
+        dispatch(loaderFalse());
+      });
+  };
+};
 
 export const login = (email, password) => {
   return dispatch => {
@@ -48,10 +71,10 @@ export const signup = (
       password,
       userType,
     };
+    console.log("🚀 ~ body:", body)
     dispatch(loaderTrue());
     ApiInstance.post('auth/signup', body)
       .then(({data}) => {
-        successToast('Registered Successfully, Please login now.');
         onSuccess();
       })
       .finally(() => {
@@ -72,7 +95,7 @@ const getUser = loginResponse => {
         const user = {...data?.body, ...loginResponse};
         dispatch(saveUser(user));
         dispatch(saveUserType(data?.body?.userType));
-        dispatch(getProfile(user));
+        dispatch(getProfile(user, true));
       })
       .finally(() => {
         dispatch(loaderFalse());
@@ -93,7 +116,7 @@ export const getUserWithId = (userId, onSuccess) => {
   };
 };
 
-export const getProfile = user => {
+export const getProfile = (user, isLogin = false) => {
   return dispatch => {
     const isCustomer = user?.userType === 'CUSTOMER';
     dispatch(loaderTrue());
@@ -102,7 +125,7 @@ export const getProfile = user => {
         user?.userId,
     )
       .then(({data}) => {
-        navigate('AppStack');
+        if(isLogin) navigate('AppStack');
         dispatch(saveUserProfile(data?.body));
         dispatch(getUserContacts(data?.body?.profileId));
       })
@@ -116,13 +139,111 @@ export const getProfile = user => {
   };
 };
 
+export const getProfileExplicitly = (user, onSuccess) => {
+  return dispatch => {
+    const isCustomer = user?.userType === 'CUSTOMER';
+    dispatch(loaderTrue());
+    ApiInstanceWithJWT.get(
+      (isCustomer ? 'profiles/customer/user/' : 'profiles/agent/user/') +
+        user?.userId,
+    )
+      .then(({data}) => {
+        onSuccess(data?.body);
+      })
+      .finally(() => {
+        dispatch(loaderFalse());
+      });
+  };
+};
+
 export const getUserContacts = id => {
   return dispatch => {
     dispatch(loaderTrue());
     ApiInstanceWithJWT.get('profiles/contacts/' + id)
       .then(({data}) => {
-        console.log('🚀 ~ .then ~ data:', data);
+        console.log(data);
         dispatch(saveUserContacts(data));
+      })
+      .finally(() => {
+        dispatch(loaderFalse());
+      });
+  };
+};
+
+export const getUserInvites = onSuccess => {
+  return (dispatch, getState) => {
+    const id = getState().user?.profile?.profileId;
+    dispatch(loaderTrue());
+    ApiInstanceWithJWT.get('invites/receiver/' + id)
+      .then(({data}) => {
+        console.log('🚀 ~ .then ~ data:', data);
+        onSuccess(data.filter(i=>i.inviteStatus !== 'ACCEPTED'));
+        // dispatch(saveUserContacts(data));
+      })
+      .finally(() => {
+        dispatch(loaderFalse());
+      });
+  };
+};
+
+export const deleteInvitePerm = (senderId, receiverId, onSuccess) => {
+  console.log("🚀 ~ deleteInvitePerm ~ senderId, receiverId:", senderId, receiverId)
+  return (dispatch, getState) => {
+    const id = getState().user?.profile?.profileId;
+    const url =
+      'invites/delete?senderId=' + senderId + '&receiverId=' + receiverId;
+    console.log('🚀 ~ return ~ url:', url);
+    dispatch(loaderTrue());
+    ApiInstanceWithJWT.delete(url)
+      .then(({data}) => {
+        onSuccess(true);
+      })
+      .finally(() => {
+        dispatch(getUserContacts(id));
+        dispatch(loaderFalse());
+      });
+  };
+};
+
+export const acceptInvite = (invitationId, onSuccess) => {
+  return (dispatch, getState) => {
+    const id = getState().user?.profile?.profileId;
+    dispatch(loaderTrue());
+    ApiInstanceWithJWT.put('invites/accept/' + invitationId)
+      .then(({data}) => {
+        dispatch(getUserInvites(onSuccess));
+        dispatch(getUserContacts(id));
+      })
+      .finally(() => {
+        dispatch(loaderFalse());
+      });
+  };
+};
+
+export const rejectInvite = (invitationId, onSuccess) => {
+  return (dispatch, getState) => {
+    const id = getState().user?.profile?.profileId;
+    dispatch(loaderTrue());
+    ApiInstanceWithJWT.put('invites/reject/' + invitationId)
+      .then(({data}) => {
+        dispatch(getUserInvites(onSuccess));
+        dispatch(getUserContacts(id));
+      })
+      .finally(() => {
+        dispatch(loaderFalse());
+      });
+  };
+};
+
+export const getUserSentInvites = onSuccess => {
+  return (dispatch, getState) => {
+    const id = getState().user?.profile?.profileId;
+    dispatch(loaderTrue());
+    ApiInstanceWithJWT.get('invites/sender/' + id)
+      .then(({data}) => {
+        console.log('🚀 ~ .then ~ data:', data);
+        onSuccess(data);
+        // dispatch(saveUserContacts(data));
       })
       .finally(() => {
         dispatch(loaderFalse());
@@ -133,10 +254,22 @@ export const getUserContacts = id => {
 export const saveContact = (data, closeModal) => {
   return (dispatch, getState) => {
     const profileId = getState().user?.profile?.profileId;
+    const userType = getState().user?.userType;
+    const isCustomer = userType === 'CUSTOMER';
+    console.log('🚀 ~ return ~ isCustomer:', isCustomer);
+
+    const url = !isCustomer
+      ? 'profiles/contacts-customer/'
+      : 'profiles/contacts-agent/';
+
+    console.log('🚀 ~ return ~ url:', url + profileId);
     dispatch(loaderTrue());
-    ApiInstanceWithJWT.patch('profiles/contacts/' + profileId, data)
+    ApiInstanceWithJWT.patch(url + profileId, data)
       .then(() => {
         dispatch(getUserContacts(profileId));
+      })
+      .catch(err => {
+        console.log('🚀 ~ .catch ~ err:', err.response);
       })
       .finally(() => {
         dispatch(loaderFalse());
@@ -187,20 +320,19 @@ export const updateSeller = (data, goBack) => {
   };
 };
 
-export const updateCustomerProfile = (preferences, goBack) => {
-  console.log('🚀 ~ updateCustomerProfile ~ preferences:', preferences);
+export const updateCustomerProfile = (favDesigner, goBack) => {
   return (dispatch, getState) => {
     const profileId = getState().user?.profile?.profileId;
     console.log('🚀 ~ return ~ profileId:', profileId);
     dispatch(loaderTrue());
     ApiInstanceWithJWT.patch('profiles/customer/' + profileId, {
-      preferences,
+      favDesigner,
     })
-      .then(() => {
+      .then(data => {
         dispatch(
           saveUserProfile({
             ...getState().user?.profile,
-            preferences,
+            favDesigner,
           }),
         );
       })
@@ -210,13 +342,13 @@ export const updateCustomerProfile = (preferences, goBack) => {
       });
   };
 };
-export const updateSellerProfile = (links, goBack) => {
-  console.log('🚀 ~ updateSellerProfile ~ links:', links);
+export const updateSellerProfile = (links, bio, goBack) => {
   return (dispatch, getState) => {
     const profileId = getState().user?.profile?.profileId;
-    console.log('🚀 ~ return ~ profileId:', 'profiles/agent/' + profileId);
+
     dispatch(loaderTrue());
     ApiInstanceWithJWT.patch('profiles/agent/' + profileId, {
+      bio,
       links,
     })
       .then(() => {
@@ -224,6 +356,7 @@ export const updateSellerProfile = (links, goBack) => {
           saveUserProfile({
             ...getState().user?.profile,
             links,
+            bio
           }),
         );
       })

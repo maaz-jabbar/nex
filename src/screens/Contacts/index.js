@@ -2,6 +2,7 @@ import React, {useEffect} from 'react';
 import {
   FlatList,
   Image,
+  RefreshControl,
   StyleSheet,
   Text,
   TextInput,
@@ -13,13 +14,20 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ContactCard, GradientButton} from '../../components';
 import Images from '../../assets';
 import {ContactAvatar} from '../../components';
-import {AddInvitePopup, NewContactModal} from '../../modals';
+import {AddInvitePopup, InvitesModal, NewContactModal} from '../../modals';
 import {useDispatch, useSelector} from 'react-redux';
-import {getUserWithId} from '../../redux/middlewares/user';
+import {
+  deleteInvitePerm,
+  getProfile,
+  getProfileExplicitly,
+  getUserContacts,
+  getUserWithId,
+} from '../../redux/middlewares/user';
 
 const Contacts = ({navigation}) => {
   const {top} = useSafeAreaInsets();
   const [search, setSearch] = React.useState('');
+  const profileId = useSelector(state => state.user?.profile?.profileId);
   const userType = useSelector(state => state.user?.userType);
   const contacts = useSelector(state => state.user?.contacts);
   console.log(
@@ -62,6 +70,21 @@ const Contacts = ({navigation}) => {
   };
   const [addContactModal, setAddContactModal] = React.useState(false);
   const [newContact, setNewContact] = React.useState(false);
+  const [inviteModal, setInviteModal] = React.useState(false);
+
+  const deleteInvite = senderId => {
+    dispatch(
+      getProfileExplicitly(
+        {
+          userId: senderId,
+          userType: userType === 'CUSTOMER' ? 'AGENT' : 'CUSTOMER',
+        },
+        data => {
+          dispatch(deleteInvitePerm(profileId, data?.profileId, () => {}));
+        },
+      ),
+    );
+  };
 
   return (
     <View style={[styles.container, {paddingTop: top}]}>
@@ -71,6 +94,7 @@ const Contacts = ({navigation}) => {
         setContactModal={setNewContact}
       />
       <NewContactModal isVisible={newContact} setVisible={setNewContact} />
+      <InvitesModal isVisible={inviteModal} setVisible={setInviteModal} />
       <View style={styles.header}>
         <TouchableOpacity
           onPress={_goBack}
@@ -80,7 +104,13 @@ const Contacts = ({navigation}) => {
           <Text style={styles.back}>Back</Text>
         </TouchableOpacity>
         <Text style={styles.title}>Contacts</Text>
-        <View style={styles.headerPlaceholder} />
+        <TouchableOpacity
+          onPress={() => setInviteModal(true)}
+          activeOpacity={0.8}
+          style={styles.backButton}>
+          <Image source={Images.invite} style={styles.inviteIcon} />
+          <Text style={styles.back}>Invites</Text>
+        </TouchableOpacity>
       </View>
       <>
         <View style={styles.searchCont}>
@@ -98,6 +128,11 @@ const Contacts = ({navigation}) => {
         </View>
         <View>
           <FlatList
+            refreshControl={
+              <RefreshControl refreshing={false} onRefresh={() => {
+                dispatch(getUserContacts(profileId))
+              }} />
+            }
             data={contacts.filter(contact => {
               return contact?.name
                 ?.toLowerCase()
@@ -135,7 +170,15 @@ const Contacts = ({navigation}) => {
             renderItem={({item, index}) => {
               return (
                 <ContactAvatar
-                  onPress={() => viewProfile(item)}
+                  onPress={() => {
+                    console.log(
+                      '🚀 ~ Contacts ~ item?.inviteStatus:',
+                      item?.inviteStatus,
+                    );
+                    if (item?.inviteStatus === 'ACCEPTED') {
+                      viewProfile(item);
+                    }
+                  }}
                   key={index}
                   contact={item}
                 />
@@ -149,11 +192,32 @@ const Contacts = ({navigation}) => {
           return contact?.name?.toLowerCase().includes(search?.toLowerCase());
         })}
         renderItem={({item, index}) => {
+          const accepted = item?.inviteStatus === 'ACCEPTED';
           return (
             <ContactCard
-              onPress={() => viewProfile(item)}
+              onPress={() => {
+                console.log(
+                  '🚀 ~ Contacts ~ item?.inviteStatus:',
+                  item?.inviteStatus,
+                );
+                if (accepted) {
+                  viewProfile(item);
+                }
+              }}
               key={index}
               user={item}
+              customComp={
+                !accepted && (
+                  <TouchableOpacity
+                    style={{marginRight: 10}}
+                    onPress={() => deleteInvite(item?.userId)}>
+                    <Image
+                      source={Images.delete}
+                      style={{width: 25, height: 25, resizeMode: 'contain'}}
+                    />
+                  </TouchableOpacity>
+                )
+              }
             />
           );
         }}
@@ -168,6 +232,11 @@ const styles = StyleSheet.create({
   backIcon: {
     width: 25,
     height: 25,
+    marginRight: 5,
+  },
+  inviteIcon: {
+    width: 20,
+    height: 20,
     marginRight: 5,
   },
   backButton: {

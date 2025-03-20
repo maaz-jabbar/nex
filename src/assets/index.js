@@ -46,4 +46,11 @@ export default {
   productCount: require('./productCount.png'),
   galleryCount: require('./galleryCount.png'),
   share: require('./share.png'),
+  email: require('./email.png'),
+  otp: require('./otp.png'),
+  phone: require('./phone.png'),
+  name: require('./name.png'),
+  check: require('./check.png'),
+  close: require('./close.png'),
+  invite: require('./invite.png'),
 };

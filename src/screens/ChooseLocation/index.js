@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -17,9 +17,12 @@ import {useDispatch, useSelector} from 'react-redux';
 const ChooseLocation = ({route}) => {
   const dispatch = useDispatch();
   const {userId} = useSelector(state => state.user?.user);
+  const [bio, setBio] = React.useState('');
   const [search, setSearch] = React.useState('');
   const [searchResults, setSearchResults] = React.useState([]);
   const [selectedLocation, setSelectedLocation] = React.useState(null);
+  const [isLocationFocused, setIsLocationFocused] = React.useState(false);
+  const locationRef = useRef();
 
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
@@ -42,6 +45,7 @@ const ChooseLocation = ({route}) => {
   const moveToCongratulations = () => {
     const body = route?.params?.body;
     body.location = selectedLocation;
+    body.bio = bio;
     dispatch(createAgentProfile(userId, body));
   };
 
@@ -53,29 +57,47 @@ const ChooseLocation = ({route}) => {
           title="City, State"
           containerStyle={styles.input}
           hideLabel
-          textInputProps={{value: search, onChangeText: setSearch}}
+          textInputProps={{
+            value: search,
+            onChangeText: setSearch,
+            ref: locationRef,
+            onFocus: () => setIsLocationFocused(true),
+            onBlur: () => setIsLocationFocused(false),
+          }}
         />
-        <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
-          {!!searchResults?.length &&
-            searchResults.map(item => (
+        {!!searchResults?.length && (
+          <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
+            {searchResults.map(item => (
               <TouchableOpacity
                 activeOpacity={0.8}
                 key={item.geonameId}
                 style={styles.listItem}
                 onPress={() => {
+                  setSearch(item.toponymName);
                   setSelectedLocation({
                     longitude: item.lng,
                     latitude: item.lat,
                     link: item.toponymName,
                   });
                   setSearchResults([]);
-                  setSearch(item.toponymName);
+                  locationRef.current.blur();
                 }}>
                 <Text style={styles.listItemName}>{item.toponymName}</Text>
                 <Text style={styles.listItemCountry}>{item.countryName}</Text>
               </TouchableOpacity>
             ))}
-        </ScrollView>
+          </ScrollView>
+        )}
+        <TextInputCustom
+          title="Bio"
+          textInputStyle={{height: 100, textAlignVertical: 'top'}}
+          containerStyle={styles.input}
+          textInputProps={{
+            multiline: true,
+            value: bio,
+            onChangeText: setBio,
+          }}
+        />
       </View>
       <View style={styles.lowerContainer}>
         <GradientButton

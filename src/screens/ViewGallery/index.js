@@ -93,7 +93,7 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
         <LinearGradient
           start={{x: 0, y: 0}}
           end={{x: 1, y: 0}}
-          colors={[Colors.primary, Colors.secondary]}
+          colors={[Colors.transparent, Colors.transparent]}
           style={{borderRadius: 10, padding: 2}}>
           <ImageBackground
             source={{

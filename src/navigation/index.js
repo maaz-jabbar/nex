@@ -12,6 +12,7 @@ import {useSelector} from 'react-redux';
 const Stack = createNativeStackNavigator();
 
 export default function Navigation() {
+  const rememberMe = useSelector(state => state.user?.rememberMe);
   const user = useSelector(state => state.user?.user);
   useEffect(() => {
     setTimeout(() => {
@@ -27,7 +28,7 @@ export default function Navigation() {
       ref={navigationRef => setTopLevelNavigator(navigationRef)}>
       <Stack.Navigator
         screenOptions={{headerShown: false}}
-        initialRouteName={user ? 'AppStack' : 'Auth'}>
+        initialRouteName={user && rememberMe ? 'AppStack' : 'Auth'}>
         <Stack.Screen name="Auth" component={AuthStack} />
         <Stack.Screen name="ProfileCreation" component={ProfileCreationStack} />
         <Stack.Screen
