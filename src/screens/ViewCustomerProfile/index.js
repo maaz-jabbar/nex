@@ -12,19 +12,12 @@ import {Colors, Fonts} from '../../config';
 import LinearGradient from 'react-native-linear-gradient';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Images from '../../assets';
-import {ContactAvatar, GradientButton, ToggleButton} from '../../components';
-import {brands, contacts} from '../../dummyData';
+import {ContactAvatar, GradientButton} from '../../components';
+import {brands} from '../../dummyData';
 import {logout} from '../../redux/actions/UserActions';
 import {useDispatch} from 'react-redux';
 import {createChat} from '../../redux/middlewares/chat';
-
-const socialIcons = [
-  Images.instagram,
-  Images.facebook,
-  Images.tiktok,
-  Images.twitterX,
-];
-const user = contacts[0];
+import { sendInvite } from '../../redux/middlewares/user';
 
 const ViewCustomerProfile = ({navigation, route: {params}}) => {
   const {top} = useSafeAreaInsets();
@@ -34,23 +27,14 @@ const ViewCustomerProfile = ({navigation, route: {params}}) => {
   };
 
   const user = params?.user;
-
-  const logoutButton = () => {
-    dispatch(logout());
-    navigation.reset({
-      index: 0,
-      routes: [{name: 'Auth', params: {screen: 'BeforeSignUp'}}],
-    });
-  };
-
-  const moveToEditProfile = () => {
-    navigation.navigate('CustomerEditProfile');
-  };
+  const inviteStatus = user?.inviteStatus;
+  const notAccepted = inviteStatus !== 'ACCEPTED';
 
   const actionItems = [
     {
       name: 'Chat',
       icon: Images.chat,
+      disabled: notAccepted,
       onPress: () => {
         dispatch(
           createChat(user?.userId, data => {
@@ -65,11 +49,13 @@ const ViewCustomerProfile = ({navigation, route: {params}}) => {
     },
     {
       name: 'Favorite',
+      disabled: notAccepted,
       icon: Images.star,
       onPress: () => alert('Favorite'),
     },
     {
       name: 'Block',
+      disabled: notAccepted,
       icon: Images.block,
       onPress: () => alert('Block'),
     },
@@ -129,7 +115,9 @@ const ViewCustomerProfile = ({navigation, route: {params}}) => {
         ) : (
           <GradientButton
             title="Send Invite"
-            onPress={() => {}}
+            onPress={() => {
+              dispatch(sendInvite(user?.number));
+            }}
             noGradient
             containerStyle={{
               height: 35,
@@ -151,6 +139,7 @@ const ViewCustomerProfile = ({navigation, route: {params}}) => {
                 return (
                   <TouchableOpacity
                     onPress={item.onPress}
+                    disabled={item.disabled}
                     activeOpacity={0.8}
                     style={[styles.actionButton, isLast && {marginRight: 0}]}>
                     <Image
@@ -166,11 +155,6 @@ const ViewCustomerProfile = ({navigation, route: {params}}) => {
                 );
               })}
             </View>
-            <Text style={styles.preferences}>Notes</Text>
-            <Text style={styles.bio}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-            </Text>
             <Text style={styles.preferences}>Preferences:</Text>
             <FlatList
               data={brands}

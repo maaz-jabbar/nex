@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {
   FlatList,
   Image,
@@ -18,7 +18,6 @@ import {AddInvitePopup, InvitesModal, NewContactModal} from '../../modals';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   deleteInvitePerm,
-  getProfile,
   getProfileExplicitly,
   getUserContacts,
   getUserWithId,
@@ -30,12 +29,6 @@ const Contacts = ({navigation}) => {
   const profileId = useSelector(state => state.user?.profile?.profileId);
   const userType = useSelector(state => state.user?.userType);
   const contacts = useSelector(state => state.user?.contacts);
-  console.log(
-    '🚀 ~ Contacts ~ contacts:',
-    contacts.filter(contact => {
-      return contact?.name?.toLowerCase().includes(search?.toLowerCase());
-    }),
-  );
   const dispatch = useDispatch();
 
   const _goBack = () => {
@@ -43,7 +36,7 @@ const Contacts = ({navigation}) => {
   };
 
   const viewProfile = item => {
-    if (item?.joined) {
+    if (!item?.joined) {
       dispatch(
         getUserWithId(item?.userId, data => {
           const toSendData = {
@@ -60,13 +53,10 @@ const Contacts = ({navigation}) => {
         }),
       );
     } else {
-      navigation.navigate('ViewCustomerProfile', {user: item});
+      navigation.navigate('ViewCustomerProfile', {
+        user: item,
+      });
     }
-    // if (isCustomer) {
-    //   navigation.navigate('ViewSellerProfile');
-    // } else {
-    //   navigation.navigate('ViewCustomerProfile');
-    // }
   };
   const [addContactModal, setAddContactModal] = React.useState(false);
   const [newContact, setNewContact] = React.useState(false);
@@ -129,9 +119,12 @@ const Contacts = ({navigation}) => {
         <View>
           <FlatList
             refreshControl={
-              <RefreshControl refreshing={false} onRefresh={() => {
-                dispatch(getUserContacts(profileId))
-              }} />
+              <RefreshControl
+                refreshing={false}
+                onRefresh={() => {
+                  dispatch(getUserContacts(profileId));
+                }}
+              />
             }
             data={contacts.filter(contact => {
               return contact?.name
@@ -171,13 +164,7 @@ const Contacts = ({navigation}) => {
               return (
                 <ContactAvatar
                   onPress={() => {
-                    console.log(
-                      '🚀 ~ Contacts ~ item?.inviteStatus:',
-                      item?.inviteStatus,
-                    );
-                    if (item?.inviteStatus === 'ACCEPTED') {
-                      viewProfile(item);
-                    }
+                    viewProfile(item);
                   }}
                   key={index}
                   contact={item}
@@ -196,13 +183,7 @@ const Contacts = ({navigation}) => {
           return (
             <ContactCard
               onPress={() => {
-                console.log(
-                  '🚀 ~ Contacts ~ item?.inviteStatus:',
-                  item?.inviteStatus,
-                );
-                if (accepted) {
-                  viewProfile(item);
-                }
+                viewProfile(item);
               }}
               key={index}
               user={item}

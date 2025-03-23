@@ -29,6 +29,7 @@ export default {
   logout: require('./logout.png'),
   instagram: require('./instagram.png'),
   facebook: require('./facebook.png'),
+  whatsapp: require('./whatsapp.png'),
   tiktok: require('./tiktok.png'),
   twitterX: require('./twitterX.png'),
   camera: require('./camera.png'),

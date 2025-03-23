@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Image,
   ImageBackground,
-  LayoutAnimation,
   ScrollView,
   StyleSheet,
   Text,
@@ -12,19 +11,16 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import {Colors, Fonts} from '../../config';
 import Images from '../../assets';
-import {CheckBox, GradientButton, TextInputCustom} from '../../components';
-import {useDispatch, useSelector} from 'react-redux';
-import {login, signup, sendOTP, verifyOTP} from '../../redux/middlewares/user';
-import * as EmailValidator from 'email-validator';
+import {GradientButton, TextInputCustom} from '../../components';
+import {useDispatch} from 'react-redux';
+import {resetPassword, forgotPassSendOtp} from '../../redux/middlewares/user';
 import {errorToast} from '../../config/api';
 
 const otpError = 'Please enter a valid OTP code.';
-const emailError = 'Please enter a valid email.';
 const passwordError = 'Password must be at least 8 characters.';
 const phoneError = 'Please enter a valid phone number.';
-const nameError = 'Please enter a valid name (at least 3 characters).';
 
-const ForgotPassword = ({route, navigation: {goBack}}) => {
+const ForgotPassword = ({navigation: {goBack}}) => {
   const dispatch = useDispatch();
 
   const [password, setPassword] = React.useState('');
@@ -35,7 +31,34 @@ const ForgotPassword = ({route, navigation: {goBack}}) => {
   const passwordInput = React.useRef(null);
 
   const _onSubmit = () => {
-    setOtpSent(true)
+    let message = [];
+
+    if (otpSent) {
+      if (otp.length < 6) {
+        message.push(otpError);
+      }
+      if (password.length < 8) {
+        message.push(passwordError);
+      }
+      message = message.join('\n');
+      if (message) return errorToast({message});
+      dispatch(
+        resetPassword(phone, otp, password, () => {
+          goBack();
+        }),
+      );
+    } else {
+      if (phone.length < 10) {
+        message.push(phoneError);
+      }
+      message = message.join('\n');
+      if (message) return errorToast({message});
+      dispatch(
+        forgotPassSendOtp(phone, isSent => {
+          setOtpSent(isSent);
+        }),
+      );
+    }
   };
 
   return (

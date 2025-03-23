@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -16,7 +16,8 @@ import Images from '../../assets';
 import {ContactAvatar, GradientButton, ToggleButton} from '../../components';
 import {brands, contacts} from '../../dummyData';
 import {logout} from '../../redux/actions/UserActions';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {getProfileExplicitly} from '../../redux/middlewares/user';
 const socialIcons = [
   Images.instagram,
   Images.facebook,
@@ -28,7 +29,28 @@ const ViewSellerProfile = ({navigation, route: {params}}) => {
   const {top} = useSafeAreaInsets();
   const dispatch = useDispatch();
 
+  const [profile, setProfile] = useState(null);
+  console.log("🚀 ~ ViewSellerProfile ~ profile:", profile)
+  const userType = useSelector(state => state?.user?.userType);
+  console.log('🚀 ~ ViewSellerProfile ~ userType:', userType);
+
   const user = params?.user;
+  console.log('🚀 ~ ViewSellerProfile ~ user:', user);
+
+  useEffect(() => {
+    dispatch(
+      getProfileExplicitly(
+        {
+          ...user,
+          userType: userType === 'CUSTOMER' ? 'SELLER' : 'CUSTOMER',
+        },
+        profile => {
+          console.log('🚀 ~ useEffect ~ profile:', profile);
+          setProfile(profile);
+        },
+      ),
+    );
+  }, []);
 
   const _goBack = () => {
     navigation.goBack();
@@ -44,24 +66,6 @@ const ViewSellerProfile = ({navigation, route: {params}}) => {
   const moveToEditProfile = () => {
     navigation.navigate('SellerEditProfile');
   };
-
-  const [links, setLinks] = React.useState([
-    {
-      id: 1,
-      title: 'Follow me on Instagram',
-      link: 'https://www.instagram.com/',
-    },
-    {
-      id: 2,
-      title: 'Follow me on Facebook',
-      link: 'https://www.facebook.com/',
-    },
-    {
-      id: 3,
-      title: 'Follow me on TikTok',
-      link: 'https://www.tiktok.com/',
-    },
-  ]);
 
   return (
     <View style={styles.container}>
@@ -105,22 +109,19 @@ const ViewSellerProfile = ({navigation, route: {params}}) => {
         <Text style={styles.phone}>{user?.number}</Text>
         <Text style={styles.email}>{user?.email}</Text>
         <Text style={styles.preferences}>Bio</Text>
-        <Text style={styles.bio}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-        </Text>
-        {links.map((link, index) => {
+        <Text style={styles.bio}>{profile?.bio}</Text>
+        {profile?.links.map((link, index) => {
           return (
             <GradientButton
               key={index}
               noGradient
               onPress={() => {
-                Linking.openURL(link.link);
+                Linking.openURL(link);
               }}
               icon={Images.link}
               iconSize={20}
               iconStyle={{tintColor: Colors.secondary}}
-              title={link.title}
+              title={link}
               textStyle={{color: Colors.secondary, flex: 1, marginLeft: 10}}
               buttonStyle={{marginBottom: 0}}
               containerStyle={{
@@ -164,6 +165,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.black,
     marginVertical: 10,
+    alignSelf: 'flex-start',
   },
   listContent: {
     paddingVertical: 10,

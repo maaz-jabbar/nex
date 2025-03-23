@@ -1,4 +1,4 @@
-import {ApiInstance, ApiInstanceWithJWT, errorToast} from '../../config/api';
+import {ApiInstance, ApiInstanceWithJWT, errorToast, successToast} from '../../config/api';
 import {navigate} from '../../navigation/navigationService';
 import {
   loaderFalse,
@@ -12,10 +12,25 @@ import {
 export const sendOTP = (phone, onSuccess) => {
   return dispatch => {
     dispatch(loaderTrue());
-    ApiInstanceWithJWT.post('/twilio/send-otp?phoneNumber=' + phone)
+    ApiInstance.post('/twilio/send-otp?phoneNumber=' + phone)
       .then(({data}) => {
-        console.log("🚀 ~ .then ~ data:", data)
+        console.log('🚀 ~ .then ~ data:', data);
         onSuccess(true);
+      })
+      .finally(() => {
+        dispatch(loaderFalse());
+      });
+  };
+};
+export const sendInvite = (phone, link = 'https://google.com/') => {
+  return dispatch => {
+    dispatch(loaderTrue());
+    ApiInstanceWithJWT.post(
+      `/twilio/send-invites?inviteLink=${link}`,
+      [phone],
+    )
+      .then(({data}) => {
+        successToast("Invite sent successfully");
       })
       .finally(() => {
         dispatch(loaderFalse());
@@ -26,9 +41,9 @@ export const sendOTP = (phone, onSuccess) => {
 export const verifyOTP = (phone, otp, onSuccess) => {
   return dispatch => {
     dispatch(loaderTrue());
-    ApiInstanceWithJWT.post('/twilio/verify-otp?phoneNumber=' + phone + '&otp=' + otp)
+    ApiInstance.post('/twilio/verify-otp?phoneNumber=' + phone + '&otp=' + otp)
       .then(({data}) => {
-        console.log("🚀 ~ .then ~sss data:", data)
+        console.log('🚀 ~ .then ~sss data:', data);
         onSuccess(data);
       })
       .finally(() => {
@@ -55,6 +70,34 @@ export const login = (email, password) => {
   };
 };
 
+export const forgotPassSendOtp = (phone, onSuccess) => {
+  return dispatch => {
+    dispatch(loaderTrue());
+    ApiInstance.post(`auth/forgot-password?phoneNumber=${phone}`)
+      .then(({data}) => {
+        onSuccess(true);
+      })
+      .finally(() => {
+        dispatch(loaderFalse());
+      });
+  };
+};
+
+export const resetPassword = (phone, otp, newPassword, onSuccess) => {
+  return dispatch => {
+    dispatch(loaderTrue());
+    ApiInstance.post(
+      `auth/reset-password?phoneNumber=${phone}&otp=${otp}&newPassword=${newPassword}`,
+    )
+      .then(({data}) => {
+        onSuccess(true);
+      })
+      .finally(() => {
+        dispatch(loaderFalse());
+      });
+  };
+};
+
 export const signup = (
   fullName,
   mobileNumber,
@@ -71,7 +114,7 @@ export const signup = (
       password,
       userType,
     };
-    console.log("🚀 ~ body:", body)
+    console.log('🚀 ~ body:', body);
     dispatch(loaderTrue());
     ApiInstance.post('auth/signup', body)
       .then(({data}) => {
@@ -125,7 +168,7 @@ export const getProfile = (user, isLogin = false) => {
         user?.userId,
     )
       .then(({data}) => {
-        if(isLogin) navigate('AppStack');
+        if (isLogin) navigate('AppStack');
         dispatch(saveUserProfile(data?.body));
         dispatch(getUserContacts(data?.body?.profileId));
       })
@@ -177,7 +220,7 @@ export const getUserInvites = onSuccess => {
     ApiInstanceWithJWT.get('invites/receiver/' + id)
       .then(({data}) => {
         console.log('🚀 ~ .then ~ data:', data);
-        onSuccess(data.filter(i=>i.inviteStatus !== 'ACCEPTED'));
+        onSuccess(data.filter(i => i.inviteStatus !== 'ACCEPTED'));
         // dispatch(saveUserContacts(data));
       })
       .finally(() => {
@@ -187,7 +230,11 @@ export const getUserInvites = onSuccess => {
 };
 
 export const deleteInvitePerm = (senderId, receiverId, onSuccess) => {
-  console.log("🚀 ~ deleteInvitePerm ~ senderId, receiverId:", senderId, receiverId)
+  console.log(
+    '🚀 ~ deleteInvitePerm ~ senderId, receiverId:',
+    senderId,
+    receiverId,
+  );
   return (dispatch, getState) => {
     const id = getState().user?.profile?.profileId;
     const url =
@@ -356,7 +403,7 @@ export const updateSellerProfile = (links, bio, goBack) => {
           saveUserProfile({
             ...getState().user?.profile,
             links,
-            bio
+            bio,
           }),
         );
       })

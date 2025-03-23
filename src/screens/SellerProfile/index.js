@@ -9,6 +9,7 @@ import {
   FlatList,
   Linking,
 } from 'react-native';
+import Share from 'react-native-share';
 import {Colors, Fonts} from '../../config';
 import LinearGradient from 'react-native-linear-gradient';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -19,11 +20,28 @@ import {logout} from '../../redux/actions/UserActions';
 import {useDispatch, useSelector} from 'react-redux';
 import {CommonActions} from '@react-navigation/native';
 const socialIcons = [
-  Images.instagram,
-  Images.facebook,
-  Images.tiktok,
-  Images.twitterX,
+  {icon: Images.instagram, social: Share.Social.INSTAGRAM},
+  {icon: Images.facebook, social: Share.Social.FACEBOOK},
+  {icon: Images.whatsapp, social: Share.Social.WHATSAPP},
+  {icon: Images.twitterX, social: Share.Social.TWITTER},
 ];
+
+const onPressSocialIcon = (social = undefined) => {
+  const shareOptions = {
+    title: 'INVITE',
+    message: 'You are invited to join nexsa app!',
+    url: 'https://www.google.com',
+    social,
+  };
+  const method = social ? Share.shareSingle : Share.open;
+  method(shareOptions)
+    .then(res => {
+      console.log(res);
+    })
+    .catch(err => {
+      err && console.log(err);
+    });
+};
 
 const SellerProfile = ({navigation}) => {
   const {top} = useSafeAreaInsets();
@@ -98,7 +116,7 @@ const SellerProfile = ({navigation}) => {
           <Text style={styles.email}>{user?.email}</Text>
           <GradientButton
             title="Invite Link"
-            onPress={() => {}}
+            onPress={() => onPressSocialIcon()}
             icon={Images.link}
             iconSize={20}
             noGradient
@@ -111,11 +129,11 @@ const SellerProfile = ({navigation}) => {
             {socialIcons.map((icon, index) => (
               <TouchableOpacity
                 key={index}
-                onPress={() => {}}
+                onPress={() => onPressSocialIcon(icon.social)}
                 activeOpacity={0.8}
                 style={styles.socialIcon}>
                 <Image
-                  source={icon}
+                  source={icon?.icon}
                   resizeMode="contain"
                   style={styles.socialIconImage}
                 />
