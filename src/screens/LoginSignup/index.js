@@ -17,6 +17,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {login, signup, sendOTP, verifyOTP} from '../../redux/middlewares/user';
 import * as EmailValidator from 'email-validator';
 import {errorToast} from '../../config/api';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const otpError = 'Please enter a valid OTP code.';
 const emailError = 'Please enter a valid email.';
@@ -80,7 +81,7 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
       dispatch(
         verifyOTP(phone, otp, isSuccess => {
           console.log(isSuccess, 'issuccess');
-          if (true) {
+          if (isSuccess) {
             dispatch(
               signup(
                 fullName,
@@ -93,11 +94,15 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
                 },
               ),
             );
+          } else {
+            errorToast({message: 'Invalid OTP'});
           }
         }),
       );
     }
   };
+
+  const {top} = useSafeAreaInsets();
 
   return (
     <LinearGradient
@@ -124,7 +129,7 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={goBack}
-          style={styles.backIconContainer}>
+          style={[styles.backIconContainer, {top: top + 10}]}>
           <Image source={Images.back} style={styles.back} />
         </TouchableOpacity>
       </ImageBackground>
@@ -205,13 +210,16 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
                   icon={Images.phone}
                   textInputProps={{
                     value: phone,
-                    editable: !otpSent,
-                    onChangeText: setPhone,
-                    keyboardType: 'number-pad',
+                    onChangeText: (val)=>{
+                      setPhone(val)
+                      setOtpSent(false)
+                      setOtp('')
+                    },
+                    keyboardType: 'phone-pad',
                     returnKeyType: 'next',
                     ref: phoneInput,
                     onSubmitEditing: () => {
-                      otpInput.current.focus();
+                      emailInput.current.focus();
                     },
                   }}
                 />
@@ -221,6 +229,7 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
                     icon={Images.otp}
                     textInputProps={{
                       value: otp,
+                      maxLength: 6,
                       onChangeText: setOtp,
                       keyboardType: 'number-pad',
                       returnKeyType: 'next',

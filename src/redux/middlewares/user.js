@@ -12,7 +12,7 @@ import {
 export const sendOTP = (phone, onSuccess) => {
   return dispatch => {
     dispatch(loaderTrue());
-    ApiInstance.post('/twilio/send-otp?phoneNumber=' + phone)
+    ApiInstance.post('/auth/send-otp?phoneNumber=' + phone)
       .then(({data}) => {
         console.log('🚀 ~ .then ~ data:', data);
         onSuccess(true);
@@ -41,9 +41,8 @@ export const sendInvite = (phone, link = 'https://google.com/') => {
 export const verifyOTP = (phone, otp, onSuccess) => {
   return dispatch => {
     dispatch(loaderTrue());
-    ApiInstance.post('/twilio/verify-otp?phoneNumber=' + phone + '&otp=' + otp)
+    ApiInstance.post('/auth/verify-otp?phoneNumber=' + phone + '&otp=' + otp)
       .then(({data}) => {
-        console.log('🚀 ~ .then ~sss data:', data);
         onSuccess(data);
       })
       .finally(() => {
