@@ -15,7 +15,7 @@ export const sendOTP = (phone, onSuccess) => {
     ApiInstance.post('/auth/send-otp?phoneNumber=' + phone)
       .then(({data}) => {
         console.log('🚀 ~ .then ~ data:', data);
-        onSuccess(true);
+        onSuccess(data);
       })
       .finally(() => {
         dispatch(loaderFalse());
@@ -39,6 +39,7 @@ export const sendInvite = (phone, link = 'https://google.com/') => {
 };
 
 export const verifyOTP = (phone, otp, onSuccess) => {
+  console.log("🚀 ~ verifyOTP ~ phone, otp, onSuccess:", phone, otp, onSuccess)
   return dispatch => {
     dispatch(loaderTrue());
     ApiInstance.post('/auth/verify-otp?phoneNumber=' + phone + '&otp=' + otp)

@@ -54,4 +54,5 @@ export default {
   check: require('./check.png'),
   close: require('./close.png'),
   invite: require('./invite.png'),
+  eyeOff: require('./eyeOff.png'),
 };

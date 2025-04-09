@@ -19,6 +19,7 @@ const TextInputCustom = ({
   isPassword = false,
   icon = null,
   iconStyles = {},
+  error = '',
 }) => {
   const [isSecureText, setIsSecureText] = React.useState(
     textInputProps.secureTextEntry,
@@ -29,6 +30,7 @@ const TextInputCustom = ({
       <TextInput
         style={[
           styles.input,
+          error && {borderColor: Colors.red},
           (isPassword || icon) && {paddingRight: 50},
           textInputStyle,
         ]}
@@ -41,7 +43,7 @@ const TextInputCustom = ({
           style={{position: 'absolute', right: 15, bottom: 22}}
           activeOpacity={0.8}>
           <Image
-            source={Images.eye}
+            source={isSecureText ? Images.eyeOff : Images.eye}
             style={{width: 24, height: 24, tintColor: Colors.lightGrey}}
           />
         </TouchableOpacity>
@@ -52,13 +54,25 @@ const TextInputCustom = ({
           style={{
             position: 'absolute',
             right: 15,
-            bottom: 22,
+            top: 37,
             width: 24,
             height: 24,
             tintColor: Colors.lightGrey,
             ...iconStyles,
           }}
         />
+      )}
+      {error && (
+        <Text
+          style={{
+            color: Colors.red,
+            marginBottom: 5,
+            marginLeft: 10,
+            fontSize: 12,
+            fontFamily: Fonts.RobotoRegular,
+          }}>
+          {error}
+        </Text>
       )}
     </View>
   );

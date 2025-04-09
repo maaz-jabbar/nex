@@ -24,8 +24,10 @@ import ViewGallery from './ViewGallery';
 import GalleryPhotoView from './GalleryPhotoView';
 import GalleryContacts from './GalleryContacts';
 import ForgotPassword from './ForgotPassword';
+import OTPScreen from './OTPScreen';
 
 export {
+  OTPScreen,
   ForgotPassword,
   GalleryPhotoView,
   GalleryContacts,

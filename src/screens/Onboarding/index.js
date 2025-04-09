@@ -40,7 +40,7 @@ const Onboarding = ({navigation}) => {
   const flatlistRef = React.useRef(null);
 
   const moveToLogin = () => {
-    navigation.navigate('LoginSignup');
+    navigation.navigate('LoginSignup', {loginActive: false});
   };
 
   const _renderItem = ({item, index}) => {

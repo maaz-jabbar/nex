@@ -29,7 +29,7 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
   const dispatch = useDispatch();
 
   const [loginActive, setLoginActive] = React.useState(
-    route?.params?.loginActive || true,
+    route?.params?.loginActive,
   );
   const userType = useSelector(state => state.user?.userType);
   const rememberMe = useSelector(state => state.user?.rememberMe);
@@ -46,6 +46,8 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
   const phoneInput = React.useRef(null);
   const emailInput = React.useRef(null);
   const passwordInput = React.useRef(null);
+
+  const [otpSendError, setOtpSendError] = React.useState('');
 
   const _onSubmit = () => {
     let message = [];
@@ -73,9 +75,21 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
     if (!otpSent) {
       dispatch(
         sendOTP(phone, isSent => {
-          setOtpSent(isSent);
+          if (isSent)
+            if (isSent?.includes('success')) {
+              navigate('OTPScreen', {
+                fullName,
+                phone,
+                email,
+                password,
+                isCustomer,
+              });
+            } else {
+              setOtpSendError(isSent);
+            }
         }),
       );
+
       return;
     } else {
       dispatch(
@@ -208,12 +222,14 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
                 <TextInputCustom
                   title="Phone Number"
                   icon={Images.phone}
+                  error={otpSendError}
                   textInputProps={{
                     value: phone,
-                    onChangeText: (val)=>{
-                      setPhone(val)
-                      setOtpSent(false)
-                      setOtp('')
+                    onChangeText: val => {
+                      setPhone(val);
+                      setOtpSent(false);
+                      setOtp('');
+                      setOtpSendError('');
                     },
                     keyboardType: 'phone-pad',
                     returnKeyType: 'next',
