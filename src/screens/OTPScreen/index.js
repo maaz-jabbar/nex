@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Image,
   ImageBackground,
@@ -13,7 +13,7 @@ import {Colors, Fonts} from '../../config';
 import Images from '../../assets';
 import {GradientButton, TextInputCustom} from '../../components';
 import {useDispatch} from 'react-redux';
-import {login, signup, verifyOTP} from '../../redux/middlewares/user';
+import {login, sendOTP, signup, verifyOTP} from '../../redux/middlewares/user';
 import {errorToast} from '../../config/api';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import OTPTextInput from 'react-native-otp-textinput';
@@ -24,6 +24,35 @@ const OTPScreen = ({route, navigation: {goBack, navigate}}) => {
   const dispatch = useDispatch();
   const [otp, setOtp] = React.useState('');
   const {fullName, phone, email, password, isCustomer} = route.params || {};
+  const [timer, setTimer] = useState(59);
+  const [canResend, setCanResend] = useState(false);
+
+  useEffect(() => {
+    if (timer === 0) {
+      setCanResend(true);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setTimer(prev => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timer]);
+
+  const handleResendOTP = () => {
+    dispatch(
+      sendOTP(phone, isSent => {
+        if (isSent)
+          if (isSent?.includes('success')) {
+            setTimer(59);
+            setCanResend(false);
+          } else {
+            errorToast({message: isSent});
+          }
+      }),
+    );
+  };
 
   const _onSubmit = () => {
     let message = [];
@@ -137,6 +166,20 @@ const OTPScreen = ({route, navigation: {goBack, navigate}}) => {
               handleTextChange={setOtp}
             />
           </View>
+          <Text style={{textAlign: 'center', marginTop: 20}}>
+            {canResend ? (
+              <Text
+                onPress={handleResendOTP}
+                style={{
+                  color: Colors.primary,
+                  textDecorationLine: 'underline',
+                }}>
+                Resend Code
+              </Text>
+            ) : (
+              `Resend OTP in 00:${timer < 10 ? `0${timer}` : timer}`
+            )}
+          </Text>
           <GradientButton
             buttonStyle={{alignSelf: 'center', width: 200, marginTop: 40}}
             onPress={_onSubmit}
