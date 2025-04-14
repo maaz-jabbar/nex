@@ -65,6 +65,7 @@ const OTPScreen = ({route, navigation: {goBack, navigate}}) => {
       verifyOTP(phone, otp, isSuccess => {
         console.log(isSuccess, 'issuccess');
         if (isSuccess) {
+          goBack();
           dispatch(
             signup(
               fullName,
