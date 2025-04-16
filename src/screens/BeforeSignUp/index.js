@@ -1,10 +1,10 @@
 import React, {useEffect} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {Colors, Fonts} from '../../config';
-import GradientButton from '../../components/GradientButton';
-import Images from '../../assets';
 import {useDispatch} from 'react-redux';
 import {loaderFalse, saveUserType} from '../../redux/actions/UserActions';
+import GradientButton from '../../components/GradientButton';
+import Images from '../../assets';
+import {Colors, Fonts} from '../../config';
 
 const BeforeSignUp = ({navigation}) => {
   const dispatch = useDispatch();
@@ -12,6 +12,7 @@ const BeforeSignUp = ({navigation}) => {
   useEffect(() => {
     dispatch(loaderFalse());
   }, []);
+
   const moveToOnboarding = customerType => {
     dispatch(saveUserType(customerType));
     navigation.navigate('Onboarding');
@@ -24,33 +25,27 @@ const BeforeSignUp = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <View />
-      <View>
-        <Text style={styles.welcomeText}>Welcome to Nexsa</Text>
-      </View>
-      <View
-        style={{
-          width: '80%',
-          alignItems: 'center',
-        }}>
+      <Text style={styles.welcomeText}>Welcome to Nexsa</Text>
+
+      <View style={styles.buttonContainer}>
         <GradientButton
           onPress={() => moveToOnboarding('CUSTOMER')}
           icon={Images.cart}
           title="Customer account"
         />
         <GradientButton
-          onPress={() => moveToOnboarding('seller')}
+          onPress={() => moveToOnboarding('SELLER')}
           icon={Images.cart}
           title="Seller account"
         />
       </View>
-      <View>
+
+      <View style={styles.signInContainer}>
         <Text style={styles.alreadyHaveAccount}>Already have an account?</Text>
         <Text style={styles.signIn} onPress={moveToLogin}>
           Sign In
         </Text>
       </View>
-      <View />
     </View>
   );
 };
@@ -71,11 +66,12 @@ const styles = StyleSheet.create({
     color: Colors.black,
     fontFamily: Fonts.JosefinSansSemiBold,
   },
-  instructions: {
-    fontSize: 24,
-    textAlign: 'center',
-    color: Colors.black,
-    fontFamily: Fonts.NothingYouCouldDoRegular,
+  buttonContainer: {
+    width: '80%',
+    alignItems: 'center',
+  },
+  signInContainer: {
+    alignItems: 'center',
   },
   alreadyHaveAccount: {
     fontSize: 14,

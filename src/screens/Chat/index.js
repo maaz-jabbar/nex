@@ -13,14 +13,8 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Colors, Fonts} from '../../config';
 import Images from '../../assets';
 import {ChatBubble, ContactAvatar, GradientButton} from '../../components';
-import {chat, myUser} from '../../dummyData';
 import {useDispatch, useSelector} from 'react-redux';
-import {baseURL} from '../../config/api';
-import {
-  getChats,
-  getMessages,
-  sendMessageAsync,
-} from '../../redux/middlewares/chat';
+import {getMessages, sendMessageAsync} from '../../redux/middlewares/chat';
 
 const Chat = ({route: {params}, navigation}) => {
   const dispatch = useDispatch();
@@ -28,19 +22,18 @@ const Chat = ({route: {params}, navigation}) => {
     navigation.goBack();
   };
   const [loader, setLoader] = React.useState(true);
+  const [sending, setSending] = React.useState(false);
+  const [message, setMessage] = React.useState('');
+  const [chatMessages, setChatMessages] = React.useState([]);
+
   const user = useSelector(state => state.user?.user);
   const conversation = params?.conversation;
+  const broadcast = params?.broadcast;
+  const isBroadcast = params?.isBroadcast;
   const chatWith = conversation?.user?.filter(
     sender => sender.userId !== user?.userId,
   )[0];
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      console.log('asdasd');
-      getAll();
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
+  const {top} = useSafeAreaInsets();
 
   const getAll = () => {
     setLoader(false);
@@ -53,12 +46,12 @@ const Chat = ({route: {params}, navigation}) => {
     );
   };
 
-  const broadcast = params?.broadcast;
-  const isBroadcast = params?.isBroadcast;
-  const {top} = useSafeAreaInsets();
-
-  const [message, setMessage] = React.useState('');
-  const [chatMessages, setChatMessages] = React.useState([]);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      getAll();
+    }, 3000); // Adjusted polling interval
+    return () => clearInterval(timer); // Fixed incorrect clearTimeout
+  }, []);
 
   const sendMessage = () => {
     if (message === '') return;
@@ -67,10 +60,11 @@ const Chat = ({route: {params}, navigation}) => {
       content: message,
       senderId: user?.userId,
     };
-    setLoader(true);
+    setSending(true);
     setMessage('');
-    dispatch(sendMessageAsync(messageObj, () => setLoader(false)));
+    dispatch(sendMessageAsync(messageObj, () => setSending(false)));
   };
+
   return (
     <View style={[styles.container, {paddingTop: top}]}>
       <View style={styles.header}>
@@ -82,11 +76,7 @@ const Chat = ({route: {params}, navigation}) => {
           />
         </TouchableOpacity>
         {isBroadcast ? (
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
             {broadcast?.users?.slice(0, 3)?.map((user, index) => {
               return (
                 <ContactAvatar
@@ -143,9 +133,13 @@ const Chat = ({route: {params}, navigation}) => {
           />
         </TouchableOpacity>
       </View>
+
       <FlatList
         inverted
         data={chatMessages}
+        keyExtractor={item =>
+          item?.messageId?.toString() || item?.timestamp?.toString()
+        }
         contentContainerStyle={{
           paddingHorizontal: 20,
           flexDirection: 'column-reverse',
@@ -159,11 +153,11 @@ const Chat = ({route: {params}, navigation}) => {
               sender={chatWith}
               message={item}
               nextChatBySameUser={nextChatBySameUser}
-              key={index}
             />
           );
         }}
       />
+
       <View style={styles.sendMessCont}>
         <Image
           source={Images.attachment}
@@ -173,19 +167,13 @@ const Chat = ({route: {params}, navigation}) => {
         <TextInput
           value={message}
           onChangeText={setMessage}
-          style={{
-            flex: 1,
-            color: Colors.black,
-            height: 48,
-            fontFamily: Fonts.RobotoRegular,
-            paddingHorizontal: 10,
-          }}
+          style={styles.textInput}
           placeholder="Type your message here..."
         />
         <GradientButton
-          icon={loader ? null : Images.send}
+          icon={sending ? null : Images.send}
           customComp={
-            loader ? <ActivityIndicator color={Colors.white} /> : null
+            sending ? <ActivityIndicator color={Colors.white} /> : null
           }
           onPress={sendMessage}
           containerStyle={styles.sendButtonCont}
@@ -239,6 +227,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.background,
+  },
+  textInput: {
+    flex: 1,
+    color: Colors.black,
+    height: 48,
+    fontFamily: Fonts.RobotoRegular,
+    paddingHorizontal: 10,
   },
   sendButton: {
     marginBottom: 0,

@@ -37,7 +37,9 @@ const ChatBubble = ({nextChatBySameUser, message, sender}) => {
         ]}>
         <View
           style={{
-            backgroundColor: !sentByMe ? Colors.primaryOpacity : Colors.secondaryOpacity,
+            backgroundColor: !sentByMe
+              ? Colors.primaryOpacity
+              : Colors.secondaryOpacity,
             padding: 10,
             paddingHorizontal: 20,
             borderRadius: 20,

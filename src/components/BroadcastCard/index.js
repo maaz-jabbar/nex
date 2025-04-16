@@ -32,7 +32,7 @@ const BroadcastCard = ({chat, onPress}) => {
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => setAttachmentModal('')}
-          style={{flex: 1}}>
+          style={styles.modalCont}>
           <Image
             source={{
               uri: `${baseURL}/images/upload/${attachmentModal}`,
@@ -41,7 +41,7 @@ const BroadcastCard = ({chat, onPress}) => {
               },
             }}
             resizeMode="contain"
-            style={{width: '100%', height: '100%'}}
+            style={styles.attachment1}
           />
         </TouchableOpacity>
       </ReactNativeModal>
@@ -49,59 +49,21 @@ const BroadcastCard = ({chat, onPress}) => {
         onPress={onPress}
         activeOpacity={0.8}
         style={styles.container}>
-        <Text
-          style={{
-            fontSize: 16,
-            color: Colors.black,
-            fontFamily: Fonts.RobotoRegular,
-            marginBottom: 5,
-          }}>
-          {chat?.title}
-        </Text>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 10,
-          }}>
-          <Text
-            numberOfLines={2}
-            style={{
-              flex: 1,
-              paddingRight: 30,
-              fontSize: 14,
-              color: Colors.lightGrey,
-              fontFamily: Fonts.RobotoRegular,
-            }}>
+        <Text style={styles.title}>{chat?.title}</Text>
+        <View style={styles.chatContentCont}>
+          <Text numberOfLines={2} style={styles.chat}>
             {chat?.content}
           </Text>
           <View>
-            <Text
-              style={{
-                fontSize: 14,
-                color: Colors.lightGrey,
-                fontFamily: Fonts.RobotoRegular,
-                textAlign: 'right',
-              }}>
+            <Text style={styles.time}>
               {moment(chat?.createdAt).format('DD/MM/YYYY')}
             </Text>
-            <Text
-              style={{
-                fontSize: 14,
-                color: Colors.lightGrey,
-                fontFamily: Fonts.RobotoRegular,
-                textAlign: 'right',
-              }}>
+            <Text style={styles.createdAt}>
               {moment(chat?.createdAt).format('hh:mm a')}
             </Text>
           </View>
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
+        <View style={styles.peopleCont}>
           {!!chat?.attachmentId?.length &&
             chat?.attachmentId?.map(data => {
               return (
@@ -109,18 +71,12 @@ const BroadcastCard = ({chat, onPress}) => {
                   onPress={() => setAttachmentModal(data)}
                   activeOpacity={0.8}
                   style={styles.attachment}>
-                  <Text style={styles.attachmentTextName}>
-                    {data}
-                  </Text>
+                  <Text style={styles.attachmentTextName}>{data}</Text>
                 </TouchableOpacity>
               );
             })}
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
+        <View style={styles.peopleCont}>
           {chat?.receiverIds?.slice(0, 3)?.map((user, index) => {
             const userTemp = {userId: user};
             return (
@@ -134,23 +90,8 @@ const BroadcastCard = ({chat, onPress}) => {
             );
           })}
           {chat?.receiverIds?.length > 3 && (
-            <View
-              style={{
-                borderRadius: 34 / 2,
-                backgroundColor: Colors.white,
-                height: 34,
-                width: 34,
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginRight: -7,
-                borderWidth: 2,
-                borderColor: Colors.darkGrey,
-              }}>
-              <Text
-                style={{
-                  color: Colors.darkerGrey,
-                  fontFamily: Fonts.RobotoRegular,
-                }}>
+            <View style={styles.remainingCont}>
+              <Text style={styles.remainingText}>
                 {chat?.receiverIds?.length - 3}
               </Text>
             </View>
@@ -164,6 +105,63 @@ const BroadcastCard = ({chat, onPress}) => {
 export default BroadcastCard;
 
 const styles = StyleSheet.create({
+  remainingText: {
+    color: Colors.darkerGrey,
+    fontFamily: Fonts.RobotoRegular,
+  },
+  remainingCont: {
+    borderRadius: 34 / 2,
+    backgroundColor: Colors.white,
+    height: 34,
+    width: 34,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: -7,
+    borderWidth: 2,
+    borderColor: Colors.darkGrey,
+  },
+  peopleCont: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  createdAt: {
+    fontSize: 14,
+    color: Colors.lightGrey,
+    fontFamily: Fonts.RobotoRegular,
+    textAlign: 'right',
+  },
+  time: {
+    fontSize: 14,
+    color: Colors.lightGrey,
+    fontFamily: Fonts.RobotoRegular,
+    textAlign: 'right',
+  },
+  chat: {
+    flex: 1,
+    paddingRight: 30,
+    fontSize: 14,
+    color: Colors.lightGrey,
+    fontFamily: Fonts.RobotoRegular,
+  },
+  chatContentCont: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  title: {
+    fontSize: 16,
+    color: Colors.black,
+    fontFamily: Fonts.RobotoRegular,
+    marginBottom: 5,
+  },
+  attachment1: {
+    width: '100%',
+    height: '100%',
+  },
+  modalCont: {
+    flex: 1,
+  },
   container: {
     padding: 10,
   },

@@ -1,19 +1,17 @@
-import React, {useEffect, useState} from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React from 'react';
+import {Image, StyleSheet, Text, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {GradientButton, TextInputCustom, ToggleButton} from '../../components';
+import {GradientButton} from '../../components';
 import ReactNativeModal from 'react-native-modal';
 import {Colors, Fonts} from '../../config';
-import LinearGradient from 'react-native-linear-gradient';
 import Images from '../../assets';
-import {launchImageLibrary} from 'react-native-image-picker';
-import { useDispatch } from 'react-redux';
-import { deleteGalleryFromServer } from '../../redux/middlewares/gallery';
+import {useDispatch} from 'react-redux';
+import {deleteGalleryFromServer} from '../../redux/middlewares/gallery';
 
 const DeleteGalleryModal = ({isVisible, setVisible}) => {
   const {top} = useSafeAreaInsets();
-
   const dispatch = useDispatch();
+
   const deleteGallery = () => {
     setVisible(false);
     dispatch(deleteGalleryFromServer(isVisible));
@@ -22,18 +20,12 @@ const DeleteGalleryModal = ({isVisible, setVisible}) => {
   return (
     <ReactNativeModal
       isVisible={!!isVisible}
-      onBackdropPress={() => {
-        setVisible(false);
-      }}
-      onBackButtonPress={() => {
-        setVisible(false);
-      }}
-      animationIn={'zoomIn'}
-      animationOut={'zoomOut'}
+      onBackdropPress={() => setVisible(false)}
+      onBackButtonPress={() => setVisible(false)}
+      animationIn="zoomIn"
+      animationOut="zoomOut"
       style={[styles.popupModal, {paddingTop: top}]}
-      onDismiss={() => {
-        setVisible(false);
-      }}>
+      onDismiss={() => setVisible(false)}>
       <View style={styles.popup}>
         <View style={styles.deleteIconCont}>
           <Image source={Images.delete} style={styles.deleteIcon} />
@@ -44,21 +36,14 @@ const DeleteGalleryModal = ({isVisible, setVisible}) => {
         </Text>
         <Text style={styles.text2}>This process cannot be undone</Text>
         <GradientButton
-          title={'Delete Gallery'}
+          title="Delete Gallery"
           onPress={deleteGallery}
-          buttonStyle={{
-            alignSelf: 'center',
-            width: 150,
-            marginTop: 20,
-            marginBottom: 0,
-          }}
+          buttonStyle={styles.deleteButton}
         />
       </View>
     </ReactNativeModal>
   );
 };
-
-export default DeleteGalleryModal;
 
 const styles = StyleSheet.create({
   deleteIcon: {
@@ -73,7 +58,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 2,
     borderColor: Colors.primary,
-    borderRadius: 100 / 2,
+    borderRadius: 50,
   },
   popup: {
     padding: 40,
@@ -103,4 +88,12 @@ const styles = StyleSheet.create({
     color: Colors.textGrey,
     marginBottom: 10,
   },
+  deleteButton: {
+    alignSelf: 'center',
+    width: 150,
+    marginTop: 20,
+    marginBottom: 0,
+  },
 });
+
+export default DeleteGalleryModal;

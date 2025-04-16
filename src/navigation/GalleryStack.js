@@ -6,7 +6,7 @@ import {
   GalleryPhotoView,
   GalleryContacts,
 } from '../screens';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 
 const Stack = createNativeStackNavigator();
 
@@ -14,7 +14,7 @@ const GalleryStack = () => {
   const userType = useSelector(state => state.user?.user?.userType);
   return (
     <Stack.Navigator
-      initialRouteName={userType === "CUSTOMER" ? 'GalleryContacts' : 'Gallery'}
+      initialRouteName={userType === 'CUSTOMER' ? 'GalleryContacts' : 'Gallery'}
       screenOptions={{headerShown: false}}>
       <Stack.Screen name="GalleryContacts" component={GalleryContacts} />
       <Stack.Screen name="Gallery" component={Gallery} />

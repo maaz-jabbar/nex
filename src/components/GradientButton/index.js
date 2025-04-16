@@ -35,7 +35,7 @@ const GradientButton = ({
         end={{x: 1, y: 0}}
         style={[
           styles.linearGradient,
-          !icon && {justifyContent: 'center'},
+          !icon && styles.justifyCenter,
           noGradient && styles.border,
           containerStyle,
         ]}>
@@ -50,7 +50,11 @@ const GradientButton = ({
         {!!title && (
           <Text
             numberOfLines={1}
-            style={[styles.buttonText, !icon && {marginLeft: 0}, textStyle]}>
+            style={[
+              styles.buttonText,
+              !icon && styles.noIconTextMargin,
+              textStyle,
+            ]}>
             {title}
           </Text>
         )}
@@ -59,9 +63,7 @@ const GradientButton = ({
             <Text
               style={[
                 styles.indicatorText,
-                {
-                  color: noGradient ? Colors.darkerGrey : Colors.secondary,
-                },
+                {color: noGradient ? Colors.darkerGrey : Colors.secondary},
               ]}>
               {indicator}
             </Text>
@@ -75,10 +77,6 @@ const GradientButton = ({
 export default GradientButton;
 
 const styles = StyleSheet.create({
-  indicatorText: {
-    fontSize: 16,
-    fontFamily: Fonts.RobotoBold,
-  },
   button: {
     width: '100%',
     marginBottom: 20,
@@ -91,11 +89,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     height: 48,
   },
+  justifyCenter: {
+    justifyContent: 'center',
+  },
   buttonText: {
     color: Colors.white,
     fontSize: 16,
     fontFamily: Fonts.RobotoBold,
     marginLeft: 20,
+  },
+  noIconTextMargin: {
+    marginLeft: 0,
   },
   border: {
     borderWidth: 2,
@@ -109,5 +113,9 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  indicatorText: {
+    fontSize: 16,
+    fontFamily: Fonts.RobotoBold,
   },
 });

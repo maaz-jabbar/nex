@@ -16,7 +16,7 @@ const Stack = createNativeStackNavigator();
 const CustomerProfileCreationStack = () => {
   const userType = useSelector(state => state.user?.userType);
   const isCustomer = userType === 'CUSTOMER';
-  
+
   return (
     <Stack.Navigator
       screenOptions={{

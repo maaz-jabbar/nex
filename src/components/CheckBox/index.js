@@ -15,24 +15,19 @@ const CheckBox = ({
     <View style={styles.container}>
       <TouchableOpacity
         onPress={setIsChecked}
-        style={{
-          width: size,
-          height: size,
-          borderRadius: rounded ? size / 2 : 5,
-          borderWidth: isChecked ? 0 : 1,
-          overflow: 'hidden',
-          borderColor: Colors.lightGrey,
-          marginRight: 10,
-          backgroundColor: isChecked ? Colors.lightGrey : Colors.white,
-        }}>
+        style={[
+          styles.checkbox,
+          {
+            width: size,
+            height: size,
+            borderRadius: rounded ? size / 2 : 5,
+            borderWidth: isChecked ? 0 : 1,
+            backgroundColor: isChecked ? Colors.lightGrey : Colors.white,
+          },
+        ]}>
         {isChecked && (
           <LinearGradient
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              width: size,
-              height: size,
-            }}
+            style={[styles.gradientBox, {width: size, height: size}]}
             start={{x: 0, y: 0}}
             end={{x: 1, y: 0}}
             colors={
@@ -48,11 +43,7 @@ const CheckBox = ({
           </LinearGradient>
         )}
       </TouchableOpacity>
-      {title && (
-        <Text style={{color: Colors.black, fontFamily: Fonts.RobotoMedium}}>
-          {title}
-        </Text>
-      )}
+      {title && <Text style={styles.title}>{title}</Text>}
     </View>
   );
 };
@@ -65,13 +56,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginLeft: 10,
   },
-  gradient: {
-    flex: 1,
+  checkbox: {
+    overflow: 'hidden',
+    borderColor: Colors.lightGrey,
+    marginRight: 10,
+  },
+  gradientBox: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   tick: {
     width: 15,
     height: 20,
     resizeMode: 'contain',
     tintColor: Colors.white,
+  },
+  title: {
+    color: Colors.black,
+    fontFamily: Fonts.RobotoMedium,
   },
 });

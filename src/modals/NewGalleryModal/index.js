@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {GradientButton, TextInputCustom, ToggleButton} from '../../components';
@@ -23,7 +23,6 @@ const NewGalleryModal = ({
   const [description, setDescription] = useState(data?.description || '');
   const [notifications, setNotifications] = useState(false);
   const [imagePicked, setImagePicked] = useState(data?.coverImage || null);
-  console.log('🚀 ~ imagePicked:', imagePicked);
   const agentProfileId = useSelector(state => state.user?.profile?.profileId);
   const jwt = useSelector(state => state?.user?.user?.jwt);
 
@@ -41,55 +40,38 @@ const NewGalleryModal = ({
     setDescription('');
   };
 
-  const addGallery = () => {
+  const addGallery = useCallback(() => {
     if (!imagePicked || !name || !description) return;
     dispatch(
       uploadMedia(
         {uri: imagePicked, type: 'image/*', name: Date.now()?.toString()},
         coverImage => {
-          const body = {
-            name,
-            description,
-            coverImage,
-            agentProfileId,
-          };
+          const body = {name, description, coverImage, agentProfileId};
           dispatch(createGallery(body));
         },
       ),
     );
     setVisible(false);
     emptyData();
-  };
+  }, [imagePicked, name, description, agentProfileId, dispatch, setVisible]);
 
-  const updateGallery = () => {
+  const updateGallery = useCallback(() => {
     if (!imagePicked || !name || !description) return;
-    if (imagePicked === data?.coverImage) {
-      const body = {
-        name,
-        description,
-        coverImage: data?.coverImage,
-      };
-      dispatch(putGallery(data?.galleryId, body));
-      setVisible(false);
-      emptyData();
-      return;
-    }
+
+    const coverImage =
+      imagePicked === data?.coverImage ? data?.coverImage : imagePicked;
     dispatch(
       uploadMedia(
-        {uri: imagePicked, type: 'image/*', name: Date.now()?.toString()},
-        coverImage => {
-          const body = {
-            name,
-            description,
-            coverImage,
-          };
+        {uri: coverImage, type: 'image/*', name: Date.now()?.toString()},
+        updatedCoverImage => {
+          const body = {name, description, coverImage: updatedCoverImage};
           dispatch(putGallery(data?.galleryId, body));
         },
       ),
     );
     setVisible(false);
     emptyData();
-  };
+  }, [imagePicked, name, description, data, dispatch, setVisible]);
 
   const pickImage = () => {
     launchImageLibrary(

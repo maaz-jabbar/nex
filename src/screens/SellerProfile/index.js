@@ -6,7 +6,6 @@ import {
   View,
   Image,
   ScrollView,
-  FlatList,
   Linking,
 } from 'react-native';
 import Share from 'react-native-share';
@@ -14,11 +13,11 @@ import {Colors, Fonts} from '../../config';
 import LinearGradient from 'react-native-linear-gradient';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Images from '../../assets';
-import {ContactAvatar, GradientButton, ToggleButton} from '../../components';
-import {brands, contacts} from '../../dummyData';
-import {logout} from '../../redux/actions/UserActions';
+import {ContactAvatar, GradientButton} from '../../components';
 import {useDispatch, useSelector} from 'react-redux';
 import {CommonActions} from '@react-navigation/native';
+import {logout} from '../../redux/actions/UserActions';
+
 const socialIcons = [
   {icon: Images.instagram, social: Share.Social.INSTAGRAM},
   {icon: Images.facebook, social: Share.Social.FACEBOOK},
@@ -35,12 +34,8 @@ const onPressSocialIcon = (social = undefined) => {
   };
   const method = social ? Share.shareSingle : Share.open;
   method(shareOptions)
-    .then(res => {
-      console.log(res);
-    })
-    .catch(err => {
-      err && console.log(err);
-    });
+    .then(res => console.log(res))
+    .catch(err => err && console.log(err));
 };
 
 const SellerProfile = ({navigation}) => {
@@ -49,9 +44,7 @@ const SellerProfile = ({navigation}) => {
   const user = useSelector(state => state.user?.user);
   const profile = useSelector(state => state.user?.profile);
 
-  const _goBack = () => {
-    navigation.goBack();
-  };
+  const _goBack = () => navigation.goBack();
 
   const logoutButton = () => {
     dispatch(logout());
@@ -62,18 +55,13 @@ const SellerProfile = ({navigation}) => {
       }),
     );
   };
-  const moveToEditProfile = () => {
-    navigation.navigate('SellerEditProfile');
-  };
+
+  const moveToEditProfile = () => navigation.navigate('SellerEditProfile');
 
   return (
     <View style={styles.container}>
       <LinearGradient
-        style={{
-          paddingTop: top,
-          overflow: 'visible',
-          zIndex: 1,
-        }}
+        style={[styles.headerGradient, {paddingTop: top}]}
         start={{x: 0, y: 0}}
         end={{x: 1, y: 0}}
         colors={[Colors.primary, Colors.secondary]}>
@@ -98,17 +86,12 @@ const SellerProfile = ({navigation}) => {
           contact={user}
           displayName={false}
           size={120}
-          containerStyle={{
-            marginRight: 0,
-            marginTop: 20,
-            marginBottom: -60,
-            zIndex: 99,
-          }}
+          containerStyle={styles.avatarContainer}
         />
       </LinearGradient>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.lowerContentContainer}
+        contentContainerStyle={styles.scrollContent}
         style={styles.container}>
         <View style={styles.info}>
           <Text style={styles.name}>{user?.fullName}</Text>
@@ -120,11 +103,11 @@ const SellerProfile = ({navigation}) => {
             icon={Images.link}
             iconSize={20}
             noGradient
-            iconStyle={{tintColor: Colors.black}}
-            buttonStyle={{width: 150, marginTop: 30, marginBottom: 10}}
-            textStyle={{color: Colors.black, marginLeft: 10}}
+            iconStyle={styles.iconStyle}
+            buttonStyle={styles.inviteButton}
+            textStyle={styles.inviteText}
           />
-          <Text style={styles.email}>Share Nexsa. Unlock rewards</Text>
+          <Text style={styles.shareText}>Share Nexsa. Unlock rewards</Text>
           <View style={styles.socialIcons}>
             {socialIcons.map((icon, index) => (
               <TouchableOpacity
@@ -143,25 +126,14 @@ const SellerProfile = ({navigation}) => {
           <View style={styles.buttons}>
             <GradientButton
               title="Settings"
-              buttonStyle={{
-                width: 150,
-                alignSelf: 'center',
-                backgroundColor: Colors.secondary,
-                marginRight: 10,
-                borderRadius: 50,
-              }}
+              buttonStyle={styles.settingsButton}
               noGradient
-              iconStyle={{tintColor: Colors.white}}
+              iconStyle={styles.settingsIcon}
               icon={Images.settings}
             />
             <GradientButton
               title="Plan"
-              buttonStyle={{
-                borderRadius: 50,
-                width: 150,
-                alignSelf: 'center',
-                backgroundColor: Colors.secondary,
-              }}
+              buttonStyle={styles.planButton}
               noGradient
               icon={Images.idea}
             />
@@ -169,33 +141,24 @@ const SellerProfile = ({navigation}) => {
           <Text style={styles.preferences}>Bio</Text>
           <Text style={styles.bio}>{profile?.bio}</Text>
           {!!profile?.links?.length &&
-            profile?.links.map((link, index) => {
-              return (
-                <GradientButton
-                  key={index}
-                  noGradient
-                  onPress={() => {
-                    Linking.openURL(link);
-                  }}
-                  icon={Images.link}
-                  iconSize={20}
-                  iconStyle={{tintColor: Colors.secondary}}
-                  title={link}
-                  textStyle={{color: Colors.secondary, flex: 1, marginLeft: 10}}
-                  buttonStyle={{marginBottom: 0}}
-                  containerStyle={{
-                    borderWidth: 0,
-                    height: undefined,
-                    paddingVertical: 5,
-                    paddingHorizontal: 0,
-                  }}
-                />
-              );
-            })}
+            profile?.links.map((link, index) => (
+              <GradientButton
+                key={index}
+                noGradient
+                onPress={() => Linking.openURL(link)}
+                icon={Images.link}
+                iconSize={20}
+                iconStyle={styles.linkIcon}
+                title={link}
+                textStyle={styles.linkText}
+                buttonStyle={styles.linkButton}
+                containerStyle={styles.linkContainer}
+              />
+            ))}
         </View>
         <GradientButton
           title="Edit Profile"
-          buttonStyle={{width: 150, alignSelf: 'center', marginTop: 20}}
+          buttonStyle={styles.editProfileButton}
           onPress={moveToEditProfile}
         />
       </ScrollView>
@@ -206,65 +169,62 @@ const SellerProfile = ({navigation}) => {
 export default SellerProfile;
 
 const styles = StyleSheet.create({
-  buttons: {
+  container: {
+    flex: 1,
+    backgroundColor: Colors.white,
+  },
+  headerGradient: {
+    overflow: 'visible',
+    zIndex: 1,
+  },
+  header: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  list: {
-    marginBottom: 20,
-  },
-  brandItem: {
-    marginRight: 10,
-    backgroundColor: Colors.secondary,
-    padding: 10,
-    paddingHorizontal: 15,
-    borderRadius: 20,
-  },
-  brandItemText: {
-    fontFamily: Fonts.RobotoRegular,
-    fontSize: 14,
-    color: Colors.white,
-  },
-  bio: {
-    fontFamily: Fonts.RobotoRegular,
-    fontSize: 14,
-    color: Colors.black,
-    marginVertical: 10,
-    alignSelf: 'flex-start',
-  },
-  listContent: {
+    paddingHorizontal: 20,
     paddingVertical: 10,
   },
-  preferences: {
-    alignSelf: 'flex-start',
-    fontFamily: Fonts.RobotoMedium,
-    fontSize: 14,
-    color: Colors.lightGrey,
-  },
-  socialIcons: {
+  backButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 30,
   },
-  socialIconImage: {
-    width: 30,
-    height: 30,
+  backIcon: {
+    width: 25,
+    height: 25,
+    marginRight: 5,
+    tintColor: Colors.white,
   },
-  socialIcon: {
-    marginRight: 10,
+  logoutIcon: {
+    tintColor: Colors.white,
+    width: 20,
+    height: 20,
+    marginLeft: 5,
   },
-  listItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  back: {
+    fontFamily: Fonts.RobotoRegular,
+    fontSize: 15,
+    color: Colors.white,
+  },
+  title: {
+    color: Colors.white,
+    fontSize: 24,
+    fontFamily: Fonts.RobotoBold,
+    marginLeft: 10,
+  },
+  avatarContainer: {
+    marginRight: 0,
+    marginTop: 20,
+    marginBottom: -60,
+    zIndex: 99,
+  },
+  scrollContent: {
+    flexGrow: 1,
     justifyContent: 'space-between',
-    marginBottom: 20,
-    alignSelf: 'stretch',
+    padding: 20,
+    paddingTop: 80,
   },
-  listTitle: {
-    fontFamily: Fonts.RobotoMedium,
-    fontSize: 14,
-    color: Colors.black,
+  info: {
+    alignItems: 'center',
   },
   name: {
     fontSize: 36,
@@ -283,51 +243,90 @@ const styles = StyleSheet.create({
     color: Colors.textGrey,
     marginTop: 5,
   },
-  info: {
-    alignItems: 'center',
+  shareText: {
+    fontSize: 15,
+    fontFamily: Fonts.RobotoRegular,
+    color: Colors.textGrey,
+    marginTop: 10,
   },
-  container: {
-    flex: 1,
-    backgroundColor: Colors.white,
-  },
-  lowerContentContainer: {
-    flexGrow: 1,
-    justifyContent: 'space-between',
-    padding: 20,
-    paddingTop: 80,
-  },
-  header: {
+  socialIcons: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    marginTop: 10,
+    marginBottom: 30,
   },
-  title: {
-    color: Colors.white,
-    fontSize: 24,
-    fontFamily: Fonts.RobotoBold,
+  socialIconImage: {
+    width: 30,
+    height: 30,
+  },
+  socialIcon: {
+    marginRight: 10,
+  },
+  buttons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  settingsButton: {
+    width: 150,
+    alignSelf: 'center',
+    backgroundColor: Colors.secondary,
+    marginRight: 10,
+    borderRadius: 50,
+  },
+  settingsIcon: {
+    tintColor: Colors.white,
+  },
+  planButton: {
+    borderRadius: 50,
+    width: 150,
+    alignSelf: 'center',
+    backgroundColor: Colors.secondary,
+  },
+  preferences: {
+    alignSelf: 'flex-start',
+    fontFamily: Fonts.RobotoMedium,
+    fontSize: 14,
+    color: Colors.lightGrey,
+  },
+  bio: {
+    fontFamily: Fonts.RobotoRegular,
+    fontSize: 14,
+    color: Colors.black,
+    marginVertical: 10,
+    alignSelf: 'flex-start',
+  },
+  linkIcon: {
+    tintColor: Colors.secondary,
+  },
+  linkText: {
+    color: Colors.secondary,
+    flex: 1,
     marginLeft: 10,
   },
-  backIcon: {
-    width: 25,
-    height: 25,
-    marginRight: 5,
-    tintColor: Colors.white,
+  linkButton: {
+    marginBottom: 0,
   },
-  logoutIcon: {
-    tintColor: Colors.white,
-    width: 20,
-    height: 20,
-    marginLeft: 5,
+  linkContainer: {
+    borderWidth: 0,
+    height: undefined,
+    paddingVertical: 5,
+    paddingHorizontal: 0,
   },
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  editProfileButton: {
+    width: 150,
+    alignSelf: 'center',
+    marginTop: 20,
   },
-  back: {
-    fontFamily: Fonts.RobotoRegular,
-    fontSize: 15,
-    color: Colors.white,
+  iconStyle: {
+    tintColor: Colors.black,
+  },
+  inviteButton: {
+    width: 150,
+    marginTop: 30,
+    marginBottom: 10,
+  },
+  inviteText: {
+    color: Colors.black,
+    marginLeft: 10,
   },
 });

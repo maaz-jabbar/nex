@@ -1,6 +1,12 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {BeforeSignUp, ForgotPassword, LoginSignup, Onboarding, OTPScreen} from '../screens';
+import {
+  BeforeSignUp,
+  ForgotPassword,
+  LoginSignup,
+  Onboarding,
+  OTPScreen,
+} from '../screens';
 
 const Stack = createNativeStackNavigator();
 

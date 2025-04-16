@@ -1,7 +1,6 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Home, Gallery} from '../screens';
-import {StyleSheet} from 'react-native';
+import {Home} from '../screens';
 import TabbarCustom from '../components/Tabbar';
 import ContactsStack from './ContactsStack';
 import ChatStack from './ChatStack';
@@ -26,10 +25,3 @@ const AppStack = () => {
 };
 
 export default AppStack;
-
-const styles = StyleSheet.create({
-  icon: {
-    width: 25,
-    height: 25,
-  },
-});

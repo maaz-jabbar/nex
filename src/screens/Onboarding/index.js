@@ -1,124 +1,114 @@
-import React from 'react';
+import React, {useRef, useState} from 'react';
 import {
   Dimensions,
   FlatList,
   Image,
-  LayoutAnimation,
   StyleSheet,
   Text,
   View,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
 } from 'react-native';
 import {Colors, Fonts} from '../../config';
 import Images from '../../assets';
 import GradientButton from '../../components/GradientButton';
 import LinearGradient from 'react-native-linear-gradient';
 
-const data = [
+const SCREEN_WIDTH = Dimensions.get('screen').width;
+
+const onboardingData = [
   {
     image: Images.onboarding1,
     title: 'Create\nMass Message',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ',
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
   },
   {
     image: Images.onboarding1,
     title: 'Create\nMass Message',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ',
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
   },
   {
     image: Images.onboarding1,
     title: 'Create\nMass Message',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ',
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
   },
 ];
 
 const Onboarding = ({navigation}) => {
-  const {width} = Dimensions.get('screen');
-  const [currentIndex, setCurrentIndex] = React.useState(0);
-  const flatlistRef = React.useRef(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const flatListRef = useRef(null);
 
-  const moveToLogin = () => {
-    navigation.navigate('LoginSignup', {loginActive: false});
+  const handleNext = () => {
+    if (currentIndex === onboardingData.length - 1) {
+      navigation.navigate('LoginSignup', {loginActive: false});
+    } else {
+      flatListRef.current.scrollToIndex({index: currentIndex + 1});
+    }
   };
 
-  const _renderItem = ({item, index}) => {
-    return (
-      <View style={[styles.item, {width}]} key={index}>
-        <Image
-          source={item.image}
-          style={{width: 250, height: 250}}
-          resizeMode="contain"
-        />
-        <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.description}>{item.description}</Text>
-      </View>
+  const handleScroll = ({nativeEvent}) => {
+    const newIndex = Math.round(
+      nativeEvent.contentOffset.x / nativeEvent.layoutMeasurement.width,
     );
-  };
-
-  const _pageIndicator = () => {
-    return (
-      <View style={styles.pageIndicatorContainer}>
-        <GradientButton
-          title="Next"
-          onPress={() => {
-            if (currentIndex === data.length - 1) {
-              moveToLogin();
-              return;
-            }
-            flatlistRef.current.scrollToIndex({
-              index: currentIndex + 1,
-              viewOffset: 0,
-              viewPosition: 0,
-            });
-          }}
-          buttonStyle={{width: 150, marginTop: 20}}
-        />
-
-        <Text onPress={moveToLogin} style={styles.skip}>
-          Skip
-        </Text>
-        <View style={styles.pageIndicator}>
-          {data.map((_, index) => (
-            <LinearGradient
-              colors={
-                index === currentIndex
-                  ? [Colors.primary, Colors.secondary]
-                  : [Colors.darkGrey, Colors.darkGrey]
-              }
-              start={{x: 0, y: 0}}
-              end={{x: 1, y: 0}}
-              style={styles.dot}
-              key={index}
-            />
-          ))}
-        </View>
-      </View>
-    );
-  };
-
-  const _changeIndex = ({nativeEvent}) => {
-    const totalWidth = nativeEvent.layoutMeasurement.width;
-    const xPosition = nativeEvent.contentOffset.x;
-    const newIndex = Math.round(xPosition / totalWidth);
     if (newIndex !== currentIndex) {
       setCurrentIndex(newIndex);
     }
   };
+
+  const renderItem = ({item}) => (
+    <View style={[styles.itemContainer, {width: SCREEN_WIDTH}]}>
+      <Image source={item.image} style={styles.image} resizeMode="contain" />
+      <Text style={styles.title}>{item.title}</Text>
+      <Text style={styles.description}>{item.description}</Text>
+    </View>
+  );
+
+  const renderPagination = () => (
+    <View style={styles.paginationContainer}>
+      <GradientButton
+        title="Next"
+        onPress={handleNext}
+        buttonStyle={styles.nextButton}
+      />
+      <Text
+        onPress={() => navigation.navigate('LoginSignup', {loginActive: false})}
+        style={styles.skip}>
+        Skip
+      </Text>
+      <View style={styles.dotsContainer}>
+        {onboardingData.map((_, index) => (
+          <LinearGradient
+            key={index}
+            colors={
+              index === currentIndex
+                ? [Colors.primary, Colors.secondary]
+                : [Colors.darkGrey, Colors.darkGrey]
+            }
+            style={styles.dot}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}
+          />
+        ))}
+      </View>
+    </View>
+  );
+
   return (
     <View style={styles.container}>
       <FlatList
-        ref={flatlistRef}
+        ref={flatListRef}
         horizontal
         pagingEnabled
-        data={data}
-        renderItem={_renderItem}
-        style={{flex: 1}}
         showsHorizontalScrollIndicator={false}
-        onScroll={_changeIndex}
+        data={onboardingData}
+        renderItem={renderItem}
+        keyExtractor={(_, index) => index.toString()}
+        onScroll={handleScroll}
       />
-      {_pageIndicator()}
+      {renderPagination()}
     </View>
   );
 };
@@ -130,9 +120,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.white,
   },
-  item: {
+  itemContainer: {
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  image: {
+    width: 250,
+    height: 250,
   },
   title: {
     fontSize: 28,
@@ -149,24 +144,30 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.RobotoRegular,
     marginHorizontal: 30,
   },
+  paginationContainer: {
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  nextButton: {
+    width: 150,
+    marginTop: 20,
+  },
   skip: {
     fontSize: 14,
     textAlign: 'center',
     fontFamily: Fonts.RobotoMedium,
     color: Colors.secondary,
+    marginTop: 10,
+  },
+  dotsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginVertical: 30,
   },
   dot: {
     width: 13,
     height: 13,
-    borderRadius: 13 / 2,
+    borderRadius: 6.5,
     marginHorizontal: 5,
-  },
-  pageIndicator: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginVertical: 50,
-  },
-  pageIndicatorContainer: {
-    alignItems: 'center',
   },
 });

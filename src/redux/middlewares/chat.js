@@ -10,22 +10,22 @@ export const getChats = (loaderStop = () => {}) => {
   return (dispatch, getState) => {
     const chatsLength = getState().user?.chats?.length;
     const user = getState().user?.user;
-    const userType = getState().user?.userType
+    const userType = getState().user?.userType;
     const isCustomer = userType === 'CUSTOMER';
-    console.log("🚀 ~ getChats ~ loaderStop:")
-  
+    console.log('🚀 ~ getChats ~ loaderStop:');
+
     if (!chatsLength) dispatch(loaderTrue());
     ApiInstanceWithJWT.get('/chat/conversations/' + user?.userId)
       .then(({data}) => {
-        console.log("🚀 ~ .then ~ data:", data)
+        console.log('🚀 ~ .then ~ data:', data);
         const filteredData = data?.filter(chat => {
           if (isCustomer) {
             return true;
           } else {
             return !chat?.broadcasted;
           }
-        })
-        
+        });
+
         dispatch(saveUserChats(filteredData));
       })
       .catch(err => {

@@ -1,4 +1,9 @@
-import {ApiInstance, ApiInstanceWithJWT, errorToast, successToast} from '../../config/api';
+import {
+  ApiInstance,
+  ApiInstanceWithJWT,
+  errorToast,
+  successToast,
+} from '../../config/api';
 import {navigate} from '../../navigation/navigationService';
 import {
   loaderFalse,
@@ -25,12 +30,9 @@ export const sendOTP = (phone, onSuccess) => {
 export const sendInvite = (phone, link = 'https://google.com/') => {
   return dispatch => {
     dispatch(loaderTrue());
-    ApiInstanceWithJWT.post(
-      `/twilio/send-invites?inviteLink=${link}`,
-      [phone],
-    )
+    ApiInstanceWithJWT.post(`/twilio/send-invites?inviteLink=${link}`, [phone])
       .then(({data}) => {
-        successToast("Invite sent successfully");
+        successToast('Invite sent successfully');
       })
       .finally(() => {
         dispatch(loaderFalse());
@@ -39,7 +41,7 @@ export const sendInvite = (phone, link = 'https://google.com/') => {
 };
 
 export const verifyOTP = (phone, otp, onSuccess) => {
-  console.log("🚀 ~ verifyOTP ~ phone, otp, onSuccess:", phone, otp, onSuccess)
+  console.log('🚀 ~ verifyOTP ~ phone, otp, onSuccess:', phone, otp, onSuccess);
   return dispatch => {
     dispatch(loaderTrue());
     ApiInstance.post('/auth/verify-otp?phoneNumber=' + phone + '&otp=' + otp)

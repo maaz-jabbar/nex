@@ -1,6 +1,11 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {Contacts, Chat, ViewSellerProfile, ViewCustomerProfile} from '../screens';
+import {
+  Contacts,
+  Chat,
+  ViewSellerProfile,
+  ViewCustomerProfile,
+} from '../screens';
 
 const Stack = createNativeStackNavigator();
 

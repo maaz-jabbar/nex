@@ -1,14 +1,18 @@
 import React from 'react';
-import {LayoutAnimation, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  LayoutAnimation,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {Colors} from '../../config';
 
 const ToggleButton = ({on = false, onToggle = () => {}}) => {
-
-    const onPress = () => {
-        LayoutAnimation.spring();
-        onToggle(!on)
-    }
+  const onPress = () => {
+    LayoutAnimation.spring();
+    onToggle(!on);
+  };
 
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.8}>
@@ -22,19 +26,9 @@ const ToggleButton = ({on = false, onToggle = () => {}}) => {
         end={{x: 1, y: 0}}
         style={[
           styles.container,
-          {
-            alignItems: on ? 'flex-end' : 'flex-start',
-            justifyContent: 'center',
-          },
+          {alignItems: on ? 'flex-end' : 'flex-start'},
         ]}>
-        <View
-          style={{
-            width: 26,
-            height: 26,
-            borderRadius: 26 / 2,
-            backgroundColor: Colors.white,
-          }}
-        />
+        <View style={styles.toggleCircle} />
       </LinearGradient>
     </TouchableOpacity>
   );
@@ -47,6 +41,13 @@ const styles = StyleSheet.create({
     height: 30,
     width: 50,
     borderRadius: 30,
-    padding: 2
+    padding: 2,
+    justifyContent: 'center',
+  },
+  toggleCircle: {
+    width: 26,
+    height: 26,
+    borderRadius: 13, // Using a single radius instead of dividing by 2
+    backgroundColor: Colors.white,
   },
 });

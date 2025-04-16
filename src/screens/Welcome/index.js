@@ -2,14 +2,18 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {Colors, Fonts} from '../../config';
 import {GradientButton} from '../../components';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 
 const Welcome = ({navigation}) => {
   const userType = useSelector(state => state.user?.userType);
   const isCustomer = userType === 'CUSTOMER';
+
   const moveToProfileCreation = () => {
-    if (isCustomer) navigation.navigate('ChooseProduct');
-    else navigation.navigate('ChoosePosition');
+    if (isCustomer) {
+      navigation.navigate('ChooseProduct');
+    } else {
+      navigation.navigate('ChoosePosition');
+    }
   };
 
   const skip = () => {};
@@ -20,9 +24,11 @@ const Welcome = ({navigation}) => {
       <GradientButton
         title="Next"
         onPress={moveToProfileCreation}
-        buttonStyle={{alignSelf: 'center', width: 150, marginVertical: 20}}
+        buttonStyle={styles.nextButton}
       />
-      <Text style={styles.skip}>Skip - edit profile in Settings</Text>
+      <Text style={styles.skip} onPress={skip}>
+        Skip - edit profile in Settings
+      </Text>
     </View>
   );
 };
@@ -43,10 +49,16 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.JosefinSansSemiBold,
     marginBottom: 10,
   },
+  nextButton: {
+    alignSelf: 'center',
+    width: 150,
+    marginVertical: 20,
+  },
   skip: {
     fontSize: 12,
     textAlign: 'center',
     color: Colors.secondary,
     fontFamily: Fonts.RobotoRegular,
+    textDecorationLine: 'underline',
   },
 });

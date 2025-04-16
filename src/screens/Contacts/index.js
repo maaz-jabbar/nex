@@ -9,31 +9,33 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Colors, Fonts} from '../../config';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {ContactCard, GradientButton} from '../../components';
-import Images from '../../assets';
-import {ContactAvatar} from '../../components';
-import {AddInvitePopup, InvitesModal, NewContactModal} from '../../modals';
 import {useDispatch, useSelector} from 'react-redux';
+import {Colors, Fonts} from '../../config';
+import {ContactAvatar, ContactCard, GradientButton} from '../../components';
+import {AddInvitePopup, InvitesModal, NewContactModal} from '../../modals';
 import {
   deleteInvitePerm,
   getProfileExplicitly,
   getUserContacts,
   getUserWithId,
 } from '../../redux/middlewares/user';
+import Images from '../../assets';
 
 const Contacts = ({navigation}) => {
   const {top} = useSafeAreaInsets();
-  const [search, setSearch] = React.useState('');
-  const profileId = useSelector(state => state.user?.profile?.profileId);
-  const userType = useSelector(state => state.user?.userType);
-  const contacts = useSelector(state => state.user?.contacts);
   const dispatch = useDispatch();
 
-  const _goBack = () => {
-    navigation.goBack();
-  };
+  const [search, setSearch] = React.useState('');
+  const [addContactModal, setAddContactModal] = React.useState(false);
+  const [newContact, setNewContact] = React.useState(false);
+  const [inviteModal, setInviteModal] = React.useState(false);
+
+  const profileId = useSelector(state => state.user?.profile?.profileId);
+  const userType = useSelector(state => state.user?.userType);
+  const contacts = useSelector(state => state.user?.contacts) || [];
+
+  const _goBack = () => navigation.goBack();
 
   const viewProfile = item => {
     if (!item?.joined) {
@@ -53,14 +55,9 @@ const Contacts = ({navigation}) => {
         }),
       );
     } else {
-      navigation.navigate('ViewCustomerProfile', {
-        user: item,
-      });
+      navigation.navigate('ViewCustomerProfile', {user: item});
     }
   };
-  const [addContactModal, setAddContactModal] = React.useState(false);
-  const [newContact, setNewContact] = React.useState(false);
-  const [inviteModal, setInviteModal] = React.useState(false);
 
   const deleteInvite = senderId => {
     dispatch(
@@ -76,6 +73,10 @@ const Contacts = ({navigation}) => {
     );
   };
 
+  const filteredContacts = contacts.filter(contact =>
+    contact?.name?.toLowerCase().includes(search?.toLowerCase()),
+  );
+
   return (
     <View style={[styles.container, {paddingTop: top}]}>
       <AddInvitePopup
@@ -85,6 +86,7 @@ const Contacts = ({navigation}) => {
       />
       <NewContactModal isVisible={newContact} setVisible={setNewContact} />
       <InvitesModal isVisible={inviteModal} setVisible={setInviteModal} />
+
       <View style={styles.header}>
         <TouchableOpacity
           onPress={_goBack}
@@ -102,100 +104,66 @@ const Contacts = ({navigation}) => {
           <Text style={styles.back}>Invites</Text>
         </TouchableOpacity>
       </View>
-      <>
-        <View style={styles.searchCont}>
-          <Image
-            source={Images.search}
-            resizeMode="contain"
-            style={styles.searchIcon}
-          />
-          <TextInput
-            value={search}
-            onChangeText={setSearch}
-            placeholder="Search"
-            style={styles.input}
-          />
-        </View>
-        <View>
-          <FlatList
-            refreshControl={
-              <RefreshControl
-                refreshing={false}
-                onRefresh={() => {
-                  dispatch(getUserContacts(profileId));
-                }}
-              />
-            }
-            data={contacts.filter(contact => {
-              return contact?.name
-                ?.toLowerCase()
-                .includes(search?.toLowerCase());
-            })}
-            ListEmptyComponent={() => {
-              return (
-                <View style={{}}>
-                  <Text
-                    style={{
-                      fontFamily: Fonts.RobotoRegular,
-                      color: Colors.black,
-                      fontSize: 16,
-                    }}>
-                    No contacts to show.
-                  </Text>
-                </View>
-              );
-            }}
-            horizontal
-            style={styles.list}
-            ListHeaderComponent={() => (
-              <GradientButton
-                icon={Images.plus}
-                containerStyle={styles.listPlusButtonCont}
-                buttonStyle={styles.listPlusButton}
-                iconSize={24}
-                noGradient
-                onPress={() => setAddContactModal(true)}
-                iconStyle={{tintColor: Colors.secondary}}
-              />
-            )}
-            contentContainerStyle={styles.listContent}
-            showsHorizontalScrollIndicator={false}
-            renderItem={({item, index}) => {
-              return (
-                <ContactAvatar
-                  onPress={() => {
-                    viewProfile(item);
-                  }}
-                  key={index}
-                  contact={item}
-                />
-              );
-            }}
-          />
-        </View>
-      </>
+
+      <View style={styles.searchCont}>
+        <Image source={Images.search} style={styles.searchIcon} />
+        <TextInput
+          value={search}
+          onChangeText={setSearch}
+          placeholder="Search"
+          placeholderTextColor={Colors.gray}
+          style={styles.input}
+        />
+      </View>
+      <View>
       <FlatList
-        data={contacts.filter(contact => {
-          return contact?.name?.toLowerCase().includes(search?.toLowerCase());
-        })}
-        renderItem={({item, index}) => {
+        data={filteredContacts}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.listContent}
+        style={styles.list}
+        refreshControl={
+          <RefreshControl
+            refreshing={false}
+            onRefresh={() => dispatch(getUserContacts(profileId))}
+          />
+        }
+        ListHeaderComponent={
+          <GradientButton
+            icon={Images.plus}
+            containerStyle={styles.listPlusButtonCont}
+            buttonStyle={styles.listPlusButton}
+            iconSize={24}
+            noGradient
+            onPress={() => setAddContactModal(true)}
+            iconStyle={{tintColor: Colors.secondary}}
+          />
+        }
+        ListEmptyComponent={
+          <View>
+            <Text style={styles.emptyText}>No contacts to show.</Text>
+          </View>
+        }
+        renderItem={({item}) => (
+          <ContactAvatar onPress={() => viewProfile(item)} contact={item} />
+        )}
+      />
+    </View>
+      <FlatList
+        data={filteredContacts}
+        keyExtractor={(item, index) => `${item?.userId}_${index}`}
+        renderItem={({item}) => {
           const accepted = item?.inviteStatus === 'ACCEPTED';
           return (
             <ContactCard
-              onPress={() => {
-                viewProfile(item);
-              }}
-              key={index}
+              onPress={() => viewProfile(item)}
               user={item}
               customComp={
                 !accepted && (
                   <TouchableOpacity
-                    style={{marginRight: 10}}
+                    style={styles.deleteIconWrapper}
                     onPress={() => deleteInvite(item?.userId)}>
-                    <Image
-                      source={Images.delete}
-                      style={{width: 25, height: 25, resizeMode: 'contain'}}
-                    />
+                    <Image source={Images.delete} style={styles.deleteIcon} />
                   </TouchableOpacity>
                 )
               }
@@ -210,54 +178,6 @@ const Contacts = ({navigation}) => {
 export default Contacts;
 
 const styles = StyleSheet.create({
-  backIcon: {
-    width: 25,
-    height: 25,
-    marginRight: 5,
-  },
-  inviteIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 5,
-  },
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  back: {
-    fontFamily: Fonts.RobotoRegular,
-    fontSize: 15,
-    color: Colors.black,
-  },
-  searchIcon: {
-    width: 20,
-    height: 20,
-    margin: 10,
-    marginHorizontal: 20,
-  },
-  searchCont: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.background,
-    borderRadius: 50,
-    marginHorizontal: 20,
-    marginVertical: 10,
-  },
-  plusButton: {
-    marginBottom: 0,
-    width: undefined,
-  },
-  plusButtonCont: {
-    height: 40,
-    width: 40,
-    paddingHorizontal: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 20,
-  },
-  headerPlaceholder: {
-    width: 60,
-  },
   container: {
     flex: 1,
     backgroundColor: Colors.white,
@@ -269,10 +189,43 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
   },
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backIcon: {
+    width: 25,
+    height: 25,
+    marginRight: 5,
+  },
+  inviteIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 5,
+  },
+  back: {
+    fontFamily: Fonts.RobotoRegular,
+    fontSize: 15,
+    color: Colors.black,
+  },
   title: {
     color: Colors.black,
     fontSize: 24,
     fontFamily: Fonts.RobotoBold,
+  },
+  searchCont: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.background,
+    borderRadius: 50,
+    marginHorizontal: 20,
+    marginVertical: 10,
+  },
+  searchIcon: {
+    width: 20,
+    height: 20,
+    margin: 10,
+    marginHorizontal: 20,
   },
   input: {
     flex: 1,
@@ -298,5 +251,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 20,
+  },
+  deleteIconWrapper: {
+    marginRight: 10,
+  },
+  deleteIcon: {
+    width: 25,
+    height: 25,
+    resizeMode: 'contain',
+  },
+  emptyText: {
+    fontFamily: Fonts.RobotoRegular,
+    color: Colors.black,
+    fontSize: 16,
   },
 });

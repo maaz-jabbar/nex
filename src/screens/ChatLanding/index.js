@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -9,27 +9,34 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import {Colors, Fonts} from '../../config';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {BroadcastCard, ChatCard, GradientButton} from '../../components';
-import Images from '../../assets';
-import {ContactAvatar} from '../../components';
-import {AddChatModal} from '../../modals';
 import {useDispatch, useSelector} from 'react-redux';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+
+import {Colors, Fonts} from '../../config';
+import Images from '../../assets';
+import {
+  BroadcastCard,
+  ChatCard,
+  ContactAvatar,
+  GradientButton,
+} from '../../components';
+import {AddChatModal} from '../../modals';
 import {getBroadcasts, getChats} from '../../redux/middlewares/chat';
 import {getUserWithId} from '../../redux/middlewares/user';
 
 const ChatLanding = ({navigation}) => {
   const dispatch = useDispatch();
   const {top} = useSafeAreaInsets();
-  const [selectedTab, setSelectedTab] = React.useState('Chat');
-  const [showPopup, setShowPopup] = React.useState(false);
-  const [refreshing, setRefreshing] = React.useState(false);
+
+  const [selectedTab, setSelectedTab] = useState('Chat');
+  const [showPopup, setShowPopup] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const userType = useSelector(state => state.user?.userType);
   const contacts = useSelector(state => state.user?.contacts);
   const chats = useSelector(state => state.user?.chats);
   const broadcasts = useSelector(state => state.user?.broadcasts);
+
   const isCustomer = userType === 'CUSTOMER';
 
   useEffect(() => {
@@ -37,25 +44,20 @@ const ChatLanding = ({navigation}) => {
       dispatch(getChats());
       dispatch(getBroadcasts());
     });
-
     return unsubscribe;
   }, []);
 
   const onRefresh = () => {
     setRefreshing(true);
-    dispatch(getChats(setRefreshing(false)));
-    dispatch(getBroadcasts(setRefreshing(false)));
+    dispatch(getChats(() => setRefreshing(false)));
+    dispatch(getBroadcasts(() => setRefreshing(false)));
   };
 
   const moveToChat = (user, isBroadcast) => {
     setShowPopup(false);
-    const params = {};
-    if (isBroadcast) {
-      params.isBroadcast = true;
-      params.broadcast = user;
-    } else {
-      params.conversation = user;
-    }
+    const params = isBroadcast
+      ? {isBroadcast: true, broadcast: user}
+      : {conversation: user};
     navigation.navigate('Chat', params);
   };
 
@@ -64,16 +66,13 @@ const ChatLanding = ({navigation}) => {
       dispatch(
         getUserWithId(item?.userId, data => {
           const toSendData = {
-            user: {
-              ...item,
-              userId: item?.userId,
-            },
+            user: {...item, userId: item?.userId},
           };
-          if (data?.body?.userType === 'CUSTOMER') {
-            navigation.navigate('ViewCustomerProfile', toSendData);
-          } else {
-            navigation.navigate('ViewSellerProfile', toSendData);
-          }
+          const isCustomer = data?.body?.userType === 'CUSTOMER';
+          navigation.navigate(
+            isCustomer ? 'ViewCustomerProfile' : 'ViewSellerProfile',
+            toSendData,
+          );
         }),
       );
     } else {
@@ -95,7 +94,8 @@ const ChatLanding = ({navigation}) => {
           iconSize={24}
         />
       </View>
-      <ScrollView style={{flex: 1}} stickyHeaderIndices={[2]}>
+
+      <ScrollView style={styles.flex} stickyHeaderIndices={[2]}>
         <View style={styles.searchCont}>
           <Image
             source={Images.search}
@@ -104,62 +104,42 @@ const ChatLanding = ({navigation}) => {
           />
           <TextInput placeholder="Search" style={styles.input} />
         </View>
-        <View>
-          <FlatList
-            data={contacts}
-            horizontal
-            style={styles.list}
-            ListHeaderComponent={() => (
-              <GradientButton
-                icon={Images.plus}
-                containerStyle={styles.listPlusButtonCont}
-                buttonStyle={styles.listPlusButton}
-                iconSize={24}
-                noGradient
-                onPress={() => navigation.navigate('Contacts')}
-                iconStyle={{tintColor: Colors.secondary}}
-              />
-            )}
-            ListEmptyComponent={() => {
-              return (
-                <View style={{}}>
-                  <Text
-                    style={{
-                      fontFamily: Fonts.RobotoRegular,
-                      color: Colors.black,
-                      fontSize: 16,
-                    }}>
-                    No contacts to show
-                  </Text>
-                </View>
-              );
-            }}
-            contentContainerStyle={styles.listContent}
-            showsHorizontalScrollIndicator={false}
-            renderItem={({item, index}) => {
-              return (
-                <ContactAvatar
-                  onPress={() => viewProfile(item)}
-                  key={index}
-                  contact={item}
-                />
-              );
-            }}
-          />
-        </View>
-        <>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              paddingHorizontal: 20,
-              backgroundColor: Colors.white,
-            }}>
+
+        <FlatList
+          data={contacts}
+          horizontal
+          style={styles.list}
+          keyExtractor={(item, index) => index.toString()}
+          contentContainerStyle={styles.listContent}
+          showsHorizontalScrollIndicator={false}
+          ListHeaderComponent={() => (
             <GradientButton
-              containerStyle={{
-                borderWidth: 0,
-                backgroundColor: Colors.broadcastBackground,
-              }}
+              icon={Images.plus}
+              containerStyle={styles.listPlusButtonCont}
+              buttonStyle={styles.listPlusButton}
+              iconSize={24}
+              noGradient
+              onPress={() => navigation.navigate('Contacts')}
+              iconStyle={{tintColor: Colors.secondary}}
+            />
+          )}
+          ListEmptyComponent={() => (
+            <View>
+              <Text style={styles.emptyText}>No contacts to show</Text>
+            </View>
+          )}
+          renderItem={({item, index}) => (
+            <ContactAvatar
+              onPress={() => viewProfile(item)}
+              key={index}
+              contact={item}
+            />
+          )}
+        />
+        <>
+          <View style={styles.tabButtons}>
+            <GradientButton
+              containerStyle={styles.tabButtonContainer}
               title="Chat"
               indicator={chats.length}
               buttonStyle={{width: isCustomer ? '100%' : '48%'}}
@@ -168,10 +148,7 @@ const ChatLanding = ({navigation}) => {
             />
             {!isCustomer && (
               <GradientButton
-                containerStyle={{
-                  borderWidth: 0,
-                  backgroundColor: Colors.broadcastBackground,
-                }}
+                containerStyle={styles.tabButtonContainer}
                 buttonStyle={{width: '48%'}}
                 indicator={broadcasts.length}
                 title="Broadcast"
@@ -182,42 +159,29 @@ const ChatLanding = ({navigation}) => {
           </View>
         </>
         <FlatList
+          scrollEnabled={false}
+          key={selectedTab}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
-          ListEmptyComponent={() => {
-            return (
-              <View
-                style={{
-                  alignItems: 'center',
-                  marginTop: 100,
-                }}>
-                <Text
-                  style={{
-                    fontFamily: Fonts.RobotoRegular,
-                    color: Colors.black,
-                    fontSize: 16,
-                  }}>
-                  No chats to show
-                </Text>
-              </View>
-            );
-          }}
-          key={selectedTab}
-          data={selectedTab == 'Chat' ? chats : broadcasts}
-          scrollEnabled={false}
-          renderItem={({item, index}) => {
-            if (selectedTab == 'Chat') {
-              return (
-                <ChatCard
-                  onPress={() => moveToChat(item)}
-                  key={index}
-                  chat={item}
-                />
-              );
-            }
-            return <BroadcastCard key={index} chat={item} />;
-          }}
+          data={selectedTab === 'Chat' ? chats : broadcasts}
+          keyExtractor={(item, index) => index.toString()}
+          ListEmptyComponent={() => (
+            <View style={styles.emptyListContainer}>
+              <Text style={styles.emptyText}>No chats to show</Text>
+            </View>
+          )}
+          renderItem={({item, index}) =>
+            selectedTab === 'Chat' ? (
+              <ChatCard
+                onPress={() => moveToChat(item)}
+                key={index}
+                chat={item}
+              />
+            ) : (
+              <BroadcastCard key={index} chat={item} />
+            )
+          }
         />
       </ScrollView>
     </View>
@@ -227,27 +191,38 @@ const ChatLanding = ({navigation}) => {
 export default ChatLanding;
 
 const styles = StyleSheet.create({
-  createChat: {
-    fontSize: 20,
-    fontFamily: Fonts.RobotoRegular,
-    color: Colors.black,
-    marginBottom: 20,
-  },
-  popup: {
-    padding: 40,
+  container: {
+    flex: 1,
     backgroundColor: Colors.white,
-    borderRadius: 30,
+  },
+  flex: {
+    flex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  headerPlaceholder: {
+    width: 40,
+  },
+  title: {
+    color: Colors.black,
+    fontSize: 24,
+    fontFamily: Fonts.RobotoBold,
+  },
+  plusButtonCont: {
+    height: 40,
+    width: 40,
     justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
   },
-  popupModal: {
-    justifyContent: 'flex-start',
-  },
-  searchIcon: {
-    width: 20,
-    height: 20,
-    margin: 10,
-    marginHorizontal: 20,
+  plusButton: {
+    width: undefined,
+    marginBottom: 0,
   },
   searchCont: {
     flexDirection: 'row',
@@ -257,60 +232,53 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginVertical: 10,
   },
-  plusButton: {
-    marginBottom: 0,
-    width: undefined,
-  },
-  plusButtonCont: {
-    height: 40,
-    width: 40,
-    paddingHorizontal: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 20,
-  },
-  headerPlaceholder: {
-    width: 40,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: Colors.white,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  title: {
-    color: Colors.black,
-    fontSize: 24,
-    fontFamily: Fonts.RobotoBold,
+  searchIcon: {
+    width: 20,
+    height: 20,
+    marginHorizontal: 20,
   },
   input: {
     flex: 1,
-    color: Colors.black,
+    height: 48,
     fontSize: 16,
     fontFamily: Fonts.RobotoRegular,
-    height: 48,
+    color: Colors.black,
   },
   list: {},
   listContent: {
     padding: 20,
     alignItems: 'center',
   },
-  listPlusButton: {
-    marginBottom: 0,
-    width: undefined,
-    marginRight: 20,
-  },
   listPlusButtonCont: {
     height: 30,
     width: 30,
-    paddingHorizontal: 0,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 20,
+    paddingHorizontal: 0,
+    marginRight: 20,
+  },
+  listPlusButton: {
+    marginBottom: 0,
+    width: undefined,
+  },
+  tabButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    backgroundColor: Colors.white,
+  },
+  tabButtonContainer: {
+    borderWidth: 0,
+    backgroundColor: Colors.broadcastBackground,
+  },
+  emptyListContainer: {
+    alignItems: 'center',
+    marginTop: 100,
+  },
+  emptyText: {
+    fontSize: 16,
+    fontFamily: Fonts.RobotoRegular,
+    color: Colors.black,
   },
 });

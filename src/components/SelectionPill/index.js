@@ -3,10 +3,11 @@ import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {Colors, Fonts} from '../../config';
 import LinearGradient from 'react-native-linear-gradient';
 
-const index = ({title, isSelected, onPress}) => {
+const SelectionPill = ({title, isSelected, onPress}) => {
   const colors = isSelected
     ? [Colors.primary, Colors.secondary]
     : [Colors.white, Colors.white];
+
   return (
     <TouchableOpacity
       activeOpacity={0.8}
@@ -25,7 +26,7 @@ const index = ({title, isSelected, onPress}) => {
   );
 };
 
-export default index;
+export default SelectionPill;
 
 const styles = StyleSheet.create({
   selected: {

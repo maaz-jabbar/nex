@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef, useState} from 'react';
 import {
   Image,
   ImageBackground,
@@ -23,36 +23,32 @@ const phoneError = 'Please enter a valid phone number.';
 const ForgotPassword = ({navigation: {goBack}}) => {
   const dispatch = useDispatch();
 
-  const [password, setPassword] = React.useState('');
-  const [phone, setPhone] = React.useState('');
-  const [otp, setOtp] = React.useState('');
-  const [otpSent, setOtpSent] = React.useState(false);
+  const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState('');
+  const [otp, setOtp] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
 
-  const passwordInput = React.useRef(null);
+  const passwordInput = useRef(null);
 
   const _onSubmit = () => {
     let message = [];
 
     if (otpSent) {
-      if (otp.length < 6) {
-        message.push(otpError);
-      }
-      if (password.length < 8) {
-        message.push(passwordError);
-      }
-      message = message.join('\n');
-      if (message) return errorToast({message});
+      if (otp.length < 6) message.push(otpError);
+      if (password.length < 8) message.push(passwordError);
+    } else {
+      if (phone.length < 10) message.push(phoneError);
+    }
+
+    if (message.length) return errorToast({message: message.join('\n')});
+
+    if (otpSent) {
       dispatch(
         resetPassword(phone, otp, password, () => {
           goBack();
         }),
       );
     } else {
-      if (phone.length < 10) {
-        message.push(phoneError);
-      }
-      message = message.join('\n');
-      if (message) return errorToast({message});
       dispatch(
         forgotPassSendOtp(phone, isSent => {
           setOtpSent(isSent);
@@ -66,23 +62,12 @@ const ForgotPassword = ({navigation: {goBack}}) => {
       colors={[Colors.primary, Colors.secondary]}
       start={{x: 0, y: 0}}
       end={{x: 1, y: 0}}
-      style={{flex: 1}}>
+      style={styles.gradientContainer}>
       <ImageBackground
         source={Images.bgLogo}
         resizeMode="contain"
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <Image
-          source={Images.logo}
-          resizeMode="contain"
-          style={{
-            width: 200,
-            height: 100,
-          }}
-        />
+        style={styles.imageBackground}>
+        <Image source={Images.logo} resizeMode="contain" style={styles.logo} />
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={goBack}
@@ -90,40 +75,18 @@ const ForgotPassword = ({navigation: {goBack}}) => {
           <Image source={Images.back} style={styles.back} />
         </TouchableOpacity>
       </ImageBackground>
-      <View
-        style={{
-          flex: 3,
-          backgroundColor: Colors.white,
-          borderTopLeftRadius: 30,
-          borderTopRightRadius: 30,
-        }}>
+
+      <View style={styles.whiteContainer}>
         <View style={styles.topBar}>
-          <View
-            activeOpacity={0.8}
-            style={{
-              borderBottomWidth: 2,
-              borderBottomColor: Colors.primary,
-              paddingBottom: 10,
-            }}>
-            <Text
-              style={{
-                fontSize: 16,
-                color: Colors.secondary,
-                fontFamily: Fonts.RobotoMedium,
-              }}>
-              Forgot Password
-            </Text>
+          <View style={styles.header}>
+            <Text style={styles.headerText}>Forgot Password</Text>
           </View>
         </View>
+
         <ScrollView
-          style={{flex: 1}}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            flexGrow: 1,
-            paddingHorizontal: 20,
-            paddingBottom: 30,
-            justifyContent: 'space-between',
-          }}>
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}>
           <View>
             <TextInputCustom
               title="Phone Number"
@@ -136,6 +99,7 @@ const ForgotPassword = ({navigation: {goBack}}) => {
                 returnKeyType: 'next',
               }}
             />
+
             {otpSent && (
               <>
                 <TextInputCustom
@@ -146,11 +110,10 @@ const ForgotPassword = ({navigation: {goBack}}) => {
                     onChangeText: setOtp,
                     keyboardType: 'number-pad',
                     returnKeyType: 'next',
-                    onSubmitEditing: () => {
-                      passwordInput.current.focus();
-                    },
+                    onSubmitEditing: () => passwordInput.current.focus(),
                   }}
                 />
+
                 <TextInputCustom
                   title="Password"
                   isPassword
@@ -160,14 +123,15 @@ const ForgotPassword = ({navigation: {goBack}}) => {
                     keyboardType: 'default',
                     returnKeyType: 'done',
                     secureTextEntry: true,
-                    ref: passwordInput,
                   }}
+                  ref={passwordInput}
                 />
               </>
             )}
           </View>
+
           <GradientButton
-            buttonStyle={{alignSelf: 'center', width: 200, marginTop: 20}}
+            buttonStyle={styles.button}
             onPress={_onSubmit}
             title={otpSent ? 'Reset Password' : 'Send OTP'}
           />
@@ -180,25 +144,17 @@ const ForgotPassword = ({navigation: {goBack}}) => {
 export default ForgotPassword;
 
 const styles = StyleSheet.create({
-  options: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  gradientContainer: {
+    flex: 1,
+  },
+  imageBackground: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  forgotPassword: {
-    marginRight: 15,
-    color: Colors.secondary,
-    fontFamily: Fonts.RobotoMedium,
-  },
-  topBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    padding: 30,
-  },
-  back: {
-    width: 25,
-    height: 25,
+  logo: {
+    width: 200,
+    height: 100,
   },
   backIconContainer: {
     position: 'absolute',
@@ -207,5 +163,44 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     padding: 5,
     borderRadius: 40,
+  },
+  back: {
+    width: 25,
+    height: 25,
+  },
+  whiteContainer: {
+    flex: 3,
+    backgroundColor: Colors.white,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+  },
+  topBar: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    padding: 30,
+  },
+  header: {
+    borderBottomWidth: 2,
+    borderBottomColor: Colors.primary,
+    paddingBottom: 10,
+  },
+  headerText: {
+    fontSize: 16,
+    color: Colors.secondary,
+    fontFamily: Fonts.RobotoMedium,
+  },
+  scroll: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: 20,
+    paddingBottom: 30,
+    justifyContent: 'space-between',
+  },
+  button: {
+    alignSelf: 'center',
+    width: 200,
+    marginTop: 20,
   },
 });

@@ -13,27 +13,28 @@ const TabbarCustom = ({state, navigation}) => {
     <View
       style={[
         styles.container,
-        {
-          paddingBottom: insets.bottom ? insets.bottom : insets.bottom + 10,
-        },
+        {paddingBottom: insets.bottom || insets.bottom + 10},
       ]}>
       {state.routes.map((route, index) => {
         const label = labels[index];
-
         const isFocused = state.index === index;
 
-        let iconSource;
-        if (label === 'Chat') {
-          iconSource = isFocused ? Images.chatFocused : Images.chat;
-        } else if (label === 'Contacts') {
-          iconSource = isFocused ? Images.contactsFocused : Images.contacts;
-        } else if (label === 'Settings') {
-          iconSource = isFocused ? Images.settingsFocused : Images.settings;
-        } else if (label === 'Home') {
-          iconSource = isFocused ? Images.homeFocused : Images.home;
-        } else if (label === 'Gallery') {
-          iconSource = isFocused ? Images.galleryFocused : Images.gallery;
-        }
+        const getIconSource = label => {
+          switch (label) {
+            case 'Chat':
+              return isFocused ? Images.chatFocused : Images.chat;
+            case 'Contacts':
+              return isFocused ? Images.contactsFocused : Images.contacts;
+            case 'Settings':
+              return isFocused ? Images.settingsFocused : Images.settings;
+            case 'Home':
+              return isFocused ? Images.homeFocused : Images.home;
+            case 'Gallery':
+              return isFocused ? Images.galleryFocused : Images.gallery;
+            default:
+              return Images.home; // default fallback
+          }
+        };
 
         const onPress = () => {
           if (!isFocused) {
@@ -48,7 +49,7 @@ const TabbarCustom = ({state, navigation}) => {
             onPress={onPress}
             style={styles.tab}>
             <Image
-              source={iconSource}
+              source={getIconSource(label)}
               resizeMode="contain"
               style={styles.icon}
             />
@@ -76,13 +77,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     paddingTop: 10,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-
     elevation: 5,
   },
   label: {

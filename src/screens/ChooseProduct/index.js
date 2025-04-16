@@ -1,38 +1,57 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {useDispatch} from 'react-redux';
+
 import {Colors, Fonts} from '../../config';
 import {GradientButton, SelectionPill} from '../../components';
-import {brands, positions, productFor, productType} from '../../dummyData';
-import {useDispatch} from 'react-redux';
+import {brands} from '../../dummyData';
 import {getAllProducts} from '../../redux/middlewares/profileCreation';
 
 const makeUnique = array => {
-  const newArray = [];
-  array.forEach(item => {
-    if (!newArray.filter(item1 => item1.gender === item.gender).length) {
-      newArray.push(item);
+  const seen = new Set();
+  return array.filter(item => {
+    if (!seen.has(item.gender)) {
+      seen.add(item.gender);
+      return true;
     }
+    return false;
   });
-  return newArray;
 };
 
 const ChooseProduct = ({navigation}) => {
-  const [selectedProductFor, setSelectedProductFor] = React.useState([]);
-  const [selectedProductType, setSelectedProductType] = React.useState([]);
   const dispatch = useDispatch();
-  const [products, setProducts] = React.useState([]);
-  const uniqueProducts = makeUnique(products);
+
+  const [products, setProducts] = useState([]);
+  const [selectedProductFor, setSelectedProductFor] = useState([]);
+  const [selectedProductType, setSelectedProductType] = useState([]);
 
   useEffect(() => {
-    dispatch(
-      getAllProducts(data => {
-        setProducts(data);
-      }),
-    );
-  }, []);
+    dispatch(getAllProducts(setProducts));
+  }, [dispatch]);
+
+  const uniqueProducts = useMemo(() => makeUnique(products), [products]);
+
+  const toggleSelection = (value, list, setList, comparator = item => item) => {
+    const exists = list.some(item => comparator(item) === comparator(value));
+    if (exists) {
+      setList(list.filter(item => comparator(item) !== comparator(value)));
+    } else {
+      setList([...list, value]);
+    }
+  };
+
+  const isSelected = (value, list, comparator = item => item) => {
+    return list.some(item => comparator(item) === comparator(value));
+  };
+
+  const genderVariationKey = item => `${item.gender}_${item.variation}`;
+
+  const filteredProducts = useMemo(() => {
+    return products.filter(p => selectedProductFor.includes(p.gender));
+  }, [products, selectedProductFor]);
 
   const moveToLocation = () => {
-    if (!selectedProductType?.length) return;
+    if (!selectedProductType.length) return;
     navigation.navigate('ChooseFavoriteBrands');
   };
 
@@ -44,66 +63,50 @@ const ChooseProduct = ({navigation}) => {
         <Text style={styles.heading}>Show me product for</Text>
         <Text style={styles.smallText}>Select all that apply</Text>
         <View style={styles.positions}>
-          {uniqueProducts.map((position, index) => {
-            const isSelected = selectedProductFor.filter(
-              item => item == position.gender,
-            )?.length;
-            const onPressPill = () => {
-              if (!isSelected) {
-                setSelectedProductFor([...selectedProductFor, position.gender]);
-              } else {
-                setSelectedProductFor(
-                  selectedProductFor.filter(item => item !== position.gender),
-                );
+          {uniqueProducts.map(({gender}) => (
+            <SelectionPill
+              key={gender}
+              title={gender}
+              isSelected={selectedProductFor.includes(gender)}
+              onPress={() =>
+                toggleSelection(
+                  gender,
+                  selectedProductFor,
+                  setSelectedProductFor,
+                )
               }
-            };
+            />
+          ))}
+        </View>
+
+        <Text style={styles.heading}>Product type</Text>
+        <Text style={styles.smallText}>Select all that apply</Text>
+        <View style={styles.positions}>
+          {filteredProducts.map(product => {
+            const key = genderVariationKey(product);
             return (
               <SelectionPill
-                key={index}
-                title={position.gender}
-                isSelected={isSelected}
-                onPress={onPressPill}
+                key={key}
+                title={`${product.gender}'s ${product.variation}`}
+                isSelected={isSelected(
+                  product,
+                  selectedProductType,
+                  genderVariationKey,
+                )}
+                onPress={() =>
+                  toggleSelection(
+                    product,
+                    selectedProductType,
+                    setSelectedProductType,
+                    genderVariationKey,
+                  )
+                }
               />
             );
           })}
         </View>
-        <Text style={styles.heading}>Product type</Text>
-        <Text style={styles.smallText}>Select all that apply</Text>
-        <View style={styles.positions}>
-          {selectedProductFor.map((position, index) => {
-            return products
-              .filter(item => item.gender == position)
-              .map((gender, genderIndex) => {
-                const isSelected = selectedProductType.filter(
-                  filtered =>
-                    filtered.gender + ' ' + filtered.variation ===
-                    gender.gender + ' ' + gender.variation,
-                ).length;
-                const onPressPill = () => {
-                  if (!isSelected) {
-                    setSelectedProductType([...selectedProductType, gender]);
-                  } else {
-                    setSelectedProductType(
-                      selectedProductType.filter(
-                        filtered =>
-                          filtered.gender + ' ' + filtered.variation !==
-                          gender.gender + ' ' + gender.variation,
-                      ),
-                    );
-                  }
-                };
-                return (
-                  <SelectionPill
-                    key={genderIndex}
-                    title={gender.gender + "'s " + gender.variation}
-                    isSelected={isSelected}
-                    onPress={onPressPill}
-                  />
-                );
-              });
-          })}
-        </View>
       </View>
+
       <GradientButton
         title="Next"
         onPress={moveToLocation}
@@ -117,28 +120,13 @@ const ChooseProduct = ({navigation}) => {
 export default ChooseProduct;
 
 const styles = StyleSheet.create({
-  smallText: {
-    fontFamily: Fonts.RobotoRegular,
-    fontSize: 12,
-    color: Colors.lightGrey,
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  nextButton: {
-    alignSelf: 'center',
-    width: 150,
-    marginVertical: 20,
-    marginBottom: 40,
-  },
-  scrollablePositionsContent: {
-    minWidth: '100%',
-    maxWidth: brands.length * 30,
-    marginLeft: 20,
-    flexWrap: 'wrap',
-  },
   container: {
     flex: 1,
     backgroundColor: Colors.white,
+  },
+  mainContentContainer: {
+    flexGrow: 1,
+    justifyContent: 'space-between',
   },
   heading: {
     fontSize: 24,
@@ -147,6 +135,13 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.JosefinSansSemiBold,
     marginVertical: 10,
   },
+  smallText: {
+    fontFamily: Fonts.RobotoRegular,
+    fontSize: 12,
+    color: Colors.lightGrey,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
   positions: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -154,9 +149,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginBottom: 50,
   },
-  scrollablePositions: {},
-  mainContentContainer: {
-    flexGrow: 1,
-    justifyContent: 'space-between',
+  nextButton: {
+    alignSelf: 'center',
+    width: 150,
+    marginVertical: 20,
+    marginBottom: 40,
   },
 });

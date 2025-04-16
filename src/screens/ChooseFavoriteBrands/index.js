@@ -1,20 +1,19 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {useDispatch} from 'react-redux';
+
 import {Colors, Fonts} from '../../config';
 import {GradientButton, SelectionPill} from '../../components';
 import {
   createCustomerProfile,
   getAllBrands,
 } from '../../redux/middlewares/profileCreation';
-import {useDispatch} from 'react-redux';
-import {ApiInstanceWithJWT} from '../../config/api';
-import {brands as sdsd} from '../../dummyData';
 
 const ChooseFavoriteBrands = ({navigation}) => {
-  const [selectedBrands, setSelectedBrands] = React.useState([]);
   const dispatch = useDispatch();
 
-  const [brands, setBrands] = React.useState([]);
+  const [selectedBrands, setSelectedBrands] = useState([]);
+  const [brands, setBrands] = useState([]);
 
   useEffect(() => {
     dispatch(
@@ -24,13 +23,22 @@ const ChooseFavoriteBrands = ({navigation}) => {
     );
   }, []);
 
+  const toggleBrand = brand => {
+    setSelectedBrands(prev =>
+      prev.includes(brand)
+        ? prev.filter(item => item !== brand)
+        : [...prev, brand],
+    );
+  };
+
   const moveToLocation = () => {
-    if (!selectedBrands?.length) return;
+    if (!selectedBrands.length) return;
+
     dispatch(
       createCustomerProfile(
         {
           profileType: 'CUSTOMER',
-          favDesigner: [...selectedBrands],
+          favDesigner: selectedBrands,
           products: [
             {
               gender: 'men',
@@ -54,9 +62,7 @@ const ChooseFavoriteBrands = ({navigation}) => {
             },
           ],
         },
-        () => {
-          navigation.navigate('Congratulations');
-        },
+        () => navigation.navigate('Congratulations'),
       ),
     );
   };
@@ -67,34 +73,18 @@ const ChooseFavoriteBrands = ({navigation}) => {
       style={styles.container}>
       <Text style={styles.heading}>Favorite designers & brands</Text>
       <Text style={styles.smallText}>Select all that apply</Text>
-      <View
-        style={{
-          flexWrap: 'wrap',
-          flexDirection: 'row',
-          paddingHorizontal: 20,
-        }}>
-        {!!brands?.length &&
-          brands.map((position, index) => {
-            const isSelected = selectedBrands.includes(position.designerName);
-            const onPressPill = () => {
-              if (!isSelected) {
-                setSelectedBrands([...selectedBrands, position.designerName]);
-              } else {
-                setSelectedBrands(
-                  selectedBrands.filter(item => item !== position.designerName),
-                );
-              }
-            };
-            return (
-              <SelectionPill
-                key={index}
-                title={position.designerName}
-                isSelected={isSelected}
-                onPress={onPressPill}
-              />
-            );
-          })}
+
+      <View style={styles.pillContainer}>
+        {brands.map((brand, index) => (
+          <SelectionPill
+            key={index}
+            title={brand.designerName}
+            isSelected={selectedBrands.includes(brand.designerName)}
+            onPress={() => toggleBrand(brand.designerName)}
+          />
+        ))}
       </View>
+
       <GradientButton
         title="Next"
         onPress={moveToLocation}
@@ -108,28 +98,12 @@ const ChooseFavoriteBrands = ({navigation}) => {
 export default ChooseFavoriteBrands;
 
 const styles = StyleSheet.create({
-  smallText: {
-    fontFamily: Fonts.RobotoRegular,
-    fontSize: 12,
-    color: Colors.lightGrey,
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  nextButton: {
-    alignSelf: 'center',
-    width: 150,
-    marginVertical: 20,
-    marginBottom: 40,
-  },
-  scrollablePositionsContent: {
-    minWidth: '100%',
-
-    marginLeft: 20,
-    flexWrap: 'wrap',
-  },
   container: {
     flex: 1,
     backgroundColor: Colors.white,
+  },
+  mainContentContainer: {
+    flexGrow: 1,
   },
   heading: {
     fontSize: 24,
@@ -138,14 +112,22 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.JosefinSansSemiBold,
     marginVertical: 10,
   },
-  positions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    marginHorizontal: 20,
+  smallText: {
+    fontFamily: Fonts.RobotoRegular,
+    fontSize: 12,
+    color: Colors.lightGrey,
+    textAlign: 'center',
+    marginBottom: 20,
   },
-  scrollablePositions: {},
-  mainContentContainer: {
-    flexGrow: 1,
+  pillContainer: {
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+  },
+  nextButton: {
+    alignSelf: 'center',
+    width: 150,
+    marginVertical: 20,
+    marginBottom: 40,
   },
 });

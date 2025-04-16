@@ -8,12 +8,12 @@ export const baseURL = 'http://110.93.217.235:9092'; // staging
 
 export const ApiInstance = axios.create({
   baseURL,
-  timeout: 3000,
+  timeout: 30000,
 });
 
 export const ApiInstanceWithJWT = axios.create({
   baseURL,
-  timeout: 3000,
+  timeout: 30000,
 });
 
 ApiInstanceWithJWT.interceptors.request.use(
@@ -33,7 +33,7 @@ ApiInstanceWithJWT.interceptors.response.use(
     return response;
   },
   function (error) {
-    console.log("🚀 ~ error:", JSON.stringify(error))
+    console.log('🚀 ~ error:', JSON.stringify(error));
     if (
       (error?.request?.responseURL?.includes('profiles/') ||
         error?.request?.responseURL?.includes('invites/') ||

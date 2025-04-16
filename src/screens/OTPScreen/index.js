@@ -11,7 +11,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import {Colors, Fonts} from '../../config';
 import Images from '../../assets';
-import {GradientButton, TextInputCustom} from '../../components';
+import {GradientButton} from '../../components';
 import {useDispatch} from 'react-redux';
 import {login, sendOTP, signup, verifyOTP} from '../../redux/middlewares/user';
 import {errorToast} from '../../config/api';
@@ -25,11 +25,11 @@ const OTPScreen = ({route, navigation: {goBack, navigate}}) => {
   const [otp, setOtp] = React.useState('');
   const {fullName, phone, email, password, isCustomer} = route.params || {};
   const [timer, setTimer] = useState(59);
-  const [canResend, setCanResend] = useState(false);
+  const [isResendAllowed, setIsResendAllowed] = useState(false);
 
   useEffect(() => {
     if (timer === 0) {
-      setCanResend(true);
+      setIsResendAllowed(true);
       return;
     }
 
@@ -43,27 +43,28 @@ const OTPScreen = ({route, navigation: {goBack, navigate}}) => {
   const handleResendOTP = () => {
     dispatch(
       sendOTP(phone, isSent => {
-        if (isSent)
-          if (isSent?.includes('success')) {
-            setTimer(59);
-            setCanResend(false);
-          } else {
-            errorToast({message: isSent});
-          }
+        if (isSent?.includes('success')) {
+          setTimer(59);
+          setIsResendAllowed(false);
+        } else {
+          errorToast({message: isSent});
+        }
       }),
     );
   };
 
-  const _onSubmit = () => {
+  const handleSubmit = () => {
     let message = [];
     if (!otp) {
       message.push(otpError);
     }
-    message = message.join('\n');
-    if (message) return errorToast({message});
+
+    if (message.length) {
+      return errorToast({message: message.join('\n')});
+    }
+
     dispatch(
       verifyOTP(phone, otp, isSuccess => {
-        console.log(isSuccess, 'issuccess');
         if (isSuccess) {
           goBack();
           dispatch(
@@ -86,30 +87,18 @@ const OTPScreen = ({route, navigation: {goBack, navigate}}) => {
   };
 
   const {top} = useSafeAreaInsets();
-  let otpInput = React.useRef(null);
 
   return (
     <LinearGradient
       colors={[Colors.primary, Colors.secondary]}
       start={{x: 0, y: 0}}
       end={{x: 1, y: 0}}
-      style={{flex: 1}}>
+      style={styles.gradient}>
       <ImageBackground
         source={Images.bgLogo}
         resizeMode="contain"
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <Image
-          source={Images.logo}
-          resizeMode="contain"
-          style={{
-            width: 200,
-            height: 100,
-          }}
-        />
+        style={styles.imageBackground}>
+        <Image source={Images.logo} resizeMode="contain" style={styles.logo} />
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={goBack}
@@ -117,38 +106,15 @@ const OTPScreen = ({route, navigation: {goBack, navigate}}) => {
           <Image source={Images.back} style={styles.back} />
         </TouchableOpacity>
       </ImageBackground>
-      <View
-        style={{
-          flex: 3,
-          backgroundColor: Colors.white,
-          borderTopLeftRadius: 30,
-          borderTopRightRadius: 30,
-        }}>
+      <View style={styles.contentContainer}>
         <View style={styles.topBar}>
-          <View
-            style={{
-              borderBottomWidth: 2,
-              borderBottomColor: Colors.primary,
-              paddingBottom: 10,
-            }}>
-            <Text
-              style={{
-                fontSize: 16,
-                color: Colors.secondary,
-                fontFamily: Fonts.RobotoMedium,
-              }}>
-              Enter OTP
-            </Text>
+          <View style={styles.topBarInner}>
+            <Text style={styles.enterOtpText}>Enter OTP</Text>
           </View>
         </View>
         <ScrollView
-          style={{flex: 1}}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            flexGrow: 1,
-            paddingHorizontal: 20,
-            paddingBottom: 30,
-          }}>
+          style={styles.scrollContainer}
+          showsVerticalScrollIndicator={false}>
           <View>
             <OTPTextInput
               ref={e => {
@@ -158,23 +124,13 @@ const OTPScreen = ({route, navigation: {goBack, navigate}}) => {
               tintColor={Colors.primary}
               autoCapitalize="characters"
               autoFocus
-              textInputStyle={{
-                borderColor: 'red',
-                borderWidth: 1,
-                borderBottomWidth: 1,
-                borderRadius: 10,
-              }}
+              textInputStyle={styles.otpInput}
               handleTextChange={setOtp}
             />
           </View>
-          <Text style={{textAlign: 'center', marginTop: 20}}>
-            {canResend ? (
-              <Text
-                onPress={handleResendOTP}
-                style={{
-                  color: Colors.primary,
-                  textDecorationLine: 'underline',
-                }}>
+          <Text style={styles.resendText}>
+            {isResendAllowed ? (
+              <Text onPress={handleResendOTP} style={styles.resendLink}>
                 Resend Code
               </Text>
             ) : (
@@ -182,8 +138,8 @@ const OTPScreen = ({route, navigation: {goBack, navigate}}) => {
             )}
           </Text>
           <GradientButton
-            buttonStyle={{alignSelf: 'center', width: 200, marginTop: 40}}
-            onPress={_onSubmit}
+            buttonStyle={styles.submitButton}
+            onPress={handleSubmit}
             title={'Complete Sign Up'}
           />
         </ScrollView>
@@ -192,24 +148,18 @@ const OTPScreen = ({route, navigation: {goBack, navigate}}) => {
   );
 };
 
-export default OTPScreen;
-
 const styles = StyleSheet.create({
-  options: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  gradient: {
+    flex: 1,
+  },
+  imageBackground: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  forgotPassword: {
-    marginRight: 15,
-    color: Colors.secondary,
-    fontFamily: Fonts.RobotoMedium,
-  },
-  topBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    padding: 30,
+  logo: {
+    width: 200,
+    height: 100,
   },
   back: {
     width: 25,
@@ -223,4 +173,52 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 40,
   },
+  contentContainer: {
+    flex: 3,
+    backgroundColor: Colors.white,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+  },
+  topBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    padding: 30,
+  },
+  topBarInner: {
+    borderBottomWidth: 2,
+    borderBottomColor: Colors.primary,
+    paddingBottom: 10,
+  },
+  enterOtpText: {
+    fontSize: 16,
+    color: Colors.secondary,
+    fontFamily: Fonts.RobotoMedium,
+  },
+  scrollContainer: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingBottom: 30,
+  },
+  otpInput: {
+    borderColor: 'red',
+    borderWidth: 1,
+    borderBottomWidth: 1,
+    borderRadius: 10,
+  },
+  resendText: {
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  resendLink: {
+    color: Colors.primary,
+    textDecorationLine: 'underline',
+  },
+  submitButton: {
+    alignSelf: 'center',
+    width: 200,
+    marginTop: 40,
+  },
 });
+
+export default OTPScreen;

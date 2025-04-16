@@ -11,6 +11,7 @@ import {useSelector} from 'react-redux';
 const AddInvitePopup = ({isVisible, setVisible, setContactModal}) => {
   const navigation = useNavigation();
   const {top} = useSafeAreaInsets();
+
   const moveToContacts = () => {
     setVisible(false);
     setTimeout(() => {
@@ -40,33 +41,30 @@ const AddInvitePopup = ({isVisible, setVisible, setContactModal}) => {
           title="New Contact"
           onPress={moveToContacts}
           icon={Images.newContact}
-          iconStyle={{tintColor: Colors.white}}
-          containerStyle={{height: 50, justifyContent: 'center'}}
-          buttonStyle={{width: '80%'}}
+          iconStyle={styles.iconStyle}
+          containerStyle={styles.buttonContainer}
+          buttonStyle={styles.button}
         />
         <GradientButton
           title="Broadcast"
           icon={Images.broadcast2}
           onPress={moveToBroadcastCreation}
-          iconStyle={{tintColor: Colors.white}}
-          containerStyle={{height: 50, justifyContent: 'center'}}
-          buttonStyle={{width: '80%'}}
+          iconStyle={styles.iconStyle}
+          containerStyle={styles.buttonContainer}
+          buttonStyle={styles.button}
         />
-
         <GradientButton
           title="Copy Invite Link"
           noGradient
           icon={Images.link2}
-          textStyle={{color: Colors.black}}
-          containerStyle={{height: 50, justifyContent: 'center'}}
-          buttonStyle={{width: '80%'}}
+          textStyle={styles.textStyle}
+          containerStyle={styles.buttonContainer}
+          buttonStyle={styles.button}
         />
       </View>
     </ReactNativeModal>
   );
 };
-
-export default AddInvitePopup;
 
 const styles = StyleSheet.create({
   popup: {
@@ -79,4 +77,19 @@ const styles = StyleSheet.create({
   popupModal: {
     justifyContent: 'flex-start',
   },
+  iconStyle: {
+    tintColor: Colors.white,
+  },
+  buttonContainer: {
+    height: 50,
+    justifyContent: 'center',
+  },
+  button: {
+    width: '80%',
+  },
+  textStyle: {
+    color: Colors.black,
+  },
 });
+
+export default AddInvitePopup;

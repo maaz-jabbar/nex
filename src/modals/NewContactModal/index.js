@@ -1,11 +1,9 @@
 import React from 'react';
-import {useNavigation} from '@react-navigation/native';
 import ReactNativeModal from 'react-native-modal';
 import {StyleSheet, Text, View} from 'react-native';
 import {GradientButton, TextInputCustom} from '../../components';
 import {Colors, Fonts} from '../../config';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import Images from '../../assets';
 import {useDispatch} from 'react-redux';
 import {saveContact} from '../../redux/middlewares/user';
 
@@ -16,6 +14,7 @@ const NewContactModal = ({isVisible, setVisible}) => {
   const [phone, setPhone] = React.useState('');
 
   const dispatch = useDispatch();
+
   const addContact = () => {
     if (!name || !email || !phone) {
       return;
@@ -61,7 +60,6 @@ const NewContactModal = ({isVisible, setVisible}) => {
             onChangeText: setEmail,
           }}
         />
-        {/* <TextInputCustom title="Location" /> */}
         <TextInputCustom
           title="Phone Number"
           textInputProps={{
@@ -72,14 +70,12 @@ const NewContactModal = ({isVisible, setVisible}) => {
         <GradientButton
           title="Save"
           onPress={addContact}
-          buttonStyle={{alignSelf: 'center', width: 150, marginBottom: 0}}
+          buttonStyle={styles.saveButton}
         />
       </View>
     </ReactNativeModal>
   );
 };
-
-export default NewContactModal;
 
 const styles = StyleSheet.create({
   popup: {
@@ -92,4 +88,11 @@ const styles = StyleSheet.create({
   popupModal: {
     justifyContent: 'flex-start',
   },
+  saveButton: {
+    alignSelf: 'center',
+    width: 150,
+    marginBottom: 0,
+  },
 });
+
+export default NewContactModal;

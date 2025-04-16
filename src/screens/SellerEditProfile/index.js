@@ -1,33 +1,24 @@
 import React from 'react';
 import {
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
   Image,
   ScrollView,
   Linking,
+  StyleSheet,
 } from 'react-native';
-import {Colors, Fonts} from '../../config';
-import LinearGradient from 'react-native-linear-gradient';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import Images from '../../assets';
-import {
-  ContactAvatar,
-  GradientButton,
-  TextInputCustom,
-  ToggleButton,
-} from '../../components';
 import {useDispatch, useSelector} from 'react-redux';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {errorToast} from '../../config/api';
 import {uploadMedia} from '../../redux/middlewares/chat';
-import {
-  updateCustomerProfile,
-  updateSeller,
-  updateSellerProfile,
-} from '../../redux/middlewares/user';
+import {updateSellerProfile, updateSeller} from '../../redux/middlewares/user';
 import {saveUser} from '../../redux/actions/UserActions';
+import LinearGradient from 'react-native-linear-gradient';
+import {GradientButton, TextInputCustom, ContactAvatar} from '../../components';
+import {Colors, Fonts} from '../../config';
+import Images from '../../assets';
 
 const urlRegex =
   /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
@@ -36,12 +27,29 @@ const SellerEditProfile = ({navigation}) => {
   const dispatch = useDispatch();
   const user = useSelector(state => state.user?.user);
   const profile = useSelector(state => state.user?.profile);
-  console.log('🚀 ~ SellerEditProfile ~ user:', profile);
-  const [linkAdd, setLinkAdd] = React.useState(false);
   const {top} = useSafeAreaInsets();
-  const [links, setLinks] = React.useState(profile?.links);
+
+  const [linkAdd, setLinkAdd] = React.useState(false);
+  const [links, setLinks] = React.useState(profile?.links || []);
+  const [name, setName] = React.useState(user?.fullName);
+  const [bio, setBio] = React.useState(profile?.bio);
+  const [phone, setPhone] = React.useState(user?.mobileNumber);
+  const [email, setEmail] = React.useState(user?.email);
+  const [link, setLink] = React.useState('');
+  const [image, setImage] = React.useState('');
+
   const _goBack = () => {
     navigation.goBack();
+  };
+
+  const pickImage = async () => {
+    const options = {
+      mediaType: 'photo',
+      maxHeight: 400,
+      maxWidth: 400,
+    };
+    const source = await launchImageLibrary(options);
+    setImage(source?.assets[0]?.uri);
   };
 
   const onPressSaveLink = () => {
@@ -55,6 +63,7 @@ const SellerEditProfile = ({navigation}) => {
   const onPressSave = () => {
     if (!name || !phone || !email)
       return errorToast({message: 'Please fill all the fields'});
+
     if (
       user?.fullName === name &&
       user?.mobileNumber === phone &&
@@ -86,6 +95,7 @@ const SellerEditProfile = ({navigation}) => {
           ),
         );
       }
+
       if (
         user?.fullName !== name ||
         user?.mobileNumber !== phone ||
@@ -97,7 +107,11 @@ const SellerEditProfile = ({navigation}) => {
         if (user?.email !== email) data.email = email;
         dispatch(updateSeller(data, () => navigation.goBack()));
       }
-      if (JSON.stringify(profile?.links) !== JSON.stringify(links) || bio !== profile?.bio) {
+
+      if (
+        JSON.stringify(profile?.links) !== JSON.stringify(links) ||
+        bio !== profile?.bio
+      ) {
         dispatch(
           updateSellerProfile(links, bio, () => {
             navigation.goBack();
@@ -105,24 +119,6 @@ const SellerEditProfile = ({navigation}) => {
         );
       }
     }
-  };
-  const [sendSMS, setSendSMS] = React.useState(false);
-  const [pushNotifications, setPushNotifications] = React.useState(false);
-  const [name, setName] = React.useState(user?.fullName);
-  const [bio, setBio] = React.useState(profile?.bio);
-  const [phone, setPhone] = React.useState(user?.mobileNumber);
-  const [email, setEmail] = React.useState(user?.email);
-  const [link, setLink] = React.useState('');
-  const [image, setImage] = React.useState('');
-
-  const pickImage = async () => {
-    const options = {
-      mediaType: 'photo',
-      maxHeight: 400,
-      maxWidth: 400,
-    };
-    const source = await launchImageLibrary(options);
-    setImage(source?.assets[0]?.uri);
   };
 
   return (
@@ -147,41 +143,19 @@ const SellerEditProfile = ({navigation}) => {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.lowerContentContainer}
-        style={styles.container}>
+        contentContainerStyle={styles.lowerContentContainer}>
         <View style={styles.info}>
-          <View style={{alignSelf: 'center'}}>
+          <View style={styles.avatarContainer}>
             {image ? (
-              <View
-                style={{
-                  padding: 2,
-                  height: 124,
-                  width: 124,
-                  borderRadius: 62,
-                  backgroundColor: Colors.lightGrey,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <Image
-                  style={{
-                    width: 120,
-                    height: 120,
-                    borderRadius: 60,
-                    borderWidth: 2,
-                    borderColor: Colors.white,
-                  }}
-                  source={{uri: image}}
-                />
+              <View style={styles.avatarWrapper}>
+                <Image style={styles.avatarImage} source={{uri: image}} />
               </View>
             ) : (
               <ContactAvatar
                 contact={user}
                 displayName={false}
                 size={120}
-                containerStyle={{
-                  marginRight: 0,
-                  zIndex: 99,
-                }}
+                containerStyle={styles.contactAvatar}
               />
             )}
             <GradientButton
@@ -193,104 +167,60 @@ const SellerEditProfile = ({navigation}) => {
             />
           </View>
           <TextInputCustom
-            textInputProps={{
-              value: name,
-              onChangeText: text => {
-                setName(text);
-              },
-            }}
             title="Name"
+            textInputProps={{value: name, onChangeText: setName}}
           />
           <TextInputCustom
-            textInputProps={{
-              value: phone,
-              onChangeText: text => {
-                setPhone(text);
-              },
-            }}
             title="Phone Number"
+            textInputProps={{value: phone, onChangeText: setPhone}}
           />
           <TextInputCustom
-            textInputProps={{
-              value: email,
-              onChangeText: text => {
-                setEmail(text);
-              },
-            }}
             title="Email"
+            textInputProps={{value: email, onChangeText: setEmail}}
           />
           <TextInputCustom
             title="Bio"
-            textInputProps={{
-              multiline: true,
-              value: bio,
-              onChangeText: text => {
-                setBio(text);
-              },
-            }}
-            textInputStyle={{
-              height: 100,
-              textAlignVertical: 'top',
-              paddingTop: 10,
-            }}
+            textInputProps={{multiline: true, value: bio, onChangeText: setBio}}
+            textInputStyle={styles.bioInput}
           />
-          {links.map((link, index) => {
-            return (
-              <GradientButton
-                key={index}
-                noGradient
-                onPress={() => {
-                  Linking.openURL(link);
-                }}
-                icon={Images.link}
-                iconSize={20}
-                iconStyle={{tintColor: Colors.secondary}}
-                title={link}
-                textStyle={{color: Colors.secondary, flex: 1, marginLeft: 10}}
-                buttonStyle={{marginBottom: 0}}
-                containerStyle={{
-                  borderWidth: 0,
-                  height: undefined,
-                  paddingVertical: 5,
-                  paddingHorizontal: 0,
-                }}
-              />
-            );
-          })}
+          {links.map((link, index) => (
+            <GradientButton
+              key={index}
+              noGradient
+              onPress={() => Linking.openURL(link)}
+              icon={Images.link}
+              iconSize={20}
+              iconStyle={styles.linkIcon}
+              title={link}
+              textStyle={styles.linkText}
+              buttonStyle={styles.linkButton}
+              containerStyle={styles.linkContainer}
+            />
+          ))}
           <GradientButton
             noGradient
             icon={Images.plus2}
             iconSize={20}
-            title={'Add Link'}
+            title="Add Link"
             onPress={() => setLinkAdd(true)}
-            textStyle={{color: Colors.black, flex: 1, marginLeft: 10}}
-            buttonStyle={{marginBottom: 0}}
-            containerStyle={{
-              borderWidth: 0,
-              height: undefined,
-              paddingVertical: 5,
-              paddingHorizontal: 0,
-            }}
+            textStyle={styles.addLinkText}
+            buttonStyle={styles.addLinkButton}
+            containerStyle={styles.addLinkContainer}
           />
           {linkAdd && (
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={styles.linkInputContainer}>
               <TextInputCustom
-                textInputProps={{
-                  value: link,
-                  onChangeText: text => {
-                    setLink(text);
-                  },
-                }}
-                containerStyle={{flex: 1}}
+                textInputProps={{value: link, onChangeText: setLink}}
+                containerStyle={styles.linkInput}
                 title="Link"
                 icon={Images.link}
               />
               <GradientButton
                 icon={Images.check}
-                iconStyle={{tintColor: Colors.white}}
+                iconStyle={styles.checkIcon}
                 onPress={onPressSaveLink}
-                containerStyle={styles.sendButtonCont}
-                buttonStyle={styles.sendButton}
+                containerStyle={styles.saveLinkButtonCont}
+                buttonStyle={styles.saveLinkButton}
                 iconSize={24}
               />
             </View>
@@ -298,7 +228,7 @@ const SellerEditProfile = ({navigation}) => {
         </View>
         <GradientButton
           title="Save"
-          buttonStyle={{width: 150, alignSelf: 'center', marginTop: 20}}
+          buttonStyle={styles.saveButton}
           onPress={onPressSave}
         />
       </ScrollView>
@@ -306,105 +236,7 @@ const SellerEditProfile = ({navigation}) => {
   );
 };
 
-export default SellerEditProfile;
-
 const styles = StyleSheet.create({
-  sendButton: {
-    marginBottom: 0,
-    width: undefined,
-  },
-  sendButtonCont: {
-    height: 40,
-    width: 40,
-    paddingHorizontal: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 20,
-    marginLeft: 10,
-  },
-  cameraButton: {
-    marginBottom: 0,
-    width: undefined,
-    position: 'absolute',
-    right: 0,
-    zIndex: 99,
-  },
-  cameraButtonCont: {
-    height: 40,
-    width: 40,
-    paddingHorizontal: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 20,
-  },
-  list: {
-    marginBottom: 20,
-  },
-  brandItem: {
-    marginRight: 10,
-    backgroundColor: Colors.secondary,
-    padding: 10,
-    paddingHorizontal: 15,
-    borderRadius: 20,
-  },
-  brandItemText: {
-    fontFamily: Fonts.RobotoRegular,
-    fontSize: 14,
-    color: Colors.white,
-  },
-  listContent: {
-    paddingVertical: 10,
-    alignItems: 'center',
-  },
-  preferences: {
-    alignSelf: 'flex-start',
-    fontFamily: Fonts.RobotoMedium,
-    fontSize: 14,
-    color: Colors.lightGrey,
-  },
-  socialIcons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 30,
-  },
-  socialIconImage: {
-    width: 30,
-    height: 30,
-  },
-  socialIcon: {
-    marginRight: 10,
-  },
-  listItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-    alignSelf: 'stretch',
-  },
-  listTitle: {
-    fontFamily: Fonts.RobotoMedium,
-    fontSize: 14,
-    color: Colors.black,
-  },
-  name: {
-    fontSize: 36,
-    fontFamily: Fonts.RobotoRegular,
-    color: Colors.black,
-  },
-  phone: {
-    fontSize: 20,
-    fontFamily: Fonts.RobotoRegular,
-    color: Colors.black,
-    marginTop: 5,
-  },
-  email: {
-    fontSize: 15,
-    fontFamily: Fonts.RobotoRegular,
-    color: Colors.textGrey,
-    marginTop: 5,
-  },
-  info: {},
   container: {
     flex: 1,
     backgroundColor: Colors.white,
@@ -446,4 +278,99 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: Colors.black,
   },
+  info: {},
+  avatarContainer: {
+    alignSelf: 'center',
+  },
+  avatarWrapper: {
+    padding: 2,
+    height: 124,
+    width: 124,
+    borderRadius: 62,
+    backgroundColor: Colors.lightGrey,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatarImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 2,
+    borderColor: Colors.white,
+  },
+  contactAvatar: {
+    marginRight: 0,
+    zIndex: 99,
+  },
+  cameraButtonCont: {
+    height: 40,
+    width: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+  },
+  cameraButton: {
+    position: 'absolute',
+    right: 0,
+    zIndex: 99,
+  },
+  bioInput: {
+    height: 100,
+    textAlignVertical: 'top',
+    paddingTop: 10,
+  },
+  linkIcon: {
+    tintColor: Colors.secondary,
+  },
+  linkText: {
+    color: Colors.secondary,
+    flex: 1,
+    marginLeft: 10,
+  },
+  linkButton: {
+    marginBottom: 0,
+  },
+  linkContainer: {
+    borderWidth: 0,
+    height: undefined,
+    paddingVertical: 5,
+    paddingHorizontal: 0,
+  },
+  addLinkText: {
+    fontSize: 14,
+    color: Colors.secondary,
+  },
+  addLinkButton: {
+    marginBottom: 20,
+  },
+  addLinkContainer: {
+    borderWidth: 0,
+    height: undefined,
+    paddingVertical: 5,
+    paddingHorizontal: 0,
+  },
+  linkInputContainer: {
+    marginTop: 20,
+  },
+  linkInput: {
+    marginBottom: 10,
+  },
+  saveLinkButtonCont: {
+    position: 'absolute',
+    right: 0,
+    bottom: 10,
+  },
+  saveLinkButton: {
+    backgroundColor: Colors.secondary,
+    borderRadius: 20,
+    padding: 10,
+  },
+  checkIcon: {
+    tintColor: Colors.white,
+  },
+  saveButton: {
+    marginTop: 20,
+  },
 });
+
+export default SellerEditProfile;

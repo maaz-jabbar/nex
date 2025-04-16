@@ -1,4 +1,4 @@
-import { CommonActions, DrawerActions } from '@react-navigation/native';
+import {CommonActions, DrawerActions} from '@react-navigation/native';
 
 let _navigator: any;
 
@@ -28,7 +28,7 @@ function resetStack(name: string) {
   _navigator.dispatch(
     CommonActions.reset({
       index: 0,
-      routes: [{ name }],
+      routes: [{name}],
     }),
   );
 }

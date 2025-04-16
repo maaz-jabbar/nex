@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {useDispatch} from 'react-redux';
+
 import {Colors, Fonts} from '../../config';
 import {GradientButton, SelectionPill} from '../../components';
-import {brands} from '../../dummyData';
-import {useDispatch} from 'react-redux';
 import {
   getPositionDetails,
   getPositions,
@@ -12,24 +12,34 @@ import {errorToast} from '../../config/api';
 
 const ChoosePosition = ({navigation}) => {
   const dispatch = useDispatch();
-  const [positions, setPositions] = React.useState([]);
-  const [positionDetails, setPositionDetails] = React.useState([]);
-  const [selectedPosition, setSelectedPosition] = React.useState('');
-  const [selectedPositions, setSelectedPositions] = React.useState([]);
 
-  React.useEffect(() => {
-    dispatch(
-      getPositions(p => {
-        setPositions(p);
-      }),
-    );
-  }, []);
+  const [positions, setPositions] = useState([]);
+  const [positionDetails, setPositionDetails] = useState([]);
+  const [selectedPosition, setSelectedPosition] = useState('');
+  const [selectedPositions, setSelectedPositions] = useState([]);
 
-  const getPositionDetailsFunc = id => {
-    dispatch(
-      getPositionDetails(id, p => {
-        setPositionDetails(p);
-      }),
+  useEffect(() => {
+    dispatch(getPositions(setPositions));
+  }, [dispatch]);
+
+  const getPositionDetailsFunc = useCallback(
+    id => {
+      dispatch(getPositionDetails(id, setPositionDetails));
+    },
+    [dispatch],
+  );
+
+  const handlePositionPress = (name, id) => {
+    setSelectedPosition(name);
+    setSelectedPositions([]); // Clear previous selection
+    getPositionDetailsFunc(id);
+  };
+
+  const handleDetailToggle = detail => {
+    setSelectedPositions(prev =>
+      prev.includes(detail)
+        ? prev.filter(item => item !== detail)
+        : [...prev, detail],
     );
   };
 
@@ -38,10 +48,12 @@ const ChoosePosition = ({navigation}) => {
       navigation.navigate('ChooseLocation', {
         body: {
           position: selectedPosition,
-          details: selectedPositions
+          details: selectedPositions,
         },
       });
-    } else errorToast({message: 'Please select the available options'});
+    } else {
+      errorToast({message: 'Please select the available options'});
+    }
   };
 
   return (
@@ -52,55 +64,40 @@ const ChoosePosition = ({navigation}) => {
       <View>
         <Text style={styles.heading}>My Position</Text>
         <View style={styles.positions}>
-          {positions.map((position, index) => {
-            return (
-              <SelectionPill
-                key={index}
-                title={position.positionName}
-                isSelected={position.positionName === selectedPosition}
-                onPress={() => {
-                  setSelectedPosition(position.positionName);
-                  getPositionDetailsFunc(position.positionId);
-                }}
-              />
-            );
-          })}
+          {positions.map(position => (
+            <SelectionPill
+              key={position.positionId}
+              title={position.positionName}
+              isSelected={position.positionName === selectedPosition}
+              onPress={() =>
+                handlePositionPress(position.positionName, position.positionId)
+              }
+            />
+          ))}
         </View>
-        {selectedPosition && (
+
+        {!!selectedPosition && (
           <>
             <Text style={styles.heading}>{selectedPosition}</Text>
             <ScrollView
-              showsHorizontalScrollIndicator={false}
               horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.scrollablePositions}
               contentContainerStyle={[
                 styles.scrollablePositionsContent,
                 {
                   maxWidth: positionDetails.length * 25,
                 },
-              ]}
-              style={styles.scrollablePositions}>
+              ]}>
               {positionDetails.map((position, index) => {
-                const isSelected = selectedPositions.includes(position.detail);
-                const onPressPill = () => {
-                  if (!isSelected) {
-                    setSelectedPositions([
-                      ...selectedPositions,
-                      position.detail,
-                    ]);
-                  } else {
-                    setSelectedPositions(
-                      selectedPositions.filter(
-                        item => item !== position.detail,
-                      ),
-                    );
-                  }
-                };
+                const {detail} = position;
+                const isSelected = selectedPositions.includes(detail);
                 return (
                   <SelectionPill
                     key={index}
-                    title={position.detail}
+                    title={detail}
                     isSelected={isSelected}
-                    onPress={onPressPill}
+                    onPress={() => handleDetailToggle(detail)}
                   />
                 );
               })}
@@ -108,6 +105,7 @@ const ChoosePosition = ({navigation}) => {
           </>
         )}
       </View>
+
       <GradientButton
         title="Next"
         onPress={moveToLocation}
@@ -123,20 +121,13 @@ const ChoosePosition = ({navigation}) => {
 export default ChoosePosition;
 
 const styles = StyleSheet.create({
-  nextButton: {
-    alignSelf: 'center',
-    width: 150,
-    marginVertical: 20,
-    marginBottom: 40,
-  },
-  scrollablePositionsContent: {
-    minWidth: '100%',
-    marginLeft: 20,
-    flexWrap: 'wrap',
-  },
   container: {
     flex: 1,
     backgroundColor: Colors.white,
+  },
+  mainContentContainer: {
+    flexGrow: 1,
+    justifyContent: 'space-between',
   },
   heading: {
     fontSize: 24,
@@ -152,8 +143,15 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   scrollablePositions: {},
-  mainContentContainer: {
-    flexGrow: 1,
-    justifyContent: 'space-between',
+  scrollablePositionsContent: {
+    minWidth: '100%',
+    marginLeft: 20,
+    flexWrap: 'wrap',
+  },
+  nextButton: {
+    alignSelf: 'center',
+    width: 150,
+    marginVertical: 20,
+    marginBottom: 40,
   },
 });

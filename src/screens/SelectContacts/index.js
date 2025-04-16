@@ -25,7 +25,7 @@ const SelectContacts = ({navigation}) => {
 
   const moveToForm = () => {
     if (!selectedContacts.length)
-      return errorToast({message: 'Please select atleast one contact'});
+      return errorToast({message: 'Please select at least one contact'});
     navigation.navigate('BroadcastForm', {selectedContacts});
   };
 
@@ -76,13 +76,8 @@ const SelectContacts = ({navigation}) => {
             horizontal
             ListEmptyComponent={() => {
               return (
-                <View style={{}}>
-                  <Text
-                    style={{
-                      fontFamily: Fonts.RobotoRegular,
-                      color: Colors.black,
-                      fontSize: 16,
-                    }}>
+                <View>
+                  <Text style={styles.noContactsText}>
                     No contacts to show.
                   </Text>
                 </View>
@@ -96,7 +91,7 @@ const SelectContacts = ({navigation}) => {
                 buttonStyle={styles.listPlusButton}
                 iconSize={24}
                 noGradient
-                iconStyle={{tintColor: Colors.secondary}}
+                iconStyle={styles.listPlusIcon}
               />
             )}
             contentContainerStyle={styles.listContent}
@@ -163,29 +158,14 @@ const SelectContacts = ({navigation}) => {
           activeOpacity={0.8}
           style={styles.backButton}>
           <Text style={styles.back}>Create</Text>
-          <Image
-            source={Images.back}
-            style={[
-              styles.backIcon,
-              {transform: [{scaleX: -1}], marginRight: 0, marginLeft: 5},
-            ]}
-          />
+          <Image source={Images.back} style={styles.backIconReverse} />
         </TouchableOpacity>
       </View>
       <FlatList
         ListEmptyComponent={() => {
           return (
-            <View
-              style={{
-                alignItems: 'center',
-                marginTop: 100,
-              }}>
-              <Text
-                style={{
-                  fontFamily: Fonts.RobotoRegular,
-                  color: Colors.black,
-                  fontSize: 16,
-                }}>
+            <View style={styles.emptyList}>
+              <Text style={styles.noContactsText}>
                 Please add contacts to proceed.
               </Text>
             </View>
@@ -202,83 +182,6 @@ const SelectContacts = ({navigation}) => {
 export default SelectContacts;
 
 const styles = StyleSheet.create({
-  selectAll: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    paddingRight: 10,
-  },
-
-  selectAllText: {
-    color: Colors.secondary,
-    fontSize: 13,
-    fontFamily: Fonts.RobotoRegular,
-  },
-  toListButton: {
-    width: undefined,
-    marginBottom: 0,
-    height: undefined,
-    marginRight: 10,
-  },
-  toListButtonCont: {
-    width: undefined,
-    height: undefined,
-    paddingVertical: 10,
-  },
-  toListButtonText: {
-    fontSize: 14,
-    fontFamily: Fonts.RobotoRegular,
-    color: Colors.white,
-  },
-  toListTitle: {
-    color: Colors.darkerGrey,
-    fontSize: 14,
-    fontFamily: Fonts.RobotoRegular,
-    marginRight: 20,
-  },
-  backIcon: {
-    width: 25,
-    height: 25,
-    marginRight: 5,
-  },
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  back: {
-    fontFamily: Fonts.RobotoRegular,
-    fontSize: 15,
-    color: Colors.black,
-  },
-  searchIcon: {
-    width: 20,
-    height: 20,
-    margin: 10,
-    marginHorizontal: 20,
-  },
-  searchCont: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.background,
-    borderRadius: 50,
-    marginHorizontal: 20,
-    marginVertical: 10,
-  },
-  plusButton: {
-    marginBottom: 0,
-    width: undefined,
-  },
-  plusButtonCont: {
-    height: 40,
-    width: 40,
-    paddingHorizontal: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 20,
-  },
-  headerPlaceholder: {
-    width: 60,
-  },
   container: {
     flex: 1,
     backgroundColor: Colors.white,
@@ -295,12 +198,52 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontFamily: Fonts.RobotoBold,
   },
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  back: {
+    fontFamily: Fonts.RobotoRegular,
+    fontSize: 15,
+    color: Colors.black,
+  },
+  backIcon: {
+    width: 25,
+    height: 25,
+    marginRight: 5,
+  },
+  backIconReverse: {
+    width: 25,
+    height: 25,
+    marginRight: 0,
+    marginLeft: 5,
+    transform: [{scaleX: -1}],
+  },
+  searchCont: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.background,
+    borderRadius: 50,
+    marginHorizontal: 20,
+    marginVertical: 10,
+  },
+  searchIcon: {
+    width: 20,
+    height: 20,
+    margin: 10,
+    marginHorizontal: 20,
+  },
   input: {
     flex: 1,
     color: Colors.black,
     fontSize: 16,
     fontFamily: Fonts.RobotoRegular,
     height: 48,
+  },
+  noContactsText: {
+    fontFamily: Fonts.RobotoRegular,
+    color: Colors.black,
+    fontSize: 16,
   },
   list: {},
   listContent: {
@@ -319,5 +262,45 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 20,
+  },
+  listPlusIcon: {
+    tintColor: Colors.secondary,
+  },
+  toListTitle: {
+    color: Colors.darkerGrey,
+    fontSize: 14,
+    fontFamily: Fonts.RobotoRegular,
+    marginRight: 20,
+  },
+  toListButton: {
+    width: undefined,
+    marginBottom: 0,
+    height: undefined,
+    marginRight: 10,
+  },
+  toListButtonCont: {
+    width: undefined,
+    height: undefined,
+    paddingVertical: 10,
+  },
+  toListButtonText: {
+    fontSize: 14,
+    fontFamily: Fonts.RobotoRegular,
+    color: Colors.white,
+  },
+  selectAll: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    paddingRight: 10,
+  },
+  selectAllText: {
+    color: Colors.secondary,
+    fontSize: 13,
+    fontFamily: Fonts.RobotoRegular,
+  },
+  emptyList: {
+    alignItems: 'center',
+    marginTop: 100,
   },
 });

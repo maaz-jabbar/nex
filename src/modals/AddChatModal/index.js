@@ -10,14 +10,10 @@ import Images from '../../assets';
 const AddChatModal = ({isVisible, setVisible}) => {
   const navigation = useNavigation();
   const {top} = useSafeAreaInsets();
-  const moveToContacts = () => {
-    setVisible(false);
-    navigation.navigate('Contacts');
-  };
 
-  const moveToBroadcastCreation = () => {
+  const handleNavigation = screen => {
     setVisible(false);
-    navigation.navigate('SelectContacts');
+    navigation.navigate(screen);
   };
 
   return (
@@ -33,26 +29,24 @@ const AddChatModal = ({isVisible, setVisible}) => {
         <Text style={styles.createChat}>Create Chat or Broadcast</Text>
         <GradientButton
           title="New Chat"
-          onPress={moveToContacts}
+          onPress={() => handleNavigation('Contacts')}
           icon={Images.chat}
           iconStyle={{tintColor: Colors.white}}
-          containerStyle={{height: 50, justifyContent: 'center'}}
-          buttonStyle={{width: '80%'}}
+          containerStyle={styles.buttonContainer}
+          buttonStyle={styles.button}
         />
         <GradientButton
           title="Broadcast msg"
           icon={Images.contacts}
-          onPress={moveToBroadcastCreation}
+          onPress={() => handleNavigation('SelectContacts')}
           iconStyle={{tintColor: Colors.white}}
-          containerStyle={{height: 50, justifyContent: 'center'}}
-          buttonStyle={{width: '80%'}}
+          containerStyle={styles.buttonContainer}
+          buttonStyle={styles.button}
         />
       </View>
     </ReactNativeModal>
   );
 };
-
-export default AddChatModal;
 
 const styles = StyleSheet.create({
   createChat: {
@@ -71,4 +65,13 @@ const styles = StyleSheet.create({
   popupModal: {
     justifyContent: 'flex-start',
   },
+  buttonContainer: {
+    height: 50,
+    justifyContent: 'center',
+  },
+  button: {
+    width: '80%',
+  },
 });
+
+export default AddChatModal;

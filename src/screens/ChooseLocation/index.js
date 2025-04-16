@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState, useCallback} from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -6,41 +6,41 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
+
 import {Colors, Fonts} from '../../config';
 import {GradientButton, TextInputCustom} from '../../components';
 import {
   createAgentProfile,
   getPlacesAutoComplete,
 } from '../../redux/middlewares/profileCreation';
-import {useDispatch, useSelector} from 'react-redux';
 
 const ChooseLocation = ({route}) => {
   const dispatch = useDispatch();
   const {userId} = useSelector(state => state.user?.user);
-  const [bio, setBio] = React.useState('');
-  const [search, setSearch] = React.useState('');
-  const [searchResults, setSearchResults] = React.useState([]);
-  const [selectedLocation, setSelectedLocation] = React.useState(null);
-  const [isLocationFocused, setIsLocationFocused] = React.useState(false);
+
+  const [bio, setBio] = useState('');
+  const [search, setSearch] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+
   const locationRef = useRef();
 
-  useEffect(() => {
-    const debounceTimer = setTimeout(() => {
-      getValues(search);
-    }, 500);
-    return () => {
-      clearTimeout(debounceTimer);
-    };
-  }, [search]);
-
-  const getValues = async () => {
+  const getValues = useCallback(async () => {
     if (!search) {
       setSearchResults([]);
       return;
     }
-    const searchResults = await getPlacesAutoComplete(search);
-    setSearchResults(searchResults);
-  };
+    const results = await getPlacesAutoComplete(search);
+    setSearchResults(results);
+  }, [search]);
+
+  useEffect(() => {
+    const debounceTimer = setTimeout(() => {
+      getValues();
+    }, 500);
+    return () => clearTimeout(debounceTimer);
+  }, [search, getValues]);
 
   const moveToCongratulations = () => {
     const body = route?.params?.body;
@@ -53,6 +53,7 @@ const ChooseLocation = ({route}) => {
     <View style={styles.container}>
       <View style={styles.upperContainer}>
         <Text style={styles.heading}>Location</Text>
+
         <TextInputCustom
           title="City, State"
           containerStyle={styles.input}
@@ -61,11 +62,12 @@ const ChooseLocation = ({route}) => {
             value: search,
             onChangeText: setSearch,
             ref: locationRef,
-            onFocus: () => setIsLocationFocused(true),
-            onBlur: () => setIsLocationFocused(false),
+            onFocus: () => {}, // Placeholder in case you want to add styling later
+            onBlur: () => {},
           }}
         />
-        {!!searchResults?.length && (
+
+        {searchResults.length > 0 && (
           <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
             {searchResults.map(item => (
               <TouchableOpacity
@@ -80,7 +82,7 @@ const ChooseLocation = ({route}) => {
                     link: item.toponymName,
                   });
                   setSearchResults([]);
-                  locationRef.current.blur();
+                  locationRef.current?.blur();
                 }}>
                 <Text style={styles.listItemName}>{item.toponymName}</Text>
                 <Text style={styles.listItemCountry}>{item.countryName}</Text>
@@ -88,6 +90,7 @@ const ChooseLocation = ({route}) => {
             ))}
           </ScrollView>
         )}
+
         <TextInputCustom
           title="Bio"
           textInputStyle={{height: 100, textAlignVertical: 'top'}}
@@ -99,6 +102,7 @@ const ChooseLocation = ({route}) => {
           }}
         />
       </View>
+
       <View style={styles.lowerContainer}>
         <GradientButton
           title="Create Profile"
@@ -115,7 +119,35 @@ const ChooseLocation = ({route}) => {
 export default ChooseLocation;
 
 const styles = StyleSheet.create({
-  list: {flex: 1, marginBottom: 30},
+  container: {
+    flex: 1,
+    backgroundColor: Colors.white,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+  },
+  upperContainer: {
+    flex: 1,
+    alignSelf: 'stretch',
+  },
+  lowerContainer: {
+    justifyContent: 'center',
+    paddingBottom: 100,
+  },
+  heading: {
+    fontSize: 24,
+    textAlign: 'center',
+    color: Colors.black,
+    fontFamily: Fonts.JosefinSansSemiBold,
+    marginVertical: 10,
+  },
+  input: {
+    alignSelf: 'stretch',
+    marginBottom: 0,
+  },
+  list: {
+    flex: 1,
+    marginBottom: 30,
+  },
   listItem: {
     padding: 10,
     borderColor: Colors.lightGrey,
@@ -131,31 +163,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: Colors.textGrey,
     fontFamily: Fonts.RobotoRegular,
-  },
-  lowerContainer: {
-    justifyContent: 'center',
-    paddingBottom: 100,
-  },
-  upperContainer: {
-    flex: 1,
-    alignSelf: 'stretch',
-  },
-  container: {
-    flex: 1,
-    backgroundColor: Colors.white,
-    paddingHorizontal: 20,
-    alignItems: 'center',
-  },
-  heading: {
-    fontSize: 24,
-    textAlign: 'center',
-    color: Colors.black,
-    fontFamily: Fonts.JosefinSansSemiBold,
-    marginVertical: 10,
-  },
-  input: {
-    alignSelf: 'stretch',
-    marginBottom: 0,
   },
   button: {
     width: 150,

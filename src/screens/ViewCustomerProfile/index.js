@@ -14,10 +14,9 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Images from '../../assets';
 import {ContactAvatar, GradientButton} from '../../components';
 import {brands} from '../../dummyData';
-import {logout} from '../../redux/actions/UserActions';
 import {useDispatch} from 'react-redux';
 import {createChat} from '../../redux/middlewares/chat';
-import { sendInvite } from '../../redux/middlewares/user';
+import {sendInvite} from '../../redux/middlewares/user';
 
 const ViewCustomerProfile = ({navigation, route: {params}}) => {
   const {top} = useSafeAreaInsets();
@@ -64,11 +63,7 @@ const ViewCustomerProfile = ({navigation, route: {params}}) => {
   return (
     <View style={styles.container}>
       <LinearGradient
-        style={{
-          paddingTop: top,
-          overflow: 'visible',
-          zIndex: 1,
-        }}
+        style={[styles.headerGradient, {paddingTop: top}]}
         start={{x: 0, y: 0}}
         end={{x: 1, y: 0}}
         colors={[Colors.primary, Colors.secondary]}>
@@ -81,36 +76,28 @@ const ViewCustomerProfile = ({navigation, route: {params}}) => {
             <Text style={styles.back}>Back</Text>
           </TouchableOpacity>
           <Text style={styles.title}>Profile</Text>
-          <View style={{width: 70}} />
+          <View style={styles.headerSpacer} />
         </View>
         <ContactAvatar
           contact={user}
           displayName={false}
           size={120}
-          containerStyle={{
-            marginRight: 0,
-            marginTop: 20,
-            marginBottom: -60,
-            zIndex: 99,
-          }}
+          containerStyle={styles.avatarContainer}
         />
       </LinearGradient>
+
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.lowerContentContainer}
-        style={styles.container}>
+        style={styles.scrollView}>
         {user?.joined ? (
           <GradientButton
             title="Joined"
             onPress={() => {}}
             noGradient
-            containerStyle={{
-              height: 35,
-              paddingHorizontal: 0,
-              backgroundColor: Colors.secondary,
-            }}
-            buttonStyle={{width: 120}}
-            textStyle={{color: Colors.white}}
+            containerStyle={styles.joinedButton}
+            buttonStyle={styles.joinedButtonStyle}
+            textStyle={styles.joinedButtonText}
           />
         ) : (
           <GradientButton
@@ -119,17 +106,16 @@ const ViewCustomerProfile = ({navigation, route: {params}}) => {
               dispatch(sendInvite(user?.number));
             }}
             noGradient
-            containerStyle={{
-              height: 35,
-              paddingHorizontal: 0,
-            }}
-            buttonStyle={{width: 120}}
-            textStyle={{color: Colors.secondary}}
+            containerStyle={styles.inviteButton}
+            buttonStyle={styles.inviteButtonStyle}
+            textStyle={styles.inviteButtonText}
           />
         )}
+
         <Text style={styles.name}>{user?.name}</Text>
         <Text style={styles.phone}>{user?.number}</Text>
         <Text style={styles.email}>{user?.email}</Text>
+
         {user?.joined && (
           <>
             <View style={styles.actionContainer}>
@@ -138,6 +124,7 @@ const ViewCustomerProfile = ({navigation, route: {params}}) => {
                 const isLast = index === actionItems.length - 1;
                 return (
                   <TouchableOpacity
+                    key={index}
                     onPress={item.onPress}
                     disabled={item.disabled}
                     activeOpacity={0.8}
@@ -155,20 +142,20 @@ const ViewCustomerProfile = ({navigation, route: {params}}) => {
                 );
               })}
             </View>
+
             <Text style={styles.preferences}>Preferences:</Text>
+
             <FlatList
               data={brands}
               showsHorizontalScrollIndicator={false}
               horizontal
               style={styles.list}
               contentContainerStyle={styles.listContent}
-              renderItem={({item, index}) => {
-                return (
-                  <View key={index} style={styles.brandItem}>
-                    <Text style={styles.brandItemText}>{item.name}</Text>
-                  </View>
-                );
-              }}
+              renderItem={({item, index}) => (
+                <View key={index} style={styles.brandItem}>
+                  <Text style={styles.brandItemText}>{item.name}</Text>
+                </View>
+              )}
             />
           </>
         )}
@@ -180,79 +167,79 @@ const ViewCustomerProfile = ({navigation, route: {params}}) => {
 export default ViewCustomerProfile;
 
 const styles = StyleSheet.create({
-  actionContainer: {
+  container: {
+    flex: 1,
+    backgroundColor: Colors.white,
+  },
+  scrollView: {
+    backgroundColor: Colors.white,
+  },
+  headerGradient: {
+    overflow: 'visible',
+    zIndex: 1,
+  },
+  header: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    alignSelf: 'center',
-    marginVertical: 20,
-  },
-  actionIcon: {
-    width: 25,
-    height: 25,
-  },
-  actionText: {
-    fontFamily: Fonts.RobotoMedium,
-    fontSize: 14,
-    color: Colors.black,
-    marginTop: 10,
-  },
-  actionButton: {
-    height: 80,
-    width: 80,
-    marginRight: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 10,
-    backgroundColor: Colors.secondaryOpacityLight,
-  },
-  list: {
-    marginBottom: 20,
-  },
-  brandItem: {
-    marginRight: 10,
-    backgroundColor: Colors.secondary,
-    padding: 10,
-    paddingHorizontal: 15,
-    borderRadius: 20,
-  },
-  brandItemText: {
-    fontFamily: Fonts.RobotoRegular,
-    fontSize: 14,
-    color: Colors.white,
-  },
-  listContent: {
+    paddingHorizontal: 20,
     paddingVertical: 10,
   },
-  preferences: {
-    alignSelf: 'flex-start',
-    fontFamily: Fonts.RobotoMedium,
-    fontSize: 14,
-    color: Colors.lightGrey,
-  },
-  socialIcons: {
+  backButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 30,
   },
-  socialIconImage: {
-    width: 30,
-    height: 30,
+  backIcon: {
+    width: 25,
+    height: 25,
+    marginRight: 5,
+    tintColor: Colors.white,
   },
-  socialIcon: {
-    marginRight: 10,
+  back: {
+    fontFamily: Fonts.RobotoRegular,
+    fontSize: 15,
+    color: Colors.white,
   },
-  listItem: {
-    flexDirection: 'row',
+  title: {
+    color: Colors.white,
+    fontSize: 24,
+    fontFamily: Fonts.RobotoBold,
+    marginLeft: 10,
+  },
+  headerSpacer: {
+    width: 70,
+  },
+  avatarContainer: {
+    marginRight: 0,
+    marginTop: 20,
+    marginBottom: -60,
+    zIndex: 99,
+  },
+  lowerContentContainer: {
+    padding: 20,
+    paddingTop: 80,
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-    alignSelf: 'stretch',
   },
-  listTitle: {
-    fontFamily: Fonts.RobotoMedium,
-    fontSize: 14,
-    color: Colors.black,
+  joinedButton: {
+    height: 35,
+    paddingHorizontal: 0,
+    backgroundColor: Colors.secondary,
+  },
+  joinedButtonStyle: {
+    width: 120,
+  },
+  joinedButtonText: {
+    color: Colors.white,
+  },
+  inviteButton: {
+    height: 35,
+    paddingHorizontal: 0,
+  },
+  inviteButtonStyle: {
+    width: 120,
+  },
+  inviteButtonText: {
+    color: Colors.secondary,
   },
   name: {
     fontSize: 36,
@@ -272,56 +259,53 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: 10,
   },
-  bio: {
-    fontFamily: Fonts.RobotoRegular,
-    fontSize: 14,
-    color: Colors.black,
-    marginVertical: 10,
-  },
-  info: {
-    alignItems: 'center',
-  },
-  container: {
-    flex: 1,
-    backgroundColor: Colors.white,
-  },
-  lowerContentContainer: {
-    padding: 20,
-    paddingTop: 80,
-    alignItems: 'center',
-  },
-  header: {
+  actionContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    alignSelf: 'center',
+    marginVertical: 20,
   },
-  title: {
-    color: Colors.white,
-    fontSize: 24,
-    fontFamily: Fonts.RobotoBold,
-    marginLeft: 10,
+  actionButton: {
+    height: 80,
+    width: 80,
+    marginRight: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    backgroundColor: Colors.secondaryOpacityLight,
   },
-  backIcon: {
+  actionIcon: {
     width: 25,
     height: 25,
-    marginRight: 5,
-    tintColor: Colors.white,
   },
-  logoutIcon: {
-    tintColor: Colors.white,
-    width: 20,
-    height: 20,
-    marginLeft: 5,
+  actionText: {
+    fontFamily: Fonts.RobotoMedium,
+    fontSize: 14,
+    color: Colors.black,
+    marginTop: 10,
   },
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  preferences: {
+    alignSelf: 'flex-start',
+    fontFamily: Fonts.RobotoMedium,
+    fontSize: 14,
+    color: Colors.lightGrey,
   },
-  back: {
+  list: {
+    marginBottom: 20,
+  },
+  listContent: {
+    paddingVertical: 10,
+  },
+  brandItem: {
+    marginRight: 10,
+    backgroundColor: Colors.secondary,
+    padding: 10,
+    paddingHorizontal: 15,
+    borderRadius: 20,
+  },
+  brandItemText: {
     fontFamily: Fonts.RobotoRegular,
-    fontSize: 15,
+    fontSize: 14,
     color: Colors.white,
   },
 });

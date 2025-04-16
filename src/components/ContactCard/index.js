@@ -10,7 +10,7 @@ const ContactCard = ({
   selectable = false,
   selected = false,
   onSelect = () => {},
-  customComp = null
+  customComp = null,
 }) => {
   return (
     <TouchableOpacity
@@ -23,21 +23,8 @@ const ContactCard = ({
         size={50}
         displayName={false}
       />
-      <View
-        style={{
-          flex: 1,
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}>
-        <Text
-          style={{
-            fontSize: 16,
-            color: Colors.black,
-            flex: 1,
-            fontFamily: Fonts.RobotoRegular,
-          }}>
-          {user?.name}
-        </Text>
+      <View style={styles.contentRow}>
+        <Text style={styles.userName}>{user?.name}</Text>
         {selectable && (
           <CheckBox isChecked={selected} setIsChecked={onSelect} rounded />
         )}
@@ -54,5 +41,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
+  },
+  contentRow: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  userName: {
+    fontSize: 16,
+    color: Colors.black,
+    flex: 1,
+    fontFamily: Fonts.RobotoRegular,
   },
 });

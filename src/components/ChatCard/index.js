@@ -11,7 +11,9 @@ import moment from 'moment';
 
 const ChatCard = ({chat, onPress}) => {
   const user = useSelector(state => state.user?.user);
-  const chatWith = chat?.user?.filter(sender => sender.userId !== user?.userId)[0];
+  const chatWith = chat?.user?.filter(
+    sender => sender.userId !== user?.userId,
+  )[0];
   const lastMessageSentByMe = user?.userId === chat?.lastMessage?.senderId;
 
   const lastMessageToShow = chat?.isTyping
@@ -26,37 +28,14 @@ const ChatCard = ({chat, onPress}) => {
       activeOpacity={0.8}
       style={styles.container}>
       <ContactAvatar contact={chatWith} size={50} displayName={false} />
-      <View style={{flex: 1}}>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 5,
-          }}>
-          <Text
-            style={{
-              fontSize: 16,
-              color: Colors.black,
-              fontFamily: Fonts.RobotoRegular,
-            }}>
-            {chatWith?.fullName}
-          </Text>
-          <Text
-            style={{
-              fontSize: 14,
-              color: Colors.lightGrey,
-              fontFamily: Fonts.RobotoRegular,
-            }}>
+      <View style={styles.flex1}>
+        <View style={styles.innerCard}>
+          <Text style={styles.name}>{chatWith?.fullName}</Text>
+          <Text style={styles.time}>
             {moment(chat?.lastMessage?.timestamp).fromNow()}
           </Text>
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}>
+        <View style={styles.right}>
           <Text
             numberOfLines={1}
             style={{
@@ -76,11 +55,7 @@ const ChatCard = ({chat, onPress}) => {
               }
             />
           ) : (
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
+            <View style={styles.row}>
               <Text
                 style={{
                   fontSize: 17,
@@ -94,22 +69,8 @@ const ChatCard = ({chat, onPress}) => {
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 0}}
                 colors={[Colors.primary, Colors.secondary]}
-                style={{
-                  height: 20,
-                  width: 20,
-                  borderRadius: 20 / 2,
-                  backgroundColor: Colors.primary,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <Text
-                  style={{
-                    fontSize: 12,
-                    color: Colors.white,
-                    fontFamily: Fonts.RobotoRegular,
-                  }}>
-                  {chat?.unReadCount}
-                </Text>
+                style={styles.unreadCont}>
+                <Text style={styles.unReadCount}>{chat?.unReadCount}</Text>
               </LinearGradient>
             </View>
           )}
@@ -122,6 +83,47 @@ const ChatCard = ({chat, onPress}) => {
 export default ChatCard;
 
 const styles = StyleSheet.create({
+  unReadCount: {
+    fontSize: 12,
+    color: Colors.white,
+    fontFamily: Fonts.RobotoRegular,
+  },
+  unreadCont: {
+    height: 20,
+    width: 20,
+    borderRadius: 20 / 2,
+    backgroundColor: Colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  right: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  time: {
+    fontSize: 14,
+    color: Colors.lightGrey,
+    fontFamily: Fonts.RobotoRegular,
+  },
+  name: {
+    fontSize: 16,
+    color: Colors.black,
+    fontFamily: Fonts.RobotoRegular,
+  },
+  innerCard: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  flex1: {
+    flex: 1,
+  },
   container: {
     flexDirection: 'row',
     alignItems: 'center',

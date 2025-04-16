@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,36 +6,24 @@ import {
   View,
   Image,
   ScrollView,
-  FlatList,
   Linking,
 } from 'react-native';
-import {Colors, Fonts} from '../../config';
+import { Colors, Fonts } from '../../config';
 import LinearGradient from 'react-native-linear-gradient';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Images from '../../assets';
-import {ContactAvatar, GradientButton, ToggleButton} from '../../components';
-import {brands, contacts} from '../../dummyData';
-import {logout} from '../../redux/actions/UserActions';
-import {useDispatch, useSelector} from 'react-redux';
-import {getProfileExplicitly} from '../../redux/middlewares/user';
-const socialIcons = [
-  Images.instagram,
-  Images.facebook,
-  Images.tiktok,
-  Images.twitterX,
-];
+import { ContactAvatar, GradientButton } from '../../components';
+import { useDispatch, useSelector } from 'react-redux';
+import { getProfileExplicitly } from '../../redux/middlewares/user';
+import { logout } from '../../redux/actions/UserActions';
 
-const ViewSellerProfile = ({navigation, route: {params}}) => {
-  const {top} = useSafeAreaInsets();
+const ViewSellerProfile = ({ navigation, route: { params } }) => {
+  const { top } = useSafeAreaInsets();
   const dispatch = useDispatch();
 
   const [profile, setProfile] = useState(null);
-  console.log("🚀 ~ ViewSellerProfile ~ profile:", profile)
   const userType = useSelector(state => state?.user?.userType);
-  console.log('🚀 ~ ViewSellerProfile ~ userType:', userType);
-
   const user = params?.user;
-  console.log('🚀 ~ ViewSellerProfile ~ user:', user);
 
   useEffect(() => {
     dispatch(
@@ -45,10 +33,9 @@ const ViewSellerProfile = ({navigation, route: {params}}) => {
           userType: userType === 'CUSTOMER' ? 'SELLER' : 'CUSTOMER',
         },
         profile => {
-          console.log('🚀 ~ useEffect ~ profile:', profile);
           setProfile(profile);
-        },
-      ),
+        }
+      )
     );
   }, []);
 
@@ -60,9 +47,10 @@ const ViewSellerProfile = ({navigation, route: {params}}) => {
     dispatch(logout());
     navigation.reset({
       index: 0,
-      routes: [{name: 'Auth', params: {screen: 'BeforeSignUp'}}],
+      routes: [{ name: 'Auth', params: { screen: 'BeforeSignUp' } }],
     });
   };
+
   const moveToEditProfile = () => {
     navigation.navigate('SellerEditProfile');
   };
@@ -70,13 +58,9 @@ const ViewSellerProfile = ({navigation, route: {params}}) => {
   return (
     <View style={styles.container}>
       <LinearGradient
-        style={{
-          paddingTop: top,
-          overflow: 'visible',
-          zIndex: 1,
-        }}
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 0}}
+        style={[styles.headerGradient, { paddingTop: top }]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
         colors={[Colors.primary, Colors.secondary]}>
         <View style={styles.header}>
           <TouchableOpacity
@@ -87,20 +71,16 @@ const ViewSellerProfile = ({navigation, route: {params}}) => {
             <Text style={styles.back}>Back</Text>
           </TouchableOpacity>
           <Text style={styles.title}>Profile</Text>
-          <View style={{width: 70}} />
+          <View style={{ width: 70 }} />
         </View>
         <ContactAvatar
           contact={user}
           displayName={false}
           size={120}
-          containerStyle={{
-            marginRight: 0,
-            marginTop: 20,
-            marginBottom: -60,
-            zIndex: 99,
-          }}
+          containerStyle={styles.avatarContainer}
         />
       </LinearGradient>
+
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.lowerContentContainer}
@@ -120,16 +100,11 @@ const ViewSellerProfile = ({navigation, route: {params}}) => {
               }}
               icon={Images.link}
               iconSize={20}
-              iconStyle={{tintColor: Colors.secondary}}
+              iconStyle={styles.linkIcon}
               title={link}
-              textStyle={{color: Colors.secondary, flex: 1, marginLeft: 10}}
-              buttonStyle={{marginBottom: 0}}
-              containerStyle={{
-                borderWidth: 0,
-                height: undefined,
-                paddingVertical: 5,
-                paddingHorizontal: 0,
-              }}
+              textStyle={styles.linkText}
+              buttonStyle={styles.linkButton}
+              containerStyle={styles.linkContainer}
             />
           );
         })}
@@ -141,65 +116,48 @@ const ViewSellerProfile = ({navigation, route: {params}}) => {
 export default ViewSellerProfile;
 
 const styles = StyleSheet.create({
-  buttons: {
-    flexDirection: 'row',
+  headerGradient: {
+    overflow: 'visible',
+    zIndex: 1,
+  },
+  avatarContainer: {
+    marginRight: 0,
+    marginTop: 20,
+    marginBottom: -60,
+    zIndex: 99,
+  },
+  lowerContentContainer: {
+    padding: 20,
+    paddingTop: 80,
     alignItems: 'center',
   },
-  list: {
-    marginBottom: 20,
-  },
-  brandItem: {
-    marginRight: 10,
-    backgroundColor: Colors.secondary,
-    padding: 10,
-    paddingHorizontal: 15,
-    borderRadius: 20,
-  },
-  brandItemText: {
-    fontFamily: Fonts.RobotoRegular,
-    fontSize: 14,
-    color: Colors.white,
-  },
-  bio: {
-    fontFamily: Fonts.RobotoRegular,
-    fontSize: 14,
-    color: Colors.black,
-    marginVertical: 10,
-    alignSelf: 'flex-start',
-  },
-  listContent: {
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
     paddingVertical: 10,
   },
-  preferences: {
-    alignSelf: 'flex-start',
-    fontFamily: Fonts.RobotoMedium,
-    fontSize: 14,
-    color: Colors.lightGrey,
-  },
-  socialIcons: {
+  backButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 30,
   },
-  socialIconImage: {
-    width: 30,
-    height: 30,
+  backIcon: {
+    width: 25,
+    height: 25,
+    marginRight: 5,
+    tintColor: Colors.white,
   },
-  socialIcon: {
-    marginRight: 10,
+  back: {
+    fontFamily: Fonts.RobotoRegular,
+    fontSize: 15,
+    color: Colors.white,
   },
-  listItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-    alignSelf: 'stretch',
-  },
-  listTitle: {
-    fontFamily: Fonts.RobotoMedium,
-    fontSize: 14,
-    color: Colors.black,
+  title: {
+    color: Colors.white,
+    fontSize: 24,
+    fontFamily: Fonts.RobotoBold,
+    marginLeft: 10,
   },
   name: {
     fontSize: 36,
@@ -219,50 +177,34 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: 10,
   },
-  info: {
-    alignItems: 'center',
+  preferences: {
+    alignSelf: 'flex-start',
+    fontFamily: Fonts.RobotoMedium,
+    fontSize: 14,
+    color: Colors.lightGrey,
   },
-  container: {
-    flex: 1,
-    backgroundColor: Colors.white,
-  },
-  lowerContentContainer: {
-    padding: 20,
-    paddingTop: 80,
-    alignItems: 'center',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  title: {
-    color: Colors.white,
-    fontSize: 24,
-    fontFamily: Fonts.RobotoBold,
-    marginLeft: 10,
-  },
-  backIcon: {
-    width: 25,
-    height: 25,
-    marginRight: 5,
-    tintColor: Colors.white,
-  },
-  logoutIcon: {
-    tintColor: Colors.white,
-    width: 20,
-    height: 20,
-    marginLeft: 5,
-  },
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  back: {
+  bio: {
     fontFamily: Fonts.RobotoRegular,
-    fontSize: 15,
-    color: Colors.white,
+    fontSize: 14,
+    color: Colors.black,
+    marginVertical: 10,
+    alignSelf: 'flex-start',
+  },
+  linkContainer: {
+    borderWidth: 0,
+    height: undefined,
+    paddingVertical: 5,
+    paddingHorizontal: 0,
+  },
+  linkButton: {
+    marginBottom: 0,
+  },
+  linkIcon: {
+    tintColor: Colors.secondary,
+  },
+  linkText: {
+    color: Colors.secondary,
+    flex: 1,
+    marginLeft: 10,
   },
 });

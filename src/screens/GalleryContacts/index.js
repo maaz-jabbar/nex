@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
   Image,
-  ScrollView,
   StyleSheet,
   TextInput,
   Text,
@@ -12,14 +11,12 @@ import {
 } from 'react-native';
 import {Colors, Fonts} from '../../config';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {ContactAvatar, GradientButton} from '../../components';
+import {ContactAvatar} from '../../components';
 import Images from '../../assets';
-// import {galleries} from '../../dummyData';
 import LinearGradient from 'react-native-linear-gradient';
 import {DeleteGalleryModal, NewGalleryModal} from '../../modals';
 import {useDispatch, useSelector} from 'react-redux';
 import {getCustomerGalleries} from '../../redux/middlewares/gallery';
-import {baseURL} from '../../config/api';
 
 const GalleryContacts = ({route: {params}, navigation}) => {
   const {top} = useSafeAreaInsets();
@@ -29,7 +26,6 @@ const GalleryContacts = ({route: {params}, navigation}) => {
   const [tempData, setTempData] = useState(null);
   const [search, setSearch] = useState('');
   const dispatch = useDispatch();
-  const jwt = useSelector(state => state?.user?.user?.jwt);
   const [galleries, setGalleries] = useState([]);
 
   useEffect(() => {
@@ -45,7 +41,6 @@ const GalleryContacts = ({route: {params}, navigation}) => {
   };
 
   const _renderItem = ({item, index}) => {
-    console.log('🚀 ~ const_renderItem= ~ item:', item?.userId);
     return (
       <TouchableOpacity
         onLongPress={() => {
@@ -66,16 +61,8 @@ const GalleryContacts = ({route: {params}, navigation}) => {
             {item.name}
           </Text>
         </View>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Image
-            source={Images.galleryCount}
-            style={{
-              width: 25,
-              height: 25,
-              resizeMode: 'contain',
-              marginRight: -7,
-            }}
-          />
+        <View style={styles.countWrapper}>
+          <Image source={Images.galleryCount} style={styles.countIcon} />
           <LinearGradient
             start={{x: 0, y: 0}}
             end={{x: 1, y: 0}}
@@ -86,16 +73,10 @@ const GalleryContacts = ({route: {params}, navigation}) => {
             </Text>
           </LinearGradient>
         </View>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <View style={styles.countWrapper}>
           <Image
             source={Images.productCount}
-            style={{
-              width: 25,
-              height: 25,
-              resizeMode: 'contain',
-              marginRight: -7,
-              marginLeft: 10,
-            }}
+            style={[styles.countIcon, {marginLeft: 10}]}
           />
           <LinearGradient
             start={{x: 0, y: 0}}
@@ -138,16 +119,22 @@ const GalleryContacts = ({route: {params}, navigation}) => {
             resizeMode="contain"
             style={styles.searchIcon}
           />
-          <TextInput onChangeText={text => setSearch(text)} value={search} placeholder="Search" style={styles.input} />
+          <TextInput
+            onChangeText={text => setSearch(text)}
+            value={search}
+            placeholder="Search"
+            style={styles.input}
+          />
         </View>
         <FlatList
           refreshControl={
             <RefreshControl refreshing={false} onRefresh={getData} />
           }
-          data={galleries?.filter(gallery => {
-            return gallery?.name?.toLowerCase().includes(search?.toLowerCase());
-          })}
+          data={galleries?.filter(gallery =>
+            gallery?.name?.toLowerCase().includes(search?.toLowerCase()),
+          )}
           renderItem={_renderItem}
+          keyExtractor={(item, index) => index.toString()}
         />
       </View>
     </View>
@@ -157,53 +144,6 @@ const GalleryContacts = ({route: {params}, navigation}) => {
 export default GalleryContacts;
 
 const styles = StyleSheet.create({
-  productCountCont: {
-    borderRadius: 30,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-  },
-  productCount: {
-    color: Colors.white,
-    fontSize: 14,
-    fontFamily: Fonts.RobotoRegular,
-  },
-  galleryItemInnerCont: {
-    flex: 1,
-    paddingHorizontal: 10,
-  },
-  galleryItemTitle: {
-    color: Colors.black,
-    fontSize: 16,
-    fontFamily: Fonts.RobotoMedium,
-  },
-  galleryItemDescription: {
-    fontSize: 14,
-    color: Colors.textGrey,
-    fontFamily: Fonts.RobotoRegular,
-  },
-  galleryItem: {
-    padding: 10,
-    paddingHorizontal: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  searchIcon: {
-    width: 20,
-    height: 20,
-    margin: 10,
-    marginHorizontal: 20,
-  },
-  searchCont: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.background,
-    borderRadius: 50,
-    marginHorizontal: 20,
-    marginBottom: 10,
-  },
-  headerPlaceholder: {
-    width: 40,
-  },
   container: {
     flex: 1,
     backgroundColor: Colors.white,
@@ -220,21 +160,60 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontFamily: Fonts.RobotoBold,
   },
-  text: {
-    fontSize: 20,
+  searchCont: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.background,
+    borderRadius: 50,
+    marginHorizontal: 20,
+    marginBottom: 10,
+  },
+  searchIcon: {
+    width: 20,
+    height: 20,
+    margin: 10,
+    marginHorizontal: 20,
+  },
+  input: {
+    flex: 1,
+    fontSize: 16,
     fontFamily: Fonts.RobotoRegular,
     color: Colors.black,
   },
-  plusButton: {
-    marginBottom: 0,
-    width: undefined,
-  },
-  plusButtonCont: {
-    height: 40,
-    width: 40,
-    paddingHorizontal: 0,
-    justifyContent: 'center',
+  galleryItem: {
+    padding: 10,
+    paddingHorizontal: 20,
+    flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 20,
+  },
+  galleryItemInnerCont: {
+    flex: 1,
+    paddingHorizontal: 10,
+  },
+  galleryItemTitle: {
+    color: Colors.black,
+    fontSize: 16,
+    fontFamily: Fonts.RobotoMedium,
+  },
+  productCountCont: {
+    borderRadius: 30,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    marginRight: 5,
+  },
+  productCount: {
+    color: Colors.white,
+    fontSize: 14,
+    fontFamily: Fonts.RobotoRegular,
+  },
+  countWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  countIcon: {
+    width: 25,
+    height: 25,
+    resizeMode: 'contain',
+    marginRight: -7,
   },
 });
