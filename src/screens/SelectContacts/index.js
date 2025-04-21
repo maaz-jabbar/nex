@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -13,10 +13,46 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {CheckBox, ContactCard, GradientButton} from '../../components';
 import Images from '../../assets';
 import {ContactAvatar} from '../../components';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {errorToast} from '../../config/api';
+import {
+  getCustomerBasedOnSearch,
+} from '../../redux/middlewares/user';
 
 const SelectContacts = ({navigation}) => {
+  const [search, setSearch] = useState('');
+  const dispatch = useDispatch();
+  const [searchedItems, setSearchedItems] = useState([]);
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+  const userType = useSelector(state => state.user?.userType);
+  const isCustomer = userType === 'CUSTOMER';
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(search);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
+    if (debouncedQuery && !isCustomer) {
+      dispatch(
+        getCustomerBasedOnSearch(debouncedQuery, data => {
+          if (data.body) {
+            setSearchedItems(
+              data.body.filter(contact => {
+                return contacts.find(c => c?.userId == contact?.profileId);
+              }),
+            );
+          }
+        }),
+      );
+    } else {
+      setSearchedItems([]);
+    }
+  }, [debouncedQuery]);
+
   const {top} = useSafeAreaInsets();
 
   const _goBack = () => {
@@ -33,6 +69,7 @@ const SelectContacts = ({navigation}) => {
   const contacts = useSelector(state => state.user?.contacts);
 
   const _renderItem = ({item, index}) => {
+    console.log('🚀 ~ const_renderItem= ~ item:', item);
     const isSelected =
       selectedContacts.filter(contact => contact.number === item.number)
         ?.length > 0;
@@ -62,14 +99,6 @@ const SelectContacts = ({navigation}) => {
     const allSelected = selectedContacts.length === contacts.length;
     return (
       <>
-        <View style={styles.searchCont}>
-          <Image
-            source={Images.search}
-            resizeMode="contain"
-            style={styles.searchIcon}
-          />
-          <TextInput placeholder="Search" style={styles.input} />
-        </View>
         <View>
           <FlatList
             data={contacts}
@@ -101,6 +130,7 @@ const SelectContacts = ({navigation}) => {
             }}
           />
         </View>
+
         {selectedContacts.length > 0 && (
           <View>
             <FlatList
@@ -138,9 +168,51 @@ const SelectContacts = ({navigation}) => {
             rounded
           />
         </View>
+        <View>
+          {searchedItems.map((newItem, index) => {
+            const item = {
+              email: newItem?.email,
+              inviteStatus: 'ACCEPTED',
+              joined: true,
+              name: newItem?.fullName,
+              number: newItem?.mobileNumber,
+              userId: newItem?.profileId,
+            };
+
+            const isSelected =
+              selectedContacts.filter(contact => contact.number === item.number)
+                ?.length > 0;
+
+            const onPressSelect = () => {
+              if (isSelected) {
+                setSelectedContacts(
+                  selectedContacts.filter(
+                    contact => contact.number !== item.number,
+                  ),
+                );
+              } else {
+                setSelectedContacts([...selectedContacts, item]);
+              }
+            };
+            return (
+              <ContactCard
+                user={item}
+                onPress={onPressSelect}
+                key={index}
+                onSelect={onPressSelect}
+                selected={isSelected}
+                selectable
+              />
+            );
+          })}
+        </View>
       </>
     );
   };
+
+  const filteredContacts = searchedItems?.length ? [] : contacts.filter(contact =>
+    contact?.name?.toLowerCase().includes(search?.toLowerCase()),
+  );
 
   return (
     <View style={[styles.container, {paddingTop: top}]}>
@@ -161,6 +233,19 @@ const SelectContacts = ({navigation}) => {
           <Image source={Images.back} style={styles.backIconReverse} />
         </TouchableOpacity>
       </View>
+      <View style={styles.searchCont}>
+        <Image
+          source={Images.search}
+          resizeMode="contain"
+          style={styles.searchIcon}
+        />
+        <TextInput
+          placeholder="Search"
+          onChangeText={text => setSearch(text)}
+          value={search}
+          style={styles.input}
+        />
+      </View>
       <FlatList
         ListEmptyComponent={() => {
           return (
@@ -171,7 +256,7 @@ const SelectContacts = ({navigation}) => {
             </View>
           );
         }}
-        data={contacts}
+        data={filteredContacts}
         renderItem={_renderItem}
         ListHeaderComponent={_listHeader}
       />
