@@ -391,6 +391,20 @@ export const updateCustomerProfile = (favDesigner, goBack) => {
       });
   };
 };
+
+export const getCustomerBasedOnSearch = (query, onSuccess) => {
+  return (dispatch) => {
+    dispatch(loaderTrue());
+    ApiInstanceWithJWT.get('profiles/customer/search?term=' + query)
+      .then(({data}) => {
+        onSuccess(data)
+      })
+      .finally(() => {
+        dispatch(loaderFalse());
+      });
+  };
+};
+
 export const updateSellerProfile = (links, bio, goBack) => {
   return (dispatch, getState) => {
     const profileId = getState().user?.profile?.profileId;

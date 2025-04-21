@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -16,24 +16,57 @@ import {ContactAvatar, ContactCard, GradientButton} from '../../components';
 import {AddInvitePopup, InvitesModal, NewContactModal} from '../../modals';
 import {
   deleteInvitePerm,
+  getCustomerBasedOnSearch,
   getProfileExplicitly,
   getUserContacts,
   getUserWithId,
+  saveContact,
 } from '../../redux/middlewares/user';
 import Images from '../../assets';
+import {successToast} from '../../config/api';
 
 const Contacts = ({navigation}) => {
   const {top} = useSafeAreaInsets();
   const dispatch = useDispatch();
 
-  const [search, setSearch] = React.useState('');
-  const [addContactModal, setAddContactModal] = React.useState(false);
-  const [newContact, setNewContact] = React.useState(false);
-  const [inviteModal, setInviteModal] = React.useState(false);
+  const [search, setSearch] = useState('');
+  const [addContactModal, setAddContactModal] = useState(false);
+  const [newContact, setNewContact] = useState(false);
+  const [inviteModal, setInviteModal] = useState(false);
+  const [searchedItems, setSearchedItems] = useState([]);
+  const [debouncedQuery, setDebouncedQuery] = useState('');
 
   const profileId = useSelector(state => state.user?.profile?.profileId);
   const userType = useSelector(state => state.user?.userType);
   const contacts = useSelector(state => state.user?.contacts) || [];
+
+  const isCustomer = userType === 'CUSTOMER';
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(search);
+    }, 500); 
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
+    if (debouncedQuery && !isCustomer) {
+      dispatch(
+        getCustomerBasedOnSearch(debouncedQuery, data => {
+          if (data.body) {
+            setSearchedItems(
+              data.body.filter(contact => {
+                return !contacts.find(c => c?.userId === contact?.profileId);
+              }),
+            );
+          }
+        }),
+      );
+    } else {
+      setSearchedItems([]);
+    }
+  }, [debouncedQuery]);
 
   const _goBack = () => navigation.goBack();
 
@@ -116,41 +149,89 @@ const Contacts = ({navigation}) => {
         />
       </View>
       <View>
+        <FlatList
+          data={filteredContacts}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.listContent}
+          style={styles.list}
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={() => dispatch(getUserContacts(profileId))}
+            />
+          }
+          ListHeaderComponent={
+            <GradientButton
+              icon={Images.plus}
+              containerStyle={styles.listPlusButtonCont}
+              buttonStyle={styles.listPlusButton}
+              iconSize={24}
+              noGradient
+              onPress={() => setAddContactModal(true)}
+              iconStyle={{tintColor: Colors.secondary}}
+            />
+          }
+          ListEmptyComponent={
+            <View>
+              <Text style={styles.emptyText}>No contacts to show.</Text>
+            </View>
+          }
+          renderItem={({item}) => (
+            <ContactAvatar onPress={() => viewProfile(item)} contact={item} />
+          )}
+        />
+      </View>
       <FlatList
         data={filteredContacts}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.listContent}
-        style={styles.list}
-        refreshControl={
-          <RefreshControl
-            refreshing={false}
-            onRefresh={() => dispatch(getUserContacts(profileId))}
-          />
-        }
-        ListHeaderComponent={
-          <GradientButton
-            icon={Images.plus}
-            containerStyle={styles.listPlusButtonCont}
-            buttonStyle={styles.listPlusButton}
-            iconSize={24}
-            noGradient
-            onPress={() => setAddContactModal(true)}
-            iconStyle={{tintColor: Colors.secondary}}
-          />
-        }
-        ListEmptyComponent={
-          <View>
-            <Text style={styles.emptyText}>No contacts to show.</Text>
-          </View>
-        }
-        renderItem={({item}) => (
-          <ContactAvatar onPress={() => viewProfile(item)} contact={item} />
-        )}
-      />
-    </View>
-      <FlatList
-        data={filteredContacts}
+        ListHeaderComponent={() => {
+          return (
+            <>
+              {searchedItems.map((item, index) => {
+                const itemToSend = {
+                  name: item?.fullName,
+                  userId: item?.profileId,
+                };
+                const contactToAdd = {
+                  name: item?.fullName,
+                  email: item?.email,
+                  number: item?.mobileNumber,
+                };
+                const viewItem = {
+                  email: item?.email,
+                  inviteStatus: 'PENDING',
+                  joined: true,
+                  name: item?.fullName,
+                  number: item?.mobileNumber,
+                  userId: item?.profileId,
+                };
+                const addContact = () => {
+                  dispatch(
+                    saveContact(contactToAdd, () => {
+                      successToast('Contact invited successfully');
+                    }),
+                  );
+                };
+                return (
+                  <ContactCard
+                    key={index}
+                    onPress={() => viewProfile(viewItem)}
+                    user={itemToSend}
+                    customComp={
+                      <TouchableOpacity
+                        activeOpacity={0.8}
+                        style={styles.sendInviteContainer}
+                        onPress={addContact}>
+                        <Text style={styles.sendInvite}>Send Invite</Text>
+                        <Image source={Images.plus} style={styles.addIcon} />
+                      </TouchableOpacity>
+                    }
+                  />
+                );
+              })}
+            </>
+          );
+        }}
         keyExtractor={(item, index) => `${item?.userId}_${index}`}
         renderItem={({item}) => {
           const accepted = item?.inviteStatus === 'ACCEPTED';
@@ -252,6 +333,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 20,
   },
+  sendInvite: {
+    fontFamily: Fonts.RobotoRegular,
+    color: Colors.white,
+    fontSize: 16,
+    marginRight: 5,
+  },
+  sendInviteContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.secondary,
+    borderRadius: 50,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
   deleteIconWrapper: {
     marginRight: 10,
   },
@@ -259,6 +354,12 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
     resizeMode: 'contain',
+  },
+  addIcon: {
+    width: 25,
+    height: 25,
+    resizeMode: 'contain',
+    tintColor: Colors.white,
   },
   emptyText: {
     fontFamily: Fonts.RobotoRegular,
