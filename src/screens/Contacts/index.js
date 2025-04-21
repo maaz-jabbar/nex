@@ -45,7 +45,7 @@ const Contacts = ({navigation}) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedQuery(search);
-    }, 500); 
+    }, 500);
 
     return () => clearTimeout(timer);
   }, [search]);
@@ -55,11 +55,7 @@ const Contacts = ({navigation}) => {
       dispatch(
         getCustomerBasedOnSearch(debouncedQuery, data => {
           if (data.body) {
-            setSearchedItems(
-              data.body.filter(contact => {
-                return !contacts.find(c => c?.userId === contact?.profileId);
-              }),
-            );
+            setSearchedItems(data.body);
           }
         }),
       );
@@ -106,9 +102,11 @@ const Contacts = ({navigation}) => {
     );
   };
 
-  const filteredContacts = contacts.filter(contact =>
-    contact?.name?.toLowerCase().includes(search?.toLowerCase()),
-  );
+  const filteredContacts = searchedItems?.length
+    ? []
+    : contacts.filter(contact =>
+        contact?.name?.toLowerCase().includes(search?.toLowerCase()),
+      );
 
   return (
     <View style={[styles.container, {paddingTop: top}]}>
@@ -205,6 +203,10 @@ const Contacts = ({navigation}) => {
                   number: item?.mobileNumber,
                   userId: item?.profileId,
                 };
+                const isInContacts =
+                  contacts.filter(
+                    contact => contact?.userId === item?.profileId,
+                  ).length > 0;
                 const addContact = () => {
                   dispatch(
                     saveContact(contactToAdd, () => {
@@ -218,13 +220,15 @@ const Contacts = ({navigation}) => {
                     onPress={() => viewProfile(viewItem)}
                     user={itemToSend}
                     customComp={
-                      <TouchableOpacity
-                        activeOpacity={0.8}
-                        style={styles.sendInviteContainer}
-                        onPress={addContact}>
-                        <Text style={styles.sendInvite}>Send Invite</Text>
-                        <Image source={Images.plus} style={styles.addIcon} />
-                      </TouchableOpacity>
+                      isInContacts ? null : (
+                        <TouchableOpacity
+                          activeOpacity={0.8}
+                          style={styles.sendInviteContainer}
+                          onPress={addContact}>
+                          <Text style={styles.sendInvite}>Send Invite</Text>
+                          <Image source={Images.plus} style={styles.addIcon} />
+                        </TouchableOpacity>
+                      )
                     }
                   />
                 );
