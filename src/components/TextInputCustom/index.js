@@ -54,7 +54,7 @@ const TextInputCustom = ({
             source={icon}
             style={[
               styles.icon,
-              {position: 'absolute', right: 15, top: 37},
+              {position: 'absolute', right: 15, top: 40},
               iconStyles,
             ]}
           />
