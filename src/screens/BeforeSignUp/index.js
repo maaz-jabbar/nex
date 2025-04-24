@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, Text, View} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {loaderFalse, saveUserType} from '../../redux/actions/UserActions';
 import GradientButton from '../../components/GradientButton';
@@ -15,7 +15,7 @@ const BeforeSignUp = ({navigation}) => {
 
   const moveToOnboarding = customerType => {
     dispatch(saveUserType(customerType));
-    navigation.navigate('Onboarding');
+    navigation.navigate('Onboarding', {customerType});
   };
 
   const moveToLogin = () => {
@@ -25,25 +25,37 @@ const BeforeSignUp = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.welcomeText}>Welcome to Nexsa</Text>
+      <View />
 
       <View style={styles.buttonContainer}>
+        <Image style={styles.logo} source={Images.logoColored} />
+        <Text style={styles.welcomeText}>How will you use Nexsa?</Text>
         <GradientButton
           onPress={() => moveToOnboarding('CUSTOMER')}
-          icon={Images.cart}
+          icon={Images.customer}
           title="Customer account"
+          containerStyle={{
+            justifyContent: 'center',
+          }}
+          textStyle={{marginLeft: 10}}
         />
         <GradientButton
           onPress={() => moveToOnboarding('SELLER')}
-          icon={Images.cart}
+          icon={Images.seller}
           title="Seller account"
+          containerStyle={{
+            justifyContent: 'center',
+          }}
+          textStyle={{marginLeft: 10}}
         />
       </View>
 
       <View style={styles.signInContainer}>
-        <Text style={styles.alreadyHaveAccount}>Already have an account?</Text>
-        <Text style={styles.signIn} onPress={moveToLogin}>
-          Sign In
+        <Text style={styles.alreadyHaveAccount}>
+          Already have an account?{' '}
+          <Text style={styles.signIn} onPress={moveToLogin}>
+            Log In
+          </Text>
         </Text>
       </View>
     </View>
@@ -56,22 +68,30 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.white,
     flex: 1,
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-between',
     alignItems: 'center',
     padding: 30,
   },
+  logo: {
+    width: 200,
+    height: 100,
+    resizeMode: 'contain',
+    marginBottom: 100,
+  },
   welcomeText: {
-    fontSize: 24,
+    fontSize: 16,
     textAlign: 'center',
-    color: Colors.black,
-    fontFamily: Fonts.JosefinSansSemiBold,
+    cocolor: Colors.lightGrey,
+    fontFamily: Fonts.RobotoRegular,
+    marginBottom: 20,
   },
   buttonContainer: {
-    width: '80%',
+    width: '100%',
     alignItems: 'center',
   },
   signInContainer: {
     alignItems: 'center',
+    marginBottom: 100,
   },
   alreadyHaveAccount: {
     fontSize: 14,
@@ -80,10 +100,6 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.RobotoMedium,
   },
   signIn: {
-    fontSize: 14,
-    textAlign: 'center',
-    fontFamily: Fonts.RobotoMedium,
     color: Colors.secondary,
-    marginTop: 10,
   },
 });

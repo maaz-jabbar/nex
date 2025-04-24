@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,25 +7,44 @@ import {
   Image,
   ScrollView,
   FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import {Colors, Fonts} from '../../config';
 import LinearGradient from 'react-native-linear-gradient';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Images from '../../assets';
 import {ContactAvatar, GradientButton} from '../../components';
-import {brands} from '../../dummyData';
 import {useDispatch} from 'react-redux';
 import {createChat} from '../../redux/middlewares/chat';
-import {sendInvite} from '../../redux/middlewares/user';
+import {getProfileExplicitly, sendInvite} from '../../redux/middlewares/user';
 
 const ViewCustomerProfile = ({navigation, route: {params}}) => {
   const {top} = useSafeAreaInsets();
   const dispatch = useDispatch();
+  const [brands, setBrands] = useState([]);
+  const [loader, setLoader] = useState(true);
   const _goBack = () => {
     navigation.goBack();
   };
 
   const user = params?.user;
+
+  useEffect(() => {
+    getUserPreferences();
+  }, []);
+
+  const getUserPreferences = () => {
+    dispatch(
+      getProfileExplicitly(
+        {userId: user?.userId, userType: 'CUSTOMER'},
+        userFromServer => {
+          setBrands(userFromServer?.favDesigner);
+        },
+        setLoader,
+      ),
+    );
+  };
+  console.log('🚀 ~ ViewCustomerProfile ~ user:', user);
   const inviteStatus = user?.inviteStatus;
   const notAccepted = inviteStatus !== 'ACCEPTED';
 
@@ -145,18 +164,21 @@ const ViewCustomerProfile = ({navigation, route: {params}}) => {
 
             <Text style={styles.preferences}>Preferences:</Text>
 
-            <FlatList
-              data={brands}
-              showsHorizontalScrollIndicator={false}
-              horizontal
-              style={styles.list}
-              contentContainerStyle={styles.listContent}
-              renderItem={({item, index}) => (
-                <View key={index} style={styles.brandItem}>
-                  <Text style={styles.brandItemText}>{item.name}</Text>
-                </View>
+            <View style={styles.preferencesContainer}>
+              {loader ? (
+                <ActivityIndicator />
+              ) : brands?.length ? (
+                brands?.map((item, index) => {
+                  return (
+                    <View key={index} style={styles.brandItem}>
+                      <Text style={styles.brandItemText}>{item}</Text>
+                    </View>
+                  );
+                })
+              ) : (
+                <Text>No preferences found</Text>
               )}
-            />
+            </View>
           </>
         )}
       </ScrollView>
@@ -188,6 +210,7 @@ const styles = StyleSheet.create({
   backButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    width: 70,
   },
   backIcon: {
     width: 25,
@@ -204,7 +227,6 @@ const styles = StyleSheet.create({
     color: Colors.white,
     fontSize: 24,
     fontFamily: Fonts.RobotoBold,
-    marginLeft: 10,
   },
   headerSpacer: {
     width: 70,
@@ -298,6 +320,7 @@ const styles = StyleSheet.create({
   },
   brandItem: {
     marginRight: 10,
+    marginBottom: 10,
     backgroundColor: Colors.secondary,
     padding: 10,
     paddingHorizontal: 15,
@@ -307,5 +330,11 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.RobotoRegular,
     fontSize: 14,
     color: Colors.white,
+  },
+  preferencesContainer: {
+    marginTop: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
   },
 });

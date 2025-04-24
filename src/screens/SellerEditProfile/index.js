@@ -19,6 +19,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {GradientButton, TextInputCustom, ContactAvatar} from '../../components';
 import {Colors, Fonts} from '../../config';
 import Images from '../../assets';
+import FastImage from 'react-native-fast-image';
 
 const urlRegex =
   /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
@@ -82,7 +83,7 @@ const SellerEditProfile = ({navigation}) => {
               type: 'image/' + image?.slice(image?.lastIndexOf('.') + 1),
               name: user?.userId?.toString(),
             },
-            () => {
+            async () => {
               navigation.goBack();
               setImage('');
               const userId = user?.userId;
@@ -156,6 +157,7 @@ const SellerEditProfile = ({navigation}) => {
                 displayName={false}
                 size={120}
                 containerStyle={styles.contactAvatar}
+                useImageCache={false}
               />
             )}
             <GradientButton
@@ -300,7 +302,7 @@ const styles = StyleSheet.create({
   },
   contactAvatar: {
     marginRight: 0,
-    zIndex: 99,
+    zIndex: 98,
   },
   cameraButtonCont: {
     height: 40,
@@ -311,7 +313,7 @@ const styles = StyleSheet.create({
   },
   cameraButton: {
     position: 'absolute',
-    right: 0,
+    top: 0,
     zIndex: 99,
   },
   bioInput: {

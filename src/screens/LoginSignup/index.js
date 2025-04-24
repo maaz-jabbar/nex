@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Image,
   ImageBackground,
@@ -42,6 +42,16 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
   const [otp, setOtp] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [otpSendError, setOtpSendError] = useState('');
+
+  useEffect(() => {
+    setEmail('');
+    setPassword('');
+    setPhone('');
+    setFullName('');
+    setOtp('');
+    setOtpSent(false);
+    setOtpSendError('');
+  }, [loginActive]);
 
   const otpInput = useRef(null);
   const phoneInput = useRef(null);
@@ -117,7 +127,7 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
         <Image source={Images.logo} resizeMode="contain" style={styles.logo} />
         <TouchableOpacity
           activeOpacity={0.8}
-          onPress={goBack}
+          onPress={() => navigate('BeforeSignUp')}
           style={[styles.backIconContainer, {top: top + 10}]}>
           <Image source={Images.back} style={styles.backIcon} />
         </TouchableOpacity>
@@ -153,8 +163,10 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
               <>
                 <TextInputCustom
                   title="Full Name"
+                  
                   icon={Images.name}
                   textInputProps={{
+                    autoFocus: !loginActive,
                     value: fullName,
                     onChangeText: setFullName,
                     keyboardType: 'default',
@@ -202,6 +214,7 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
               icon={Images.email}
               textInputProps={{
                 autoCapitalize: 'none',
+                autoFocus: loginActive,
                 autoCorrect: false,
                 textContentType: 'emailAddress',
                 value: email,

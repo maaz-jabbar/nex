@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 20,
+    paddingVertical: 10,
   },
   title: {
     fontSize: 24,
@@ -232,7 +232,8 @@ const styles = StyleSheet.create({
   },
   dots: {
     width: 25,
-    height: 25,
+    height: 40,
+    resizeMode: 'contain',
   },
   headerPlaceholder: {
     width: 25,

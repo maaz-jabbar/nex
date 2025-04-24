@@ -87,6 +87,7 @@ const SellerProfile = ({navigation}) => {
           displayName={false}
           size={120}
           containerStyle={styles.avatarContainer}
+          useImageCache={false}
         />
       </LinearGradient>
       <ScrollView
@@ -190,14 +191,16 @@ const styles = StyleSheet.create({
   },
   backIcon: {
     width: 25,
-    height: 25,
+    height: 40,
+    resizeMode: 'contain',
     marginRight: 5,
     tintColor: Colors.white,
   },
   logoutIcon: {
     tintColor: Colors.white,
     width: 20,
-    height: 20,
+    height: 40,
+    resizeMode: 'contain',
     marginLeft: 5,
   },
   back: {

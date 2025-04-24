@@ -18,8 +18,6 @@ import {baseURL} from '../../config/api';
 const {width, height} = Dimensions.get('window');
 
 const BroadcastCard = ({chat, onPress}) => {
-  const userId = useSelector(state => state.user?.user?.userId);
-  const sentByMe = userId === chat?.senderId;
   const [attachmentModal, setAttachmentModal] = React.useState('');
   const jwt = useSelector(state => state.user?.user?.jwt);
 
@@ -56,7 +54,7 @@ const BroadcastCard = ({chat, onPress}) => {
           </Text>
           <View>
             <Text style={styles.time}>
-              {moment(chat?.createdAt).format('DD/MM/YYYY')}
+              {moment(chat?.createdAt).format('MM/DD/YYYY')}
             </Text>
             <Text style={styles.createdAt}>
               {moment(chat?.createdAt).format('hh:mm a')}

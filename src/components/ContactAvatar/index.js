@@ -4,6 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {Colors, Fonts} from '../../config';
 import {useSelector} from 'react-redux';
 import {baseURL} from '../../config/api';
+import FastImage from 'react-native-fast-image';
 
 const ContactAvatar = ({
   contact,
@@ -12,6 +13,7 @@ const ContactAvatar = ({
   displayFullLastName,
   containerStyle = {},
   onPress = () => {},
+  useImageCache = true,
 }) => {
   const jwt = useSelector(state => state.user?.user?.jwt);
 
@@ -29,6 +31,17 @@ const ContactAvatar = ({
     lastName ? (displayFullLastName ? lastName : lastName[0]) : ''
   }`;
 
+  const Component = useImageCache ? FastImage : Image;
+  const imageSource = {
+    uri: imageUrl,
+    headers: {
+      Authorization: `Bearer ${jwt}`,
+    },
+  };
+  if (!useImageCache) {
+    imageSource.cache = 'reload';
+  }
+
   return (
     <TouchableOpacity
       activeOpacity={0.8}
@@ -43,14 +56,8 @@ const ContactAvatar = ({
             : [Colors.darkGrey, Colors.darkGrey]
         }
         style={{borderRadius: borderRadiusWithPadding, padding: 2}}>
-        <Image
-          source={{
-            cache: 'reload',
-            uri: imageUrl,
-            headers: {
-              Authorization: `Bearer ${jwt}`,
-            },
-          }}
+        <Component
+          source={imageSource}
           resizeMode="cover"
           style={[
             styles.avatar,

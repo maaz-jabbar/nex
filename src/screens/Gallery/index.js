@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.RobotoBold,
   },
   headerPlaceholder: {
-    width: 25,
+    width: 40,
   },
   dots: {
     height: 25,
@@ -186,6 +186,7 @@ const styles = StyleSheet.create({
   },
   plusButton: {
     width: undefined,
+    marginBottom: 0,
   },
   plusButtonCont: {
     height: 40,
@@ -205,12 +206,14 @@ const styles = StyleSheet.create({
   searchIcon: {
     width: 20,
     height: 20,
-    margin: 10,
+    marginHorizontal: 20,
   },
   input: {
     flex: 1,
     fontSize: 16,
+    height: 48,
     fontFamily: Fonts.RobotoRegular,
+    color: Colors.black,
   },
   galleryItem: {
     padding: 10,

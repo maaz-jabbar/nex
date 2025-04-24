@@ -1,7 +1,7 @@
 export default {
   cart: require('./cart.png'),
   profile: require('./profile.png'),
-  onboarding1: require('./onboarding1.png'),
+  logoColored: require('./logoColored.png'),
   logo: require('./logo.png'),
   bgLogo: require('./bgLogo.png'),
   back: require('./back.png'),
@@ -55,4 +55,11 @@ export default {
   close: require('./close.png'),
   invite: require('./invite.png'),
   eyeOff: require('./eyeOff.png'),
+  seller: require('./seller.png'),
+  customer: require('./customer.png'),
+  onboarding1Customer: require('./onboarding1Customer.png'),
+  onboarding2Customer: require('./onboarding2Customer.png'),
+  onboarding1Seller: require('./onboarding1Seller.png'),
+  onboarding2Seller: require('./onboarding2Seller.png'),
+  onboarding3Seller: require('./onboarding3Seller.png'),
 };

@@ -5,9 +5,8 @@ import {
   Image,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
 } from 'react-native';
 import {Colors, Fonts} from '../../config';
 import Images from '../../assets';
@@ -16,32 +15,56 @@ import LinearGradient from 'react-native-linear-gradient';
 
 const SCREEN_WIDTH = Dimensions.get('screen').width;
 
-const onboardingData = [
+const onboardingDataCustomer = [
   {
-    image: Images.onboarding1,
-    title: 'Create\nMass Message',
+    image: Images.onboarding1Customer,
+    title: 'Your Personal SA Network, All in One Place',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      'Stay connected to your favorite SAs and explore new connections instantly.',
   },
   {
-    image: Images.onboarding1,
-    title: 'Create\nMass Message',
+    image: Images.onboarding2Customer,
+    title: 'Smart Shopping, Designed around you',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      'Get curated reccomendations based on your preferences and style.',
   },
   {
-    image: Images.onboarding1,
-    title: 'Create\nMass Message',
+    image: Images.onboarding3Seller,
+    title: 'Real-Time Updates & Shared Gallery',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      'See fresh arrivals, comment, and continue the conversation in chat.',
+  },
+];
+const onboardingDataSeller = [
+  {
+    image: Images.onboarding1Seller,
+    title: 'Effortless Client Management',
+    description:
+      'Organize messaging and tracking with editable, customer preferences.',
+  },
+  {
+    image: Images.onboarding2Seller,
+    title: 'Broadcast Chat & SMS with Attachments',
+    description:
+      'Reach multiple customers instantly while keeping chats one-on-one.',
+  },
+  {
+    image: Images.onboarding3Seller,
+    title: 'Shared Gallery with Chat Response',
+    description:
+      'Transform your gallery into an interactive shopping experience.',
   },
 ];
 
-const Onboarding = ({navigation}) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+const Onboarding = ({navigation, route: {params}}) => {
   const flatListRef = useRef(null);
+  const customerType = params?.customerType;
+  const isCustomer = customerType === 'CUSTOMER';
+  const onboardingData = isCustomer
+    ? onboardingDataCustomer
+    : onboardingDataSeller;
 
-  const handleNext = () => {
+  const handleNext = currentIndex => {
     if (currentIndex === onboardingData.length - 1) {
       navigation.navigate('LoginSignup', {loginActive: false});
     } else {
@@ -49,50 +72,58 @@ const Onboarding = ({navigation}) => {
     }
   };
 
-  const handleScroll = ({nativeEvent}) => {
-    const newIndex = Math.round(
-      nativeEvent.contentOffset.x / nativeEvent.layoutMeasurement.width,
-    );
-    if (newIndex !== currentIndex) {
-      setCurrentIndex(newIndex);
-    }
-  };
-
-  const renderItem = ({item}) => (
+  const renderItem = ({item, index}) => (
     <View style={[styles.itemContainer, {width: SCREEN_WIDTH}]}>
-      <Image source={item.image} style={styles.image} resizeMode="contain" />
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.description}>{item.description}</Text>
+      <TouchableOpacity
+        style={{
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          height: 100,
+          width: 100,
+          zIndex: 99,
+        }}
+        onPress={() => handleNext(onboardingData.length - 1)}
+      />
+      <Image
+        source={item.image}
+        style={{width: SCREEN_WIDTH, height: '68%'}}
+        resizeMode="stretch"
+      />
+      <View
+        style={{
+          padding: 30,
+          paddingVertical: 10,
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}>
+        <Text style={styles.title}>{item.title}</Text>
+        <Text style={styles.description}>{item.description}</Text>
+        {renderPagination(index)}
+        <GradientButton
+          title={index === onboardingData.length - 1 ? "Let's Explore" : 'Next'}
+          onPress={() => handleNext(index)}
+        />
+      </View>
     </View>
   );
 
-  const renderPagination = () => (
-    <View style={styles.paginationContainer}>
-      <GradientButton
-        title="Next"
-        onPress={handleNext}
-        buttonStyle={styles.nextButton}
-      />
-      <Text
-        onPress={() => navigation.navigate('LoginSignup', {loginActive: false})}
-        style={styles.skip}>
-        Skip
-      </Text>
-      <View style={styles.dotsContainer}>
-        {onboardingData.map((_, index) => (
-          <LinearGradient
-            key={index}
-            colors={
-              index === currentIndex
-                ? [Colors.primary, Colors.secondary]
-                : [Colors.darkGrey, Colors.darkGrey]
-            }
-            style={styles.dot}
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 0}}
-          />
-        ))}
-      </View>
+  const renderPagination = currentIndex => (
+    <View style={styles.dotsContainer}>
+      {onboardingData.map((_, index) => (
+        <LinearGradient
+          key={index}
+          colors={
+            index === currentIndex
+              ? [Colors.primary, Colors.secondary]
+              : [Colors.darkGrey, Colors.darkGrey]
+          }
+          style={styles.dot}
+          start={{x: 0, y: 0}}
+          end={{x: 1, y: 0}}
+        />
+      ))}
     </View>
   );
 
@@ -106,9 +137,7 @@ const Onboarding = ({navigation}) => {
         data={onboardingData}
         renderItem={renderItem}
         keyExtractor={(_, index) => index.toString()}
-        onScroll={handleScroll}
       />
-      {renderPagination()}
     </View>
   );
 };
@@ -121,28 +150,26 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
   },
   itemContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 20,
+    backgroundColor: Colors.white,
   },
   image: {
     width: 250,
     height: 250,
   },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     textAlign: 'center',
-    color: Colors.black,
+    color: '#212226',
     fontFamily: Fonts.RobotoMedium,
-    marginHorizontal: 50,
-    marginVertical: 30,
+    marginHorizontal: 10,
+    textTransform: 'capitalize',
   },
   description: {
+    marginHorizontal: 10,
     fontSize: 14,
     textAlign: 'center',
-    color: Colors.black,
+    color: '#2E313D',
     fontFamily: Fonts.RobotoRegular,
-    marginHorizontal: 30,
   },
   paginationContainer: {
     alignItems: 'center',
@@ -162,12 +189,11 @@ const styles = StyleSheet.create({
   dotsContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginVertical: 30,
   },
   dot: {
-    width: 13,
-    height: 13,
+    width: 8,
+    height: 8,
     borderRadius: 6.5,
-    marginHorizontal: 5,
+    marginHorizontal: 10,
   },
 });

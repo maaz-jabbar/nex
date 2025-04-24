@@ -137,6 +137,7 @@ const Chat = ({route: {params}, navigation}) => {
       <FlatList
         inverted
         data={chatMessages}
+        extraData={chatMessages}
         keyExtractor={item =>
           item?.messageId?.toString() || item?.timestamp?.toString()
         }

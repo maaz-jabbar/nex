@@ -184,7 +184,7 @@ export const getProfile = (user, isLogin = false) => {
   };
 };
 
-export const getProfileExplicitly = (user, onSuccess) => {
+export const getProfileExplicitly = (user, onSuccess, setLoader = () => {}) => {
   return dispatch => {
     const isCustomer = user?.userType === 'CUSTOMER';
     dispatch(loaderTrue());
@@ -197,6 +197,7 @@ export const getProfileExplicitly = (user, onSuccess) => {
       })
       .finally(() => {
         dispatch(loaderFalse());
+        setLoader(false);
       });
   };
 };

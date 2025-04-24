@@ -170,11 +170,13 @@ const styles = StyleSheet.create({
     right: 0,
   },
   dots: {
-    height: 25,
+    height: 40,
+    resizeMode: 'contain',
     width: 25,
   },
   headerPlaceholder: {
     width: 25,
+    height: 40,
   },
   container: {
     flex: 1,
@@ -185,7 +187,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 20,
+    paddingVertical: 10,
   },
   title: {
     color: Colors.black,

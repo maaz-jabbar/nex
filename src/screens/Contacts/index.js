@@ -127,13 +127,23 @@ const Contacts = ({navigation}) => {
           <Text style={styles.back}>Back</Text>
         </TouchableOpacity>
         <Text style={styles.title}>Contacts</Text>
-        <TouchableOpacity
-          onPress={() => setInviteModal(true)}
-          activeOpacity={0.8}
-          style={styles.backButton}>
-          <Image source={Images.invite} style={styles.inviteIcon} />
-          <Text style={styles.back}>Invites</Text>
-        </TouchableOpacity>
+        <View style={styles.row}>
+          <GradientButton
+            icon={Images.invite}
+            onPress={() => setInviteModal(true)}
+            containerStyle={styles.plusButtonCont}
+            buttonStyle={[styles.plusButton, {marginRight: 10}]}
+            iconSize={24}
+            iconStyle={{tintColor: Colors.white}}
+          />
+          <GradientButton
+            icon={Images.plus}
+            onPress={() => setAddContactModal(true)}
+            containerStyle={styles.plusButtonCont}
+            buttonStyle={styles.plusButton}
+            iconSize={24}
+          />
+        </View>
       </View>
 
       <View style={styles.searchCont}>
@@ -263,6 +273,21 @@ const Contacts = ({navigation}) => {
 export default Contacts;
 
 const styles = StyleSheet.create({
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  plusButton: {
+    width: undefined,
+    marginBottom: 0,
+  },
+  plusButtonCont: {
+    height: 40,
+    width: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+  },
   container: {
     flex: 1,
     backgroundColor: Colors.white,
@@ -277,16 +302,19 @@ const styles = StyleSheet.create({
   backButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    width: 90,
   },
   backIcon: {
     width: 25,
-    height: 25,
+    height: 40,
     marginRight: 5,
+    resizeMode: 'contain',
   },
   inviteIcon: {
     width: 20,
-    height: 20,
+    height: 40,
     marginRight: 5,
+    resizeMode: 'contain',
   },
   back: {
     fontFamily: Fonts.RobotoRegular,
