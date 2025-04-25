@@ -26,7 +26,7 @@ import {createChat, sendMessageAsync} from '../../redux/middlewares/chat';
 const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
   const {top} = useSafeAreaInsets();
   const dispatch = useDispatch();
-  const {jwt, userType, userId} = useSelector(state => state?.user?.user);
+  const {accessToken, userType, userId} = useSelector(state => state?.user?.user);
   const isCustomer = userType === 'CUSTOMER';
 
   const ownerId = params?.ownerId;
@@ -143,7 +143,7 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
           <ImageBackground
             source={{
               uri: `${baseURL}/images/upload/${product?.image}`,
-              headers: {Authorization: `Bearer ${jwt}`},
+              headers: {Authorization: `Bearer ${accessToken}`},
             }}
             resizeMode="cover"
             imageStyle={styles.imageStyle}

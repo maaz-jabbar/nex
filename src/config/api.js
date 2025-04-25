@@ -1,6 +1,7 @@
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import {store} from '../redux';
+import {getUser} from '../redux/middlewares/user';
 
 // export const baseURL = 'https://456b-2400-adc1-469-6b00-fcb5-dc62-43a2-5269.ngrok-free.app'; //ngrok
 // export const baseURL = 'http://18.227.107.142'; //uat
@@ -18,7 +19,7 @@ export const ApiInstanceWithJWT = axios.create({
 
 ApiInstanceWithJWT.interceptors.request.use(
   function (config) {
-    const token = store.getState()?.user?.user?.jwt;
+    const token = store.getState()?.user?.user?.accessToken;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -33,19 +34,36 @@ ApiInstanceWithJWT.interceptors.response.use(
     return response;
   },
   function (error) {
-    console.log('🚀 ~ error:', JSON.stringify(error));
-    if (
-      (error?.request?.responseURL?.includes('profiles/') ||
-        error?.request?.responseURL?.includes('invites/') ||
-        error?.request?.responseURL?.includes('contacts/') ||
-        error?.request?.responseURL?.includes('chat/')) &&
-      error?.request?._method === 'GET'
-    ) {
+    const originalRequest = error.config;
+    const {accessToken, refreshToken} = store.getState()?.user?.user;
+    if (error.status == 403) {
+      return ApiInstance.post('/auth/refresh-token', undefined, {
+        headers: {
+          'auth-token': accessToken,
+          'refresh-token': refreshToken,
+        },
+      })
+        .then(({data}) => {
+          store.dispatch(getUser(data, false));
+          originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+          return ApiInstance.request(originalRequest);
+        })
+        .catch(e => {
+          return Promise.reject(e);
+        });
     } else {
-      errorToast(error);
+      if (
+        (error?.request?.responseURL?.includes('profiles/') ||
+          error?.request?.responseURL?.includes('invites/') ||
+          error?.request?.responseURL?.includes('contacts/') ||
+          error?.request?.responseURL?.includes('chat/')) &&
+        error?.request?._method === 'GET'
+      ) {
+      } else {
+        errorToast(error);
+      }
+      return Promise.reject(error);
     }
-
-    return Promise.reject(error);
   },
 );
 ApiInstance.interceptors.response.use(

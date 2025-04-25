@@ -19,7 +19,7 @@ const {width, height} = Dimensions.get('window');
 
 const BroadcastCard = ({chat, onPress}) => {
   const [attachmentModal, setAttachmentModal] = React.useState('');
-  const jwt = useSelector(state => state.user?.user?.jwt);
+  const accessToken = useSelector(state => state.user?.user?.accessToken);
 
   return (
     <>
@@ -35,7 +35,7 @@ const BroadcastCard = ({chat, onPress}) => {
             source={{
               uri: `${baseURL}/images/upload/${attachmentModal}`,
               headers: {
-                Authorization: `Bearer ${jwt}`,
+                Authorization: `Bearer ${accessToken}`,
               },
             }}
             resizeMode="contain"

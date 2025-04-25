@@ -25,7 +25,7 @@ const ViewGallery = ({route, navigation}) => {
   const {top} = useSafeAreaInsets();
   const {item, ownerId} = route.params;
   const [store, setStore] = useState(item);
-  const {jwt, userType} = useSelector(state => state?.user?.user);
+  const {accessToken, userType} = useSelector(state => state?.user?.user);
   const isCustomer = userType === 'CUSTOMER';
   const dispatch = useDispatch();
 
@@ -90,7 +90,7 @@ const ViewGallery = ({route, navigation}) => {
           source={{
             uri: `${baseURL}/images/upload/${product.image}`,
             headers: {
-              Authorization: `Bearer ${jwt}`,
+              Authorization: `Bearer ${accessToken}`,
             },
           }}
           resizeMode="cover"

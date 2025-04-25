@@ -64,7 +64,7 @@ export const login = (email, password) => {
     ApiInstance.post('auth/login', body)
       .then(({data}) => {
         if (data?.userId) dispatch(getUser(data));
-        else errorToast({message: data?.jwt});
+        else errorToast({message: data?.accessToken});
       })
       .finally(() => {
         dispatch(loaderFalse());
@@ -128,19 +128,19 @@ export const signup = (
   };
 };
 
-const getUser = loginResponse => {
+export const getUser = (loginResponse, isLogin = true) => {
   return dispatch => {
     dispatch(loaderTrue());
     ApiInstance.get('users/' + loginResponse?.userId, {
       headers: {
-        Authorization: `Bearer ${loginResponse?.jwt}`,
+        Authorization: `Bearer ${loginResponse?.accessToken}`,
       },
     })
       .then(({data}) => {
         const user = {...data?.body, ...loginResponse};
         dispatch(saveUser(user));
         dispatch(saveUserType(data?.body?.userType));
-        dispatch(getProfile(user, true));
+        if (isLogin) dispatch(getProfile(user, isLogin));
       })
       .finally(() => {
         dispatch(loaderFalse());

@@ -24,7 +24,7 @@ const NewGalleryModal = ({
   const [notifications, setNotifications] = useState(false);
   const [imagePicked, setImagePicked] = useState(data?.coverImage || null);
   const agentProfileId = useSelector(state => state.user?.profile?.profileId);
-  const jwt = useSelector(state => state?.user?.user?.jwt);
+  const accessToken = useSelector(state => state?.user?.user?.accessToken);
 
   const dispatch = useDispatch();
 
@@ -142,7 +142,7 @@ const NewGalleryModal = ({
                   ? imagePicked
                   : `${baseURL}/images/upload/${imagePicked}`,
                 headers: {
-                  Authorization: `Bearer ${jwt}`,
+                  Authorization: `Bearer ${accessToken}`,
                 },
               }}
               resizeMode="cover"

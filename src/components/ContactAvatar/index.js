@@ -15,7 +15,7 @@ const ContactAvatar = ({
   onPress = () => {},
   useImageCache = true,
 }) => {
-  const jwt = useSelector(state => state.user?.user?.jwt);
+  const accessToken = useSelector(state => state.user?.user?.accessToken);
 
   const firstName = contact?.name?.split(' ')[0] ?? '';
   const lastName = contact?.name?.split(' ')[1] ?? '';
@@ -35,7 +35,7 @@ const ContactAvatar = ({
   const imageSource = {
     uri: imageUrl,
     headers: {
-      Authorization: `Bearer ${jwt}`,
+      Authorization: `Bearer ${accessToken}`,
     },
   };
   if (!useImageCache) {

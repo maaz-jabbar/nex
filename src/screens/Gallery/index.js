@@ -25,7 +25,7 @@ const Gallery = ({route: {params}, navigation: {goBack, navigate}}) => {
   const owner = params?.owner;
 
   const dispatch = useDispatch();
-  const jwt = useSelector(state => state?.user?.user?.jwt);
+  const accessToken = useSelector(state => state?.user?.user?.accessToken);
   const galleries = useSelector(state => state?.galleries?.galleries);
 
   const [showPopup, setShowPopup] = useState(false);
@@ -64,7 +64,7 @@ const Gallery = ({route: {params}, navigation: {goBack, navigate}}) => {
         <Image
           source={{
             uri: `${baseURL}/images/upload/${item.coverImage}`,
-            headers: {Authorization: `Bearer ${jwt}`},
+            headers: {Authorization: `Bearer ${accessToken}`},
           }}
           resizeMode="cover"
           style={styles.galleryImage}

@@ -113,8 +113,11 @@ const CustomerEditProfile = ({navigation}) => {
 
   return (
     <View style={[styles.container, {paddingTop: top}]}>
-      <ReactNativeModal isVisible={preferencesModal}>
-        <View style={styles.container}>
+      <ReactNativeModal
+        onBackButtonPress={() => setPreferencesModal(false)}
+        onBackdropPress={() => setPreferencesModal(false)}
+        isVisible={preferencesModal}>
+        <View style={[styles.container, {marginTop: top}]}>
           <Text style={styles.heading}>Edit Preferences</Text>
           <Text style={styles.smallText}>Select all that apply</Text>
           {!!brands?.length && (
@@ -276,7 +279,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: Colors.black,
     fontFamily: Fonts.JosefinSansSemiBold,
-    marginVertical: 10,
+    marginBottom: 10,
+    marginTop: 20,
   },
   smallText: {
     fontFamily: Fonts.RobotoRegular,
