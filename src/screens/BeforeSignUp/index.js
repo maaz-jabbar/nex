@@ -37,7 +37,7 @@ const BeforeSignUp = ({navigation}) => {
           containerStyle={{
             justifyContent: 'center',
           }}
-          textStyle={{marginLeft: 10}}
+          textStyle={{marginLeft: 10, fontFamily: Fonts.FigtreeSemiBold}}
         />
         <GradientButton
           onPress={() => moveToOnboarding('SELLER')}
@@ -46,7 +46,7 @@ const BeforeSignUp = ({navigation}) => {
           containerStyle={{
             justifyContent: 'center',
           }}
-          textStyle={{marginLeft: 10}}
+          textStyle={{marginLeft: 10, fontFamily: Fonts.FigtreeSemiBold}}
         />
       </View>
 
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     cocolor: Colors.lightGrey,
-    fontFamily: Fonts.RobotoRegular,
+    fontFamily: Fonts.FigtreeRegular,
     marginBottom: 20,
   },
   buttonContainer: {
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     color: Colors.lightGrey,
-    fontFamily: Fonts.RobotoMedium,
+    fontFamily: Fonts.FigtreeSemiBold,
   },
   signIn: {
     color: Colors.secondary,

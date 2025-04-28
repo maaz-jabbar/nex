@@ -163,7 +163,8 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
               <>
                 <TextInputCustom
                   title="Full Name"
-                  
+                  textInputStyle={styles.inputStyles}
+                  titleStyles={styles.inputTitleStyles}
                   icon={Images.name}
                   textInputProps={{
                     autoFocus: !loginActive,
@@ -177,7 +178,9 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
                 <TextInputCustom
                   title="Phone Number"
                   icon={Images.phone}
+                  titleStyles={styles.inputTitleStyles}
                   error={otpSendError}
+                  textInputStyle={styles.inputStyles}
                   textInputProps={{
                     value: phone,
                     onChangeText: val => {
@@ -195,6 +198,8 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
                 {otpSent && (
                   <TextInputCustom
                     title="OTP"
+                    textInputStyle={styles.inputStyles}
+                    titleStyles={styles.inputTitleStyles}
                     icon={Images.otp}
                     textInputProps={{
                       value: otp,
@@ -212,6 +217,8 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
             <TextInputCustom
               title="Email Address"
               icon={Images.email}
+              textInputStyle={styles.inputStyles}
+              titleStyles={styles.inputTitleStyles}
               textInputProps={{
                 autoCapitalize: 'none',
                 autoFocus: loginActive,
@@ -227,6 +234,8 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
             />
             <TextInputCustom
               title="Password"
+              textInputStyle={styles.inputStyles}
+              titleStyles={styles.inputTitleStyles}
               isPassword
               textInputProps={{
                 value: password,
@@ -242,6 +251,7 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
               <View style={styles.options}>
                 <CheckBox
                   title="Remember me"
+                  titleStyles={styles.checkboxTitleStyles}
                   isChecked={rememberMe}
                   setIsChecked={() =>
                     dispatch({type: 'SAVE_REMEMBER_ME', payload: !rememberMe})
@@ -266,6 +276,7 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
             buttonStyle={styles.button}
             onPress={handleSubmit}
             title={loginActive ? 'Sign In' : 'Sign Up'}
+            textStyle={{fontFamily: Fonts.FigtreeSemiBold}}
           />
         </ScrollView>
       </View>
@@ -287,6 +298,17 @@ const styles = StyleSheet.create({
   logo: {
     width: 200,
     height: 100,
+  },
+  inputStyles: {
+    fontFamily: Fonts.FigtreeRegular,
+    fontSize: 14,
+    color: Colors.black,
+  },
+  inputTitleStyles: {
+    fontFamily: Fonts.RobotoBold,
+  },
+  checkboxTitleStyles: {
+    fontFamily: Fonts.RobotoRegular
   },
   backIconContainer: {
     position: 'absolute',
@@ -322,7 +344,7 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 16,
     color: Colors.mediumGrey,
-    fontFamily: Fonts.RobotoMedium,
+    fontFamily: Fonts.FigtreeSemiBold,
   },
   activeTabText: {
     color: Colors.secondary,
@@ -344,13 +366,13 @@ const styles = StyleSheet.create({
   forgotPassword: {
     marginRight: 15,
     color: Colors.secondary,
-    fontFamily: Fonts.RobotoMedium,
+    fontFamily: Fonts.FigtreeSemiBold,
   },
   agreementText: {
     alignSelf: 'center',
     color: Colors.lightGrey,
     textAlign: 'center',
-    fontFamily: Fonts.RobotoMedium,
+    fontFamily: Fonts.FigtreeRegular,
     marginTop: 10,
   },
   linkText: {

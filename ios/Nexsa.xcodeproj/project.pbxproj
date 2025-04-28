@@ -13,6 +13,12 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		13D9DD24008E2E69FE754467 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6BA76E402D3B430409283B62 /* PrivacyInfo.xcprivacy */; };
+		1C7519C12DBFB1E10019F456 /* Figtree-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1C7519BB2DBFB1E10019F456 /* Figtree-Bold.ttf */; };
+		1C7519C22DBFB1E10019F456 /* Figtree-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1C7519BE2DBFB1E10019F456 /* Figtree-Medium.ttf */; };
+		1C7519C32DBFB1E10019F456 /* Figtree-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1C7519BD2DBFB1E10019F456 /* Figtree-Light.ttf */; };
+		1C7519C42DBFB1E10019F456 /* Figtree-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1C7519BF2DBFB1E10019F456 /* Figtree-Regular.ttf */; };
+		1C7519C52DBFB1E10019F456 /* Figtree-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1C7519C02DBFB1E10019F456 /* Figtree-SemiBold.ttf */; };
+		1C7519C62DBFB1E10019F456 /* Figtree-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1C7519BC2DBFB1E10019F456 /* Figtree-ExtraBold.ttf */; };
 		1CB6BDAC2CC8D9E0003454DD /* JosefinSans-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CB6BD912CC8D9DF003454DD /* JosefinSans-Medium.ttf */; };
 		1CB6BDAD2CC8D9E0003454DD /* Roboto-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CB6BD922CC8D9DF003454DD /* Roboto-Italic.ttf */; };
 		1CB6BDAE2CC8D9E0003454DD /* JosefinSans-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CB6BD932CC8D9DF003454DD /* JosefinSans-BoldItalic.ttf */; };
@@ -67,6 +73,12 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Nexsa/main.m; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = Nexsa/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-Nexsa-NexsaTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Nexsa-NexsaTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1C7519BB2DBFB1E10019F456 /* Figtree-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Figtree-Bold.ttf"; sourceTree = "<group>"; };
+		1C7519BC2DBFB1E10019F456 /* Figtree-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Figtree-ExtraBold.ttf"; sourceTree = "<group>"; };
+		1C7519BD2DBFB1E10019F456 /* Figtree-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Figtree-Light.ttf"; sourceTree = "<group>"; };
+		1C7519BE2DBFB1E10019F456 /* Figtree-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Figtree-Medium.ttf"; sourceTree = "<group>"; };
+		1C7519BF2DBFB1E10019F456 /* Figtree-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Figtree-Regular.ttf"; sourceTree = "<group>"; };
+		1C7519C02DBFB1E10019F456 /* Figtree-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Figtree-SemiBold.ttf"; sourceTree = "<group>"; };
 		1CB6BD912CC8D9DF003454DD /* JosefinSans-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "JosefinSans-Medium.ttf"; path = "../android/app/src/main/assets/fonts/JosefinSans-Medium.ttf"; sourceTree = "<group>"; };
 		1CB6BD922CC8D9DF003454DD /* Roboto-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Italic.ttf"; path = "../android/app/src/main/assets/fonts/Roboto-Italic.ttf"; sourceTree = "<group>"; };
 		1CB6BD932CC8D9DF003454DD /* JosefinSans-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "JosefinSans-BoldItalic.ttf"; path = "../android/app/src/main/assets/fonts/JosefinSans-BoldItalic.ttf"; sourceTree = "<group>"; };
@@ -160,6 +172,12 @@
 		1CB6BD902CC8D9BF003454DD /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				1C7519BB2DBFB1E10019F456 /* Figtree-Bold.ttf */,
+				1C7519BC2DBFB1E10019F456 /* Figtree-ExtraBold.ttf */,
+				1C7519BD2DBFB1E10019F456 /* Figtree-Light.ttf */,
+				1C7519BE2DBFB1E10019F456 /* Figtree-Medium.ttf */,
+				1C7519BF2DBFB1E10019F456 /* Figtree-Regular.ttf */,
+				1C7519C02DBFB1E10019F456 /* Figtree-SemiBold.ttf */,
 				1CBBC1032CCA4BEC000EEC93 /* splash.png */,
 				1CB6BDC92CC8E5A5003454DD /* NothingYouCouldDo.ttf */,
 				1CB6BD9B2CC8D9E0003454DD /* JosefinSans-Bold.ttf */,
@@ -347,6 +365,12 @@
 				1CBBC1042CCA4BEC000EEC93 /* splash.png in Resources */,
 				1CB6BDAE2CC8D9E0003454DD /* JosefinSans-BoldItalic.ttf in Resources */,
 				1CB6BDB02CC8D9E0003454DD /* JosefinSans-ExtraLight.ttf in Resources */,
+				1C7519C12DBFB1E10019F456 /* Figtree-Bold.ttf in Resources */,
+				1C7519C22DBFB1E10019F456 /* Figtree-Medium.ttf in Resources */,
+				1C7519C32DBFB1E10019F456 /* Figtree-Light.ttf in Resources */,
+				1C7519C42DBFB1E10019F456 /* Figtree-Regular.ttf in Resources */,
+				1C7519C52DBFB1E10019F456 /* Figtree-SemiBold.ttf in Resources */,
+				1C7519C62DBFB1E10019F456 /* Figtree-ExtraBold.ttf in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				1CB6BDBD2CC8D9E0003454DD /* JosefinSans-ExtraLightItalic.ttf in Resources */,
 				1CB6BDC22CC8D9E0003454DD /* Roboto-Black.ttf in Resources */,
@@ -712,10 +736,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -788,10 +809,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;

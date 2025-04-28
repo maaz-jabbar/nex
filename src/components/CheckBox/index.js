@@ -10,6 +10,7 @@ const CheckBox = ({
   rounded = false,
   isChecked = false,
   setIsChecked = () => {},
+  titleStyles = {}
 }) => {
   return (
     <View style={styles.container}>
@@ -43,7 +44,7 @@ const CheckBox = ({
           </LinearGradient>
         )}
       </TouchableOpacity>
-      {title && <Text style={styles.title}>{title}</Text>}
+      {title && <Text style={[styles.title, titleStyles]}>{title}</Text>}
     </View>
   );
 };

@@ -15,6 +15,7 @@ const TextInputCustom = ({
   textInputProps = {},
   textInputStyle = {},
   containerStyle = {},
+  titleStyles = {},
   hideLabel = false,
   isPassword = false,
   icon = null,
@@ -27,7 +28,7 @@ const TextInputCustom = ({
 
   return (
     <View style={[styles.container, containerStyle]}>
-      {!hideLabel && <Text style={styles.title}>{title}</Text>}
+      {!hideLabel && <Text style={[styles.title, titleStyles]}>{title}</Text>}
         <TextInput
           style={[
             styles.input,

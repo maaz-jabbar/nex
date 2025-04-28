@@ -18,13 +18,13 @@ const SCREEN_WIDTH = Dimensions.get('screen').width;
 const onboardingDataCustomer = [
   {
     image: Images.onboarding1Customer,
-    title: 'Your Personal SA Network, All in One Place',
+    title: 'Your Personal SA Network, All In One Place',
     description:
       'Stay connected to your favorite SAs and explore new connections instantly.',
   },
   {
     image: Images.onboarding2Customer,
-    title: 'Smart Shopping, Designed around you',
+    title: 'Smart Shopping, Designed Around You',
     description:
       'Get curated reccomendations based on your preferences and style.',
   },
@@ -44,13 +44,13 @@ const onboardingDataSeller = [
   },
   {
     image: Images.onboarding2Seller,
-    title: 'Broadcast Chat & SMS with Attachments',
+    title: 'Broadcast Chat & SMS With Attachments',
     description:
       'Reach multiple customers instantly while keeping chats one-on-one.',
   },
   {
     image: Images.onboarding3Seller,
-    title: 'Shared Gallery with Chat Response',
+    title: 'Shared Gallery With Chat Response',
     description:
       'Transform your gallery into an interactive shopping experience.',
   },
@@ -104,6 +104,7 @@ const Onboarding = ({navigation, route: {params}}) => {
         <GradientButton
           title={index === onboardingData.length - 1 ? "Let's Explore" : 'Next'}
           onPress={() => handleNext(index)}
+          textStyle={{fontFamily: Fonts.FigtreeBold}}
         />
       </View>
     </View>
@@ -160,16 +161,15 @@ const styles = StyleSheet.create({
     fontSize: 24,
     textAlign: 'center',
     color: '#212226',
-    fontFamily: Fonts.RobotoMedium,
+    fontFamily: Fonts.FigtreeSemiBold,
     marginHorizontal: 10,
-    textTransform: 'capitalize',
   },
   description: {
     marginHorizontal: 10,
     fontSize: 14,
     textAlign: 'center',
     color: '#2E313D',
-    fontFamily: Fonts.RobotoRegular,
+    fontFamily: Fonts.FigtreeRegular,
   },
   paginationContainer: {
     alignItems: 'center',
@@ -178,13 +178,6 @@ const styles = StyleSheet.create({
   nextButton: {
     width: 150,
     marginTop: 20,
-  },
-  skip: {
-    fontSize: 14,
-    textAlign: 'center',
-    fontFamily: Fonts.RobotoMedium,
-    color: Colors.secondary,
-    marginTop: 10,
   },
   dotsContainer: {
     flexDirection: 'row',

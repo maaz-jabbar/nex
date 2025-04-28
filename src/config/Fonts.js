@@ -26,4 +26,10 @@ export default {
   RobotoRegular: 'Roboto-Regular',
   RobotoThin: 'Roboto-Thin',
   RobotoThinItalic: 'Roboto-ThinItalic',
+  FigtreeBold:'Figtree-Bold', 
+  FigtreeExtraBold:'Figtree-ExtraBold', 
+  FigtreeLight:'Figtree-Light', 
+  FigtreeMedium:'Figtree-Medium', 
+  FigtreeRegular:'Figtree-Regular', 
+  FigtreeSemiBold:'Figtree-SemiBold',
 };
