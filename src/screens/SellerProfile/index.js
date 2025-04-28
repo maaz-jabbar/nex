@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -17,6 +17,7 @@ import {ContactAvatar, GradientButton} from '../../components';
 import {useDispatch, useSelector} from 'react-redux';
 import {CommonActions} from '@react-navigation/native';
 import {logout} from '../../redux/actions/UserActions';
+import {getProfileExplicitly} from '../../redux/middlewares/user';
 
 const socialIcons = [
   {icon: Images.instagram, social: Share.Social.INSTAGRAM},
@@ -54,6 +55,17 @@ const SellerProfile = ({navigation}) => {
         routes: [{name: 'Auth', params: {screen: 'BeforeSignUp'}}],
       }),
     );
+  };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      placeholderForRefreshingToken();
+    });
+    return unsubscribe;
+  }, [navigation]);
+
+  const placeholderForRefreshingToken = async () => {
+    dispatch(getProfileExplicitly(user, null, null, false));
   };
 
   const moveToEditProfile = () => navigation.navigate('SellerEditProfile');

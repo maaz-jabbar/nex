@@ -184,10 +184,15 @@ export const getProfile = (user, isLogin = false) => {
   };
 };
 
-export const getProfileExplicitly = (user, onSuccess, setLoader = () => {}) => {
+export const getProfileExplicitly = (
+  user,
+  onSuccess,
+  setLoader = () => {},
+  loaderNeeded = true,
+) => {
   return dispatch => {
     const isCustomer = user?.userType === 'CUSTOMER';
-    dispatch(loaderTrue());
+    if (loaderNeeded) dispatch(loaderTrue());
     ApiInstanceWithJWT.get(
       (isCustomer ? 'profiles/customer/user/' : 'profiles/agent/user/') +
         user?.userId,
@@ -394,11 +399,14 @@ export const updateCustomerProfile = (favDesigner, goBack) => {
 };
 
 export const getCustomerBasedOnSearch = (query, onSuccess) => {
-  return (dispatch) => {
+  return dispatch => {
     dispatch(loaderTrue());
     ApiInstanceWithJWT.get('profiles/customer/search?term=' + query)
       .then(({data}) => {
-        onSuccess(data)
+        onSuccess(data);
+      })
+      .catch(e => {
+        console.log(e);
       })
       .finally(() => {
         dispatch(loaderFalse());

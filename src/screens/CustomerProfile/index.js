@@ -1,4 +1,4 @@
-import React, {useMemo, useCallback, useState} from 'react';
+import React, {useMemo, useCallback, useState, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -16,6 +16,7 @@ import {Colors, Fonts} from '../../config';
 import Images from '../../assets';
 import {ContactAvatar, GradientButton, ToggleButton} from '../../components';
 import {logout} from '../../redux/actions/UserActions';
+import { getProfileExplicitly } from '../../redux/middlewares/user';
 
 const CustomerProfile = ({navigation}) => {
   const user = useSelector(state => state.user?.user);
@@ -45,6 +46,17 @@ const CustomerProfile = ({navigation}) => {
   const handleEditProfile = useCallback(() => {
     navigation.navigate('CustomerEditProfile');
   }, [navigation]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      placeholderForRefreshingToken();
+    });
+    return unsubscribe;
+  }, [navigation]);
+
+  const placeholderForRefreshingToken = async () => {
+    dispatch(getProfileExplicitly(user, null, null, false));
+  };
 
   const renderSocialIcon = (icon, index) => (
     <TouchableOpacity key={index} activeOpacity={0.8} style={styles.socialIcon}>

@@ -3,7 +3,7 @@ import Toast from 'react-native-toast-message';
 import {store} from '../redux';
 import {getUser} from '../redux/middlewares/user';
 
-// export const baseURL = 'https://456b-2400-adc1-469-6b00-fcb5-dc62-43a2-5269.ngrok-free.app'; //ngrok
+// export const baseURL = 'https://888d-39-35-214-166.ngrok-free.app'; //ngrok
 // export const baseURL = 'http://18.227.107.142'; //uat
 export const baseURL = 'http://110.93.217.235:9092'; // staging
 
@@ -35,8 +35,10 @@ ApiInstanceWithJWT.interceptors.response.use(
   },
   function (error) {
     const originalRequest = error.config;
+    console.log("🚀 ~ originalRequest:", originalRequest)
     const {accessToken, refreshToken} = store.getState()?.user?.user;
     if (error.status == 403) {
+      console.log('refreshing')
       return ApiInstance.post('/auth/refresh-token', undefined, {
         headers: {
           'auth-token': accessToken,
@@ -44,6 +46,7 @@ ApiInstanceWithJWT.interceptors.response.use(
         },
       })
         .then(({data}) => {
+          console.log("🚀 ~ .then ~ data:", data)
           store.dispatch(getUser(data, false));
           originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
           return ApiInstance.request(originalRequest);
