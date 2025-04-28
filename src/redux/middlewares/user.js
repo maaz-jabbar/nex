@@ -64,7 +64,7 @@ export const login = (email, password) => {
     ApiInstance.post('auth/login', body)
       .then(({data}) => {
         if (data?.userId) dispatch(getUser(data));
-        else errorToast({message: data?.accessToken});
+        else errorToast({message: data?.message});
       })
       .finally(() => {
         dispatch(loaderFalse());
