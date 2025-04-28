@@ -77,7 +77,7 @@ const CustomerEditProfile = ({navigation}) => {
             dispatch(saveUser({...user, userId: null}));
             setTimeout(() => {
               dispatch(saveUser({...user, userId}));
-            }, 1000);
+            }, 100);
           },
           user?.userId,
         ),

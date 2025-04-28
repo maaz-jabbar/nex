@@ -31,9 +31,9 @@ const ChatLanding = ({navigation}) => {
   const [selectedTab, setSelectedTab] = useState('Chat');
   const [showPopup, setShowPopup] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [search, setSearch] = useState('');
 
   const userType = useSelector(state => state.user?.userType);
-  const contacts = useSelector(state => state.user?.contacts);
   const chats = useSelector(state => state.user?.chats);
   const broadcasts = useSelector(state => state.user?.broadcasts);
 
@@ -80,6 +80,26 @@ const ChatLanding = ({navigation}) => {
     }
   };
 
+  const user = useSelector(state => state.user?.user);
+
+  const getData = () => {
+    if (selectedTab === 'Chat') {
+      return chats.filter(c => {
+        const chatWith = c?.user?.filter(
+          sender => sender.userId !== user?.userId,
+        )[0];
+        return chatWith?.fullName
+          ?.toLowerCase()
+          ?.includes(search.toLowerCase());
+      });
+    } else {
+      return broadcasts.filter(b => {
+        return b?.title?.toLowerCase()?.includes(search.toLowerCase()) ||
+          b?.content?.toLowerCase()?.includes(search.toLowerCase());
+      });
+    }
+  };
+
   return (
     <View style={[styles.container, {paddingTop: top}]}>
       <AddChatModal isVisible={showPopup} setVisible={setShowPopup} />
@@ -102,40 +122,13 @@ const ChatLanding = ({navigation}) => {
             resizeMode="contain"
             style={styles.searchIcon}
           />
-          <TextInput placeholder="Search" style={styles.input} />
+          <TextInput
+            placeholder="Search"
+            style={styles.input}
+            value={search}
+            onChangeText={val => setSearch(val)}
+          />
         </View>
-
-        <FlatList
-          data={contacts}
-          horizontal
-          style={styles.list}
-          keyExtractor={(item, index) => index.toString()}
-          contentContainerStyle={styles.listContent}
-          showsHorizontalScrollIndicator={false}
-          ListHeaderComponent={() => (
-            <GradientButton
-              icon={Images.plus}
-              containerStyle={styles.listPlusButtonCont}
-              buttonStyle={styles.listPlusButton}
-              iconSize={24}
-              noGradient
-              onPress={() => navigation.navigate('Contacts')}
-              iconStyle={{tintColor: Colors.secondary}}
-            />
-          )}
-          ListEmptyComponent={() => (
-            <View>
-              <Text style={styles.emptyText}>No contacts to show</Text>
-            </View>
-          )}
-          renderItem={({item, index}) => (
-            <ContactAvatar
-              onPress={() => viewProfile(item)}
-              key={index}
-              contact={item}
-            />
-          )}
-        />
         <>
           <View style={styles.tabButtons}>
             <GradientButton
@@ -164,7 +157,7 @@ const ChatLanding = ({navigation}) => {
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
-          data={selectedTab === 'Chat' ? chats : broadcasts}
+          data={getData()}
           keyExtractor={(item, index) => index.toString()}
           ListEmptyComponent={() => (
             <View style={styles.emptyListContainer}>
