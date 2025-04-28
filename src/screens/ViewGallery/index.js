@@ -128,7 +128,6 @@ const ViewGallery = ({route, navigation}) => {
               alignItems: store?.items?.length ? undefined : 'center',
             },
           ]}
-          columnWrapperStyle={styles.columnWrapper}
           style={styles.flatList}
           data={store?.items}
           ListEmptyComponent={() =>
@@ -218,15 +217,15 @@ const styles = StyleSheet.create({
   },
   galleryItem: {
     zIndex: 2,
+    justifyContent:'center',
+    alignItems:'center',
+    width: (width - 40) / 3,
+    height: (width - 40) / 3,
   },
   flatListContentContainer: {
     padding: 20,
     paddingBottom: 80,
     flexGrow: 1,
-  },
-  columnWrapper: {
-    justifyContent: 'space-between',
-    marginBottom: 6,
   },
   flatList: {
     flex: 1,

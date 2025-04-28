@@ -33,7 +33,7 @@ const ContactAvatar = ({
 
   const Component = useImageCache ? FastImage : Image;
   const imageSource = {
-    uri: imageUrl,
+    uri: imageUrl + (useImageCache ? '' : `?v=${new Date().getTime()}`),
     headers: {
       Authorization: `Bearer ${jwt}`,
     },
