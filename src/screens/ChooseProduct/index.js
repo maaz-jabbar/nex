@@ -52,7 +52,9 @@ const ChooseProduct = ({navigation}) => {
 
   const moveToLocation = () => {
     if (!selectedProductType.length) return;
-    navigation.navigate('ChooseFavoriteBrands');
+    navigation.navigate('ChooseFavoriteBrands', {
+      selectedProductType,
+    });
   };
 
   return (
@@ -79,7 +81,7 @@ const ChooseProduct = ({navigation}) => {
 
                   // Remove product types not matching the new genders
                   setSelectedProductType(prev =>
-                    prev.filter(p => newSelected.includes(p.gender))
+                    prev.filter(p => newSelected.includes(p.gender)),
                   );
                 }}
               />

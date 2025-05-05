@@ -1,12 +1,13 @@
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import ReactNativeModal from 'react-native-modal';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {GradientButton} from '../../components';
-import {Colors, Fonts} from '../../config';
+import {Colors, message as inviteMessage} from '../../config';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Images from '../../assets';
 import {useSelector} from 'react-redux';
+import Share from 'react-native-share';
 
 const AddInvitePopup = ({isVisible, setVisible, setContactModal}) => {
   const navigation = useNavigation();
@@ -24,6 +25,17 @@ const AddInvitePopup = ({isVisible, setVisible, setContactModal}) => {
     navigation.navigate('SelectContacts');
   };
 
+  const onPressInvite = () => {
+    const shareOptions = {
+      title: 'INVITE',
+      message: inviteMessage,
+    };
+    const method = Share.open;
+    method(shareOptions)
+      .then(res => console.log(res))
+      .catch(err => err && console.log(err));
+  };
+
   const userType = useSelector(state => state.user?.userType);
   const isSeller = userType !== 'CUSTOMER';
 
@@ -37,25 +49,30 @@ const AddInvitePopup = ({isVisible, setVisible, setContactModal}) => {
       style={[styles.popupModal, {paddingTop: top + 40}]}
       onDismiss={() => setVisible(false)}>
       <View style={styles.popup}>
-        <GradientButton
-          title="New Contact"
-          onPress={moveToContacts}
-          icon={Images.newContact}
-          iconStyle={styles.iconStyle}
-          containerStyle={styles.buttonContainer}
-          buttonStyle={styles.button}
-        />
-        <GradientButton
-          title="Broadcast"
-          icon={Images.broadcast2}
-          onPress={moveToBroadcastCreation}
-          iconStyle={styles.iconStyle}
-          containerStyle={styles.buttonContainer}
-          buttonStyle={styles.button}
-        />
+        {isSeller && (
+          <>
+            <GradientButton
+              title="New Contact"
+              onPress={moveToContacts}
+              icon={Images.newContact}
+              iconStyle={styles.iconStyle}
+              containerStyle={styles.buttonContainer}
+              buttonStyle={styles.button}
+            />
+            <GradientButton
+              title="Broadcast"
+              icon={Images.broadcast2}
+              onPress={moveToBroadcastCreation}
+              iconStyle={styles.iconStyle}
+              containerStyle={styles.buttonContainer}
+              buttonStyle={styles.button}
+            />
+          </>
+        )}
         <GradientButton
           title="Copy Invite Link"
           noGradient
+          onPress={onPressInvite}
           icon={Images.link2}
           textStyle={styles.textStyle}
           containerStyle={styles.buttonContainer}

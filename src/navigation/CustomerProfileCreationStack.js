@@ -5,6 +5,7 @@ import {
   ChooseProduct,
   Congratulations,
   ChooseFavoriteBrands,
+  ChooseSizes,
 } from '../screens';
 import {StyleSheet, Text, View} from 'react-native';
 import {Colors} from '../config';
@@ -36,6 +37,10 @@ const CustomerProfileCreationStack = () => {
       <Stack.Screen
         name="ChooseFavoriteBrands"
         component={ChooseFavoriteBrands}
+      />
+      <Stack.Screen
+        name="ChooseSizes"
+        component={ChooseSizes}
       />
       <Stack.Screen
         name="Congratulations"

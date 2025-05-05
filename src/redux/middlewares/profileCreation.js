@@ -55,12 +55,13 @@ export const getPositionDetails = (id, onSuccess) => {
 };
 
 export const getPlacesAutoComplete = async text => {
-  console.log("🚀 ~ text:", `http://api.geonames.org/searchJSON?q=${text}&maxRows=10&username=maxnada`)
   try {
     const response = await axios.get(
       `http://api.geonames.org/searchJSON?q=${text}&maxRows=10&username=maxnada`,
     );
-    return response.data?.geonames;
+    if (Array.isArray(response.data?.geonames)) {
+      return response.data?.geonames;
+    } else return [];
   } catch (error) {
     console.log('🚀 ~ getPlacesAutoComplete ~ error:', error);
     return [];

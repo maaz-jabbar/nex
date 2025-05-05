@@ -16,13 +16,14 @@ import {
   getAllBrands,
 } from '../../redux/middlewares/profileCreation';
 
-const ChooseFavoriteBrands = ({navigation}) => {
+const ChooseFavoriteBrands = ({navigation:{navigate}, route: {params}}) => {
   const dispatch = useDispatch();
 
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [brands, setBrands] = useState([]);
   const [showOtherInput, setShowOtherInput] = useState(false);
   const [customBrand, setCustomBrand] = useState('');
+  const {selectedProductType} = params || {};
 
   useEffect(() => {
     dispatch(
@@ -51,40 +52,12 @@ const ChooseFavoriteBrands = ({navigation}) => {
     Keyboard.dismiss();
   };
 
-  const moveToLocation = () => {
+  const moveToSizesSelection = () => {
     if (!selectedBrands.length) return;
-
-    dispatch(
-      createCustomerProfile(
-        {
-          profileType: 'CUSTOMER',
-          favDesigner: selectedBrands,
-          products: [
-            {
-              gender: 'men',
-              productType: 'Shoes',
-              sizes: ['xl', 'xxl', 'ml'],
-            },
-            {
-              gender: 'women',
-              productType: 'apprel',
-              sizes: ['xl', 'xxl', 'ml'],
-            },
-            {
-              gender: 'women',
-              productType: 'Shoes',
-              sizes: ['xl', 'xxl', 'ml'],
-            },
-            {
-              gender: 'men',
-              productType: 'apprel',
-              sizes: ['xl', 'xxl', 'ml'],
-            },
-          ],
-        },
-        () => navigation.navigate('Congratulations'),
-      ),
-    );
+    navigate('ChooseSizes', {
+      selectedBrands,
+      selectedProductType,
+    })
   };
 
   return (
@@ -130,7 +103,7 @@ const ChooseFavoriteBrands = ({navigation}) => {
         title="Next"
         disabled={!selectedBrands.length}
         noGradient={!selectedBrands.length}
-        onPress={moveToLocation}
+        onPress={moveToSizesSelection}
         buttonStyle={styles.nextButton}
         containerStyle={{backgroundColor: Colors.darkGrey, borderWidth: 0}}
       />
@@ -180,7 +153,7 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.RobotoRegular,
     marginBottom: 10,
     height: 45,
-    width:200
+    width: 200,
   },
   nextButton: {
     alignSelf: 'center',

@@ -5,6 +5,8 @@ import {
   Text,
   TouchableOpacity,
   View,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 
@@ -23,22 +25,42 @@ const ChooseLocation = ({route}) => {
   const [search, setSearch] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const locationRef = useRef();
+  const isSelectionFromDropdownRef = useRef(false);
 
   const getValues = useCallback(async () => {
     if (!search) {
       setSearchResults([]);
       return;
     }
-    const results = await getPlacesAutoComplete(search);
-    setSearchResults(results);
+    try {
+      const results = await getPlacesAutoComplete(search);
+      if (Array.isArray(results)) {
+        setSearchResults(results);
+        setShowDropdown(true);
+      } else {
+        setSearchResults([]);
+        setShowDropdown(false);
+      }
+    } catch (error) {
+      console.error('Autocomplete error:', error);
+      setSearchResults([]);
+      setShowDropdown(false);
+    }
   }, [search]);
 
   useEffect(() => {
+    if (isSelectionFromDropdownRef.current) {
+      isSelectionFromDropdownRef.current = false;
+      return;
+    }
+
     const debounceTimer = setTimeout(() => {
       getValues();
     }, 500);
+
     return () => clearTimeout(debounceTimer);
   }, [search, getValues]);
 
@@ -46,80 +68,93 @@ const ChooseLocation = ({route}) => {
     const body = route?.params?.body;
     body.location = selectedLocation;
     body.bio = bio;
-    
-    console.log("🚀 ~ moveToCongratulations ~ body:", body)
+
     dispatch(createAgentProfile(userId, body));
   };
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}>
-      <View style={styles.upperContainer}>
-        <Text style={styles.heading}>Location</Text>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      style={{flex: 1}}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.contentContainer}
+        keyboardShouldPersistTaps="handled">
+        <View style={styles.upperContainer}>
+          <Text style={styles.heading}>Location</Text>
 
-        <TextInputCustom
-          title="City, State"
-          containerStyle={styles.input}
-          hideLabel
-          textInputProps={{
-            value: search,
-            onChangeText: setSearch,
-            ref: locationRef,
-            onFocus: () => {}, // Placeholder in case you want to add styling later
-            onBlur: () => {},
-          }}
-        />
+          <TextInputCustom
+            title="City, State"
+            containerStyle={styles.input}
+            hideLabel
+            textInputProps={{
+              value: search,
+              selectTextOnFocus: true,
+              onChangeText: text => {
+                setSearch(text);
+                setShowDropdown(true);
+              },
+              ref: locationRef,
+              onFocus: () => setShowDropdown(true),
+              onBlur: () => {
+                setTimeout(() => setShowDropdown(false), 200);
+              },
+            }}
+          />
 
-        {searchResults.length > 0 && (
-          <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
-            {searchResults.map(item => (
-              <TouchableOpacity
-                activeOpacity={0.8}
-                key={item.geonameId}
-                style={styles.listItem}
-                onPress={() => {
-                  setSearch(item.toponymName);
-                  setSelectedLocation({
-                    longitude: item.lng,
-                    latitude: item.lat,
-                    link: item.toponymName,
-                  });
-                  setSearchResults([]);
-                  locationRef.current?.blur();
-                }}>
-                <Text style={styles.listItemName}>{item.toponymName}</Text>
-                <Text style={styles.listItemCountry}>{item.countryName}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        )}
+          {showDropdown && searchResults.length > 0 && (
+            <ScrollView style={styles.dropdown}>
+              {searchResults.map(item => (
+                <TouchableOpacity
+                  key={item.geonameId}
+                  style={styles.dropdownItem}
+                  activeOpacity={0.8}
+                  onPress={() => {
+                    isSelectionFromDropdownRef.current = true;
+                    setSearch(item.toponymName);
+                    setSelectedLocation({
+                      longitude: item.lng,
+                      latitude: item.lat,
+                      link: item.toponymName,
+                    });
+                    setSearchResults([]);
+                    setShowDropdown(false);
+                    locationRef.current?.blur?.();
+                  }}>
+                  <Text style={styles.dropdownTitle}>{item.toponymName}</Text>
+                  <Text style={styles.dropdownSubtitle}>
+                    {item.countryName}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          )}
 
-        <TextInputCustom
-          title="Bio"
-          textInputStyle={{height: 100, textAlignVertical: 'top'}}
-          containerStyle={styles.input}
-          textInputProps={{
-            multiline: true,
-            value: bio,
-            onChangeText: setBio,
-            returnKeyType: 'done',
-            blurOnSubmit: true,
-            maxLength: 200,
-          }}
-        />
-      </View>
+          <TextInputCustom
+            title="Bio"
+            textInputStyle={{height: 100, textAlignVertical: 'top'}}
+            containerStyle={styles.input}
+            textInputProps={{
+              multiline: true,
+              value: bio,
+              onChangeText: setBio,
+              returnKeyType: 'done',
+              blurOnSubmit: true,
+              maxLength: 200,
+            }}
+          />
+        </View>
 
-      <View style={styles.lowerContainer}>
-        <GradientButton
-          title="Create Profile"
-          disabled={!selectedLocation}
-          containerStyle={styles.button}
-          onPress={moveToCongratulations}
-        />
-        {/* <Text style={styles.editProfile}>Edit your profile in Settings</Text> */}
-      </View>
-    </ScrollView>
+        <View style={styles.lowerContainer}>
+          <GradientButton
+            title="Create Profile"
+            disabled={!selectedLocation}
+            containerStyle={styles.button}
+            onPress={moveToCongratulations}
+          />
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -138,10 +173,12 @@ const styles = StyleSheet.create({
   upperContainer: {
     flex: 1,
     alignSelf: 'stretch',
+    zIndex: 10,
   },
   lowerContainer: {
     justifyContent: 'center',
     paddingBottom: 100,
+    zIndex: 0,
   },
   heading: {
     fontSize: 24,
@@ -154,22 +191,25 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     marginBottom: 0,
   },
-  list: {
-    flex: 1,
-    marginBottom: 30,
-  },
-  listItem: {
-    padding: 10,
+  dropdown: {
+    backgroundColor: Colors.white,
     borderColor: Colors.lightGrey,
+    borderWidth: 1,
+    borderRadius: 5,
+    maxHeight: 200,
+    marginBottom: 20,
+  },
+  dropdownItem: {
+    padding: 10,
+    borderBottomColor: Colors.lightGrey,
     borderBottomWidth: 1,
   },
-  listItemName: {
+  dropdownTitle: {
     fontSize: 16,
     color: Colors.black,
     fontFamily: Fonts.RobotoRegular,
-    marginBottom: 2,
   },
-  listItemCountry: {
+  dropdownSubtitle: {
     fontSize: 12,
     color: Colors.textGrey,
     fontFamily: Fonts.RobotoRegular,
@@ -177,10 +217,5 @@ const styles = StyleSheet.create({
   button: {
     width: 150,
     alignSelf: 'center',
-  },
-  editProfile: {
-    color: Colors.darkGrey,
-    fontSize: 12,
-    fontFamily: Fonts.RobotoRegular,
   },
 });
