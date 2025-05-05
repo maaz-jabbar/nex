@@ -3,7 +3,13 @@ import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {GradientButton, TextInputCustom, ToggleButton} from '../../components';
 import ReactNativeModal from 'react-native-modal';
-import {Colors, Fonts} from '../../config';
+import {
+  Colors,
+  descriptionError,
+  Fonts,
+  imageError,
+  nameError,
+} from '../../config';
 import LinearGradient from 'react-native-linear-gradient';
 import Images from '../../assets';
 import {launchImageLibrary} from 'react-native-image-picker';
@@ -25,6 +31,11 @@ const NewGalleryModal = ({
   const [imagePicked, setImagePicked] = useState(data?.coverImage || null);
   const agentProfileId = useSelector(state => state.user?.profile?.profileId);
   const accessToken = useSelector(state => state?.user?.user?.accessToken);
+  const [errors, setErrors] = useState({
+    name: '',
+    description: '',
+    imagePicked: '',
+  });
 
   const dispatch = useDispatch();
 
@@ -32,16 +43,41 @@ const NewGalleryModal = ({
     setImagePicked(data?.coverImage || null);
     setName(data?.name || '');
     setDescription(data?.description || '');
+    setErrors({
+      name: '',
+      description: '',
+      imagePicked: '',
+    });
+    return () => {
+      emptyData();
+    };
   }, [data]);
 
   const emptyData = () => {
     setImagePicked(null);
     setName('');
     setDescription('');
+    setErrors({
+      name: '',
+      description: '',
+      imagePicked: '',
+    });
   };
 
   const addGallery = useCallback(() => {
-    if (!imagePicked || !name || !description) return;
+    const errorsToShow = {};
+    if (name.length < 3) errorsToShow.name = nameError;
+    if (!description) errorsToShow.description = descriptionError;
+    if (!imagePicked) errorsToShow.imagePicked = imageError;
+    setErrors(errorsToShow);
+
+    if (
+      errorsToShow.name ||
+      errorsToShow.description ||
+      errorsToShow.imagePicked
+    )
+      return;
+
     dispatch(
       uploadMedia(
         {uri: imagePicked, type: 'image/*', name: Date.now()?.toString()},
@@ -80,7 +116,10 @@ const NewGalleryModal = ({
         maxWidth: 400,
       },
       result => {
-        if (result?.assets?.length) setImagePicked(result?.assets[0]?.uri);
+        if (result?.assets?.length) {
+          setImagePicked(result?.assets[0]?.uri);
+          setErrors({...errors, imagePicked: ''});
+        }
       },
     );
   };
@@ -108,19 +147,30 @@ const NewGalleryModal = ({
           title="Gallery Name"
           textInputProps={{
             value: name,
-            onChangeText: setName,
+            onChangeText: val => {
+              setName(val);
+              setErrors({...errors, name: ''});
+            },
+            maxLength: 70,
           }}
+          error={errors.name}
         />
         <TextInputCustom
           title="Description"
           textInputStyle={{
             height: 130,
             textAlignVertical: 'top',
+            paddingTop: 10,
           }}
           textInputProps={{
             value: description,
-            onChangeText: setDescription,
+            multiline: true,
+            onChangeText: val => {
+              setDescription(val);
+              setErrors({...errors, description: ''});
+            },
           }}
+          error={errors.description}
         />
         <View style={styles.listItem}>
           <Text style={styles.listTitle}>Notifications</Text>
@@ -189,6 +239,9 @@ const NewGalleryModal = ({
             />
           </TouchableOpacity>
         )}
+        {!!errors.imagePicked && (
+          <Text style={styles.error}>{errors.imagePicked}</Text>
+        )}
         <GradientButton
           title={data ? 'Update' : 'Create'}
           onPress={data ? updateGallery : addGallery}
@@ -218,6 +271,13 @@ const styles = StyleSheet.create({
     color: Colors.black,
     fontSize: 16,
     alignSelf: 'center',
+  },
+  error: {
+    color: Colors.red,
+    marginBottom: 5,
+    marginLeft: 10,
+    fontSize: 12,
+    fontFamily: Fonts.RobotoRegular,
   },
   popup: {
     padding: 40,

@@ -63,20 +63,28 @@ const ChooseProduct = ({navigation}) => {
         <Text style={styles.heading}>Show me product for</Text>
         <Text style={styles.smallText}>Select all that apply</Text>
         <View style={styles.positions}>
-          {uniqueProducts.map(({gender}) => (
-            <SelectionPill
-              key={gender}
-              title={gender}
-              isSelected={selectedProductFor.includes(gender)}
-              onPress={() =>
-                toggleSelection(
-                  gender,
-                  selectedProductFor,
-                  setSelectedProductFor,
-                )
-              }
-            />
-          ))}
+          {uniqueProducts.map(({gender}) => {
+            const isAlreadySelected = selectedProductFor.includes(gender);
+            return (
+              <SelectionPill
+                key={gender}
+                title={gender}
+                isSelected={isAlreadySelected}
+                onPress={() => {
+                  const newSelected = isAlreadySelected
+                    ? selectedProductFor.filter(g => g !== gender)
+                    : [...selectedProductFor, gender];
+
+                  setSelectedProductFor(newSelected);
+
+                  // Remove product types not matching the new genders
+                  setSelectedProductType(prev =>
+                    prev.filter(p => newSelected.includes(p.gender))
+                  );
+                }}
+              />
+            );
+          })}
         </View>
 
         <Text style={styles.heading}>Product type</Text>
@@ -109,6 +117,8 @@ const ChooseProduct = ({navigation}) => {
 
       <GradientButton
         title="Next"
+        disabled={!selectedProductType.length}
+        noGradient={!selectedProductType.length}
         onPress={moveToLocation}
         buttonStyle={styles.nextButton}
         containerStyle={{backgroundColor: Colors.darkGrey, borderWidth: 0}}

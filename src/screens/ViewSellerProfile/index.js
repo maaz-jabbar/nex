@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -8,17 +8,17 @@ import {
   ScrollView,
   Linking,
 } from 'react-native';
-import { Colors, Fonts } from '../../config';
+import {Colors, Fonts} from '../../config';
 import LinearGradient from 'react-native-linear-gradient';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Images from '../../assets';
-import { ContactAvatar, GradientButton } from '../../components';
-import { useDispatch, useSelector } from 'react-redux';
-import { getProfileExplicitly } from '../../redux/middlewares/user';
-import { logout } from '../../redux/actions/UserActions';
+import {ContactAvatar, GradientButton} from '../../components';
+import {useDispatch, useSelector} from 'react-redux';
+import {getProfileExplicitly} from '../../redux/middlewares/user';
+import {logout} from '../../redux/actions/UserActions';
 
-const ViewSellerProfile = ({ navigation, route: { params } }) => {
-  const { top } = useSafeAreaInsets();
+const ViewSellerProfile = ({navigation, route: {params}}) => {
+  const {top} = useSafeAreaInsets();
   const dispatch = useDispatch();
 
   const [profile, setProfile] = useState(null);
@@ -34,8 +34,8 @@ const ViewSellerProfile = ({ navigation, route: { params } }) => {
         },
         profile => {
           setProfile(profile);
-        }
-      )
+        },
+      ),
     );
   }, []);
 
@@ -43,24 +43,12 @@ const ViewSellerProfile = ({ navigation, route: { params } }) => {
     navigation.goBack();
   };
 
-  const logoutButton = () => {
-    dispatch(logout());
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Auth', params: { screen: 'BeforeSignUp' } }],
-    });
-  };
-
-  const moveToEditProfile = () => {
-    navigation.navigate('SellerEditProfile');
-  };
-
   return (
     <View style={styles.container}>
       <LinearGradient
-        style={[styles.headerGradient, { paddingTop: top }]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
+        style={[styles.headerGradient, {paddingTop: top}]}
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 0}}
         colors={[Colors.primary, Colors.secondary]}>
         <View style={styles.header}>
           <TouchableOpacity
@@ -71,7 +59,7 @@ const ViewSellerProfile = ({ navigation, route: { params } }) => {
             <Text style={styles.back}>Back</Text>
           </TouchableOpacity>
           <Text style={styles.title}>Profile</Text>
-          <View style={{ width: 70 }} />
+          <View style={{width: 70}} />
         </View>
         <ContactAvatar
           contact={user}
@@ -84,11 +72,11 @@ const ViewSellerProfile = ({ navigation, route: { params } }) => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.lowerContentContainer}
-        style={styles.container}>
+        style={styles.scroll}>
         <Text style={styles.name}>{user?.name}</Text>
         <Text style={styles.phone}>{user?.number}</Text>
         <Text style={styles.email}>{user?.email}</Text>
-        <Text style={styles.preferences}>Bio</Text>
+        {!!profile?.bio && <Text style={styles.preferences}>Bio</Text>}
         <Text style={styles.bio}>{profile?.bio}</Text>
         {profile?.links.map((link, index) => {
           return (
@@ -96,7 +84,9 @@ const ViewSellerProfile = ({ navigation, route: { params } }) => {
               key={index}
               noGradient
               onPress={() => {
-                Linking.openURL(link);
+                Linking.openURL(
+                  link?.includes('http') ? link : 'https://' + link,
+                );
               }}
               icon={Images.link}
               iconSize={20}
@@ -116,6 +106,9 @@ const ViewSellerProfile = ({ navigation, route: { params } }) => {
 export default ViewSellerProfile;
 
 const styles = StyleSheet.create({
+  scroll: {
+    marginTop: 60,
+  },
   headerGradient: {
     overflow: 'visible',
     zIndex: 1,
@@ -128,7 +121,6 @@ const styles = StyleSheet.create({
   },
   lowerContentContainer: {
     padding: 20,
-    paddingTop: 80,
     alignItems: 'center',
   },
   header: {

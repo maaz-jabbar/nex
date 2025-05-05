@@ -123,6 +123,7 @@ const GalleryContacts = ({route: {params}, navigation}) => {
             onChangeText={text => setSearch(text)}
             value={search}
             placeholder="Search"
+            placeholderTextColor={Colors.darkerGrey}
             style={styles.input}
           />
         </View>

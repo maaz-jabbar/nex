@@ -2,23 +2,35 @@ import React from 'react';
 import ReactNativeModal from 'react-native-modal';
 import {StyleSheet, Text, View} from 'react-native';
 import {GradientButton, TextInputCustom} from '../../components';
-import {Colors, Fonts} from '../../config';
+import {Colors, Fonts, phoneRegex} from '../../config';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useDispatch} from 'react-redux';
 import {saveContact} from '../../redux/middlewares/user';
+import {otpError, emailError, passwordError, phoneError, nameError} from '../../config';
+import * as EmailValidator from 'email-validator';
 
 const NewContactModal = ({isVisible, setVisible}) => {
   const {top} = useSafeAreaInsets();
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [phone, setPhone] = React.useState('');
+  const [errors, setErrors] = React.useState({
+    name: '',
+    email: '',
+    phone: '',
+  });
 
   const dispatch = useDispatch();
 
   const addContact = () => {
-    if (!name || !email || !phone) {
-      return;
-    }
+    const errorsToShow = {}
+    if (name.length < 3) errorsToShow.name = nameError;
+    if (!EmailValidator.validate(email)) errorsToShow.email = emailError;
+    if (!phoneRegex.test(phone)) errorsToShow.phone = phoneError;
+    setErrors(errorsToShow);
+
+    if(errorsToShow.name || errorsToShow.email || errorsToShow.phone) return
+
     dispatch(
       saveContact(
         {
@@ -47,25 +59,38 @@ const NewContactModal = ({isVisible, setVisible}) => {
       onDismiss={() => setVisible(false)}>
       <View style={styles.popup}>
         <TextInputCustom
-          title="First Name"
+          title="Full Name"
           textInputProps={{
             value: name,
-            onChangeText: setName,
+            onChangeText: val =>{
+              setName(val)
+              setErrors({...errors, name: ''})
+            },
+            maxLength: 35,
           }}
+          error={errors.name}
         />
         <TextInputCustom
           title="Email"
           textInputProps={{
             value: email,
-            onChangeText: setEmail,
+            onChangeText: val =>{
+              setEmail(val)
+              setErrors({...errors, email: ''})
+            },
           }}
+          error={errors.email}
         />
         <TextInputCustom
           title="Phone Number"
           textInputProps={{
             value: phone,
-            onChangeText: setPhone,
+            onChangeText: val =>{
+              setPhone(val)
+              setErrors({...errors, phone: ''})
+            },
           }}
+          error={errors.phone}
         />
         <GradientButton
           title="Save"

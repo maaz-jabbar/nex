@@ -55,6 +55,7 @@ export const getPositionDetails = (id, onSuccess) => {
 };
 
 export const getPlacesAutoComplete = async text => {
+  console.log("🚀 ~ text:", `http://api.geonames.org/searchJSON?q=${text}&maxRows=10&username=maxnada`)
   try {
     const response = await axios.get(
       `http://api.geonames.org/searchJSON?q=${text}&maxRows=10&username=maxnada`,
@@ -73,6 +74,9 @@ export const createAgentProfile = (id, body) => {
       .then(({data}) => {
         dispatch(getProfile(getState()?.user?.user));
         if (data?.status == 201) navigate('Congratulations');
+      })
+      .catch(err => {
+        console.log('🚀 ~ .catch ~ err:', JSON.stringify(err.response));
       })
       .finally(() => {
         dispatch(loaderFalse());

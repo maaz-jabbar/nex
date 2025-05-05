@@ -2,11 +2,17 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {Colors, Fonts} from '../../config';
 import {GradientButton} from '../../components';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  createAgentProfile,
+  createCustomerProfile,
+} from '../../redux/middlewares/profileCreation';
 
 const Welcome = ({navigation}) => {
   const userType = useSelector(state => state.user?.userType);
+  const id = useSelector(state => state.user?.user?.userId);
   const isCustomer = userType === 'CUSTOMER';
+  const dispatch = useDispatch();
 
   const moveToProfileCreation = () => {
     if (isCustomer) {
@@ -16,7 +22,33 @@ const Welcome = ({navigation}) => {
     }
   };
 
-  const skip = () => {};
+  const skip = () => {
+    if (isCustomer) {
+      dispatch(
+        createCustomerProfile(
+          {
+            profileType: 'CUSTOMER',
+            favDesigner: [],
+            products: [],
+          },
+          () => navigation.navigate('Congratulations'),
+        ),
+      );
+    } else {
+      dispatch(
+        createAgentProfile(
+          id,
+          {
+            profileType: 'AGENT',
+            position: '',
+            links: [],
+            bio: '',
+          },
+          () => navigation.navigate('Congratulations'),
+        ),
+      );
+    }
+  };
 
   return (
     <View style={styles.container}>

@@ -17,7 +17,7 @@ import {
 
 const ChooseLocation = ({route}) => {
   const dispatch = useDispatch();
-  const {userId} = useSelector(state => state.user?.user);
+  const {userId} = useSelector(state => state.user?.user) || {};
 
   const [bio, setBio] = useState('');
   const [search, setSearch] = useState('');
@@ -46,11 +46,15 @@ const ChooseLocation = ({route}) => {
     const body = route?.params?.body;
     body.location = selectedLocation;
     body.bio = bio;
+    
+    console.log("🚀 ~ moveToCongratulations ~ body:", body)
     dispatch(createAgentProfile(userId, body));
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}>
       <View style={styles.upperContainer}>
         <Text style={styles.heading}>Location</Text>
 
@@ -99,6 +103,9 @@ const ChooseLocation = ({route}) => {
             multiline: true,
             value: bio,
             onChangeText: setBio,
+            returnKeyType: 'done',
+            blurOnSubmit: true,
+            maxLength: 200,
           }}
         />
       </View>
@@ -110,9 +117,9 @@ const ChooseLocation = ({route}) => {
           containerStyle={styles.button}
           onPress={moveToCongratulations}
         />
-        <Text style={styles.editProfile}>Edit your profile in Settings</Text>
+        {/* <Text style={styles.editProfile}>Edit your profile in Settings</Text> */}
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -123,7 +130,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.white,
     paddingHorizontal: 20,
+  },
+  contentContainer: {
     alignItems: 'center',
+    flexGrow: 1,
   },
   upperContainer: {
     flex: 1,

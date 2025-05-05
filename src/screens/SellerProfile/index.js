@@ -9,7 +9,7 @@ import {
   Linking,
 } from 'react-native';
 import Share from 'react-native-share';
-import {Colors, Fonts} from '../../config';
+import {androidUrl, Colors, Fonts, iosUrl, message} from '../../config';
 import LinearGradient from 'react-native-linear-gradient';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Images from '../../assets';
@@ -26,11 +26,16 @@ const socialIcons = [
   {icon: Images.twitterX, social: Share.Social.TWITTER},
 ];
 
-const onPressSocialIcon = (social = undefined) => {
+const onPressSocialIcon = async (social = undefined) => {
+  if (social == Share.Social.WHATSAPP)
+    return Linking.openURL('https://wa.me/?text=' + message);
   const shareOptions = {
     title: 'INVITE',
-    message: 'You are invited to join nexsa app!',
-    url: 'https://www.google.com',
+    message,
+    url:
+      social == Share.Social.FACEBOOK
+        ? Platform.select({ios: iosUrl, android: androidUrl})
+        : undefined,
     social,
   };
   const method = social ? Share.shareSingle : Share.open;
@@ -51,7 +56,7 @@ const SellerProfile = ({navigation}) => {
     dispatch(logout());
     navigation.dispatch(
       CommonActions.reset({
-        index: 1,
+        index: 0,
         routes: [{name: 'Auth', params: {screen: 'BeforeSignUp'}}],
       }),
     );
@@ -126,8 +131,7 @@ const SellerProfile = ({navigation}) => {
               <TouchableOpacity
                 key={index}
                 onPress={() => onPressSocialIcon(icon.social)}
-                activeOpacity={0.8}
-                style={styles.socialIcon}>
+                activeOpacity={0.8}>
                 <Image
                   source={icon?.icon}
                   resizeMode="contain"
@@ -158,7 +162,11 @@ const SellerProfile = ({navigation}) => {
               <GradientButton
                 key={index}
                 noGradient
-                onPress={() => Linking.openURL(link)}
+                onPress={() =>
+                  Linking.openURL(
+                    link?.includes('http') ? link : 'https://' + link,
+                  )
+                }
                 icon={Images.link}
                 iconSize={20}
                 iconStyle={styles.linkIcon}
@@ -269,13 +277,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
     marginBottom: 30,
+    columnGap: 20,
   },
   socialIconImage: {
     width: 30,
     height: 30,
-  },
-  socialIcon: {
-    marginRight: 10,
   },
   buttons: {
     flexDirection: 'row',

@@ -162,8 +162,6 @@ const ViewCustomerProfile = ({navigation, route: {params}}) => {
               })}
             </View>
 
-            <Text style={styles.preferences}>Preferences:</Text>
-
             <View style={styles.preferencesContainer}>
               {loader ? (
                 <ActivityIndicator />
@@ -195,6 +193,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     backgroundColor: Colors.white,
+    marginTop: 60,
   },
   headerGradient: {
     overflow: 'visible',
@@ -239,7 +238,6 @@ const styles = StyleSheet.create({
   },
   lowerContentContainer: {
     padding: 20,
-    paddingTop: 80,
     alignItems: 'center',
   },
   joinedButton: {

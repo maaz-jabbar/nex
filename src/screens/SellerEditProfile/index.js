@@ -14,12 +14,13 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import {errorToast} from '../../config/api';
 import {uploadMedia} from '../../redux/middlewares/chat';
 import {updateSellerProfile, updateSeller} from '../../redux/middlewares/user';
-import {saveUser} from '../../redux/actions/UserActions';
+import {logout, saveUser} from '../../redux/actions/UserActions';
 import LinearGradient from 'react-native-linear-gradient';
 import {GradientButton, TextInputCustom, ContactAvatar} from '../../components';
-import {Colors, Fonts} from '../../config';
+import {Colors, emailError, Fonts, nameError, phoneError, phoneRegex} from '../../config';
 import Images from '../../assets';
-import FastImage from 'react-native-fast-image';
+import * as EmailValidator from 'email-validator';
+import {CommonActions} from '@react-navigation/native';
 
 const urlRegex =
   /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
@@ -61,9 +62,23 @@ const SellerEditProfile = ({navigation}) => {
     } else errorToast({message: 'Please provide a valid link'});
   };
 
+  const onDeleteLink = link => {
+    setLinks(links.filter(l => l !== link));
+  };
+
   const onPressSave = () => {
     if (!name || !phone || !email)
       return errorToast({message: 'Please fill all the fields'});
+
+    let message = [];
+
+    if (name.length < 3) message.push(nameError);
+    if (!phoneRegex.test(phone)) message.push(phoneError);
+    if (!EmailValidator.validate(email)) message.push(emailError);
+
+    if (message.length) {
+      return errorToast({message: message.join('\n')});
+    }
 
     if (
       user?.fullName === name &&
@@ -122,11 +137,21 @@ const SellerEditProfile = ({navigation}) => {
     }
   };
 
+  const logoutButton = () => {
+    dispatch(logout());
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{name: 'Auth', params: {screen: 'BeforeSignUp'}}],
+      }),
+    );
+  };
+
   return (
     <View style={[styles.container, {paddingTop: top}]}>
       <View style={styles.header}>
         <TouchableOpacity
-          onPress={_goBack}
+          onPress={logoutButton}
           activeOpacity={0.8}
           style={styles.backButton}>
           <Image source={Images.back} style={styles.backIcon} />
@@ -170,7 +195,7 @@ const SellerEditProfile = ({navigation}) => {
           </View>
           <TextInputCustom
             title="Name"
-            textInputProps={{value: name, onChangeText: setName}}
+            textInputProps={{value: name, onChangeText: setName, maxLength: 70}}
           />
           <TextInputCustom
             title="Phone Number"
@@ -182,22 +207,36 @@ const SellerEditProfile = ({navigation}) => {
           />
           <TextInputCustom
             title="Bio"
-            textInputProps={{multiline: true, value: bio, onChangeText: setBio}}
+            textInputProps={{
+              multiline: true,
+              value: bio,
+              onChangeText: setBio,
+              maxLength: 200,
+            }}
             textInputStyle={styles.bioInput}
           />
           {links.map((link, index) => (
-            <GradientButton
-              key={index}
-              noGradient
-              onPress={() => Linking.openURL(link)}
-              icon={Images.link}
-              iconSize={20}
-              iconStyle={styles.linkIcon}
-              title={link}
-              textStyle={styles.linkText}
-              buttonStyle={styles.linkButton}
-              containerStyle={styles.linkContainer}
-            />
+            <View style={styles.linkListContainer}>
+              <GradientButton
+                key={index}
+                noGradient
+                onPress={() =>
+                  Linking.openURL(
+                    link?.includes('http') ? link : 'https://' + link,
+                  )
+                }
+                icon={Images.link}
+                iconSize={20}
+                iconStyle={styles.linkIcon}
+                title={link}
+                textStyle={styles.linkText}
+                buttonStyle={styles.linkButton}
+                containerStyle={styles.linkContainer}
+              />
+              <TouchableOpacity onPress={() => onDeleteLink(link)}>
+                <Image source={Images.delete} style={styles.deleteIcon} />
+              </TouchableOpacity>
+            </View>
           ))}
           <GradientButton
             noGradient
@@ -247,6 +286,17 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'space-between',
     padding: 20,
+  },
+  linkListContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  deleteIcon: {
+    width: 20,
+    height: 20,
+    marginLeft: 5,
+    resizeMode: 'contain',
   },
   header: {
     flexDirection: 'row',
@@ -331,6 +381,7 @@ const styles = StyleSheet.create({
   },
   linkButton: {
     marginBottom: 0,
+    flex: 1,
   },
   linkContainer: {
     borderWidth: 0,
@@ -352,20 +403,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
   },
   linkInputContainer: {
-    marginTop: 20,
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   linkInput: {
     marginBottom: 10,
+    flex: 1,
+    marginRight: 10,
   },
   saveLinkButtonCont: {
-    position: 'absolute',
-    right: 0,
-    bottom: 10,
+    width: 48,
+    height: 48,
+    paddingHorizontal: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   saveLinkButton: {
-    backgroundColor: Colors.secondary,
-    borderRadius: 20,
-    padding: 10,
+    width: 48,
+    height: 48,
+    marginBottom: 0,
   },
   checkIcon: {
     tintColor: Colors.white,

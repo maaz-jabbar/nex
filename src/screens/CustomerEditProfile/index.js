@@ -8,7 +8,7 @@ import {
   ScrollView,
   FlatList,
 } from 'react-native';
-import {Colors, Fonts} from '../../config';
+import {Colors, Fonts, phoneRegex} from '../../config';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Images from '../../assets';
 import {
@@ -25,9 +25,16 @@ import {
   updateCustomer,
   updateCustomerProfile,
 } from '../../redux/middlewares/user';
-import {saveUser} from '../../redux/actions/UserActions';
+import {logout, saveUser} from '../../redux/actions/UserActions';
 import {getAllBrands} from '../../redux/middlewares/profileCreation';
 import ReactNativeModal from 'react-native-modal';
+import {CommonActions} from '@react-navigation/native';
+import * as EmailValidator from 'email-validator';
+import {errorToast} from '../../config/api';
+
+const emailError = 'Please enter a valid email.';
+const phoneError = 'Please enter a valid phone number.';
+const nameError = 'Please enter a valid name (at least 3 characters).';
 
 const CustomerEditProfile = ({navigation}) => {
   const {top} = useSafeAreaInsets();
@@ -48,8 +55,27 @@ const CustomerEditProfile = ({navigation}) => {
     dispatch(getAllBrands(data => setBrands(data)));
   }, []);
 
+  const onPressLogout = () => {
+    dispatch(logout());
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{name: 'Auth', params: {screen: 'BeforeSignUp'}}],
+      }),
+    );
+  };
+
   const onPressSave = () => {
     if (!name || !phone || !email) return;
+    let message = [];
+
+    if (name.length < 3) message.push(nameError);
+    if (!phoneRegex.test(phone)) message.push(phoneError);
+    if (!EmailValidator.validate(email)) message.push(emailError);
+
+    if (message.length) {
+      return errorToast({message: message.join('\n')});
+    }
 
     if (
       user?.fullName === name &&
@@ -84,6 +110,9 @@ const CustomerEditProfile = ({navigation}) => {
       );
     }
 
+    if (JSON.stringify(profile?.favDesigner) !== JSON.stringify(preferences)) {
+      dispatch(updateCustomerProfile(preferences, () => navigation.goBack()));
+    }
     if (
       user?.fullName !== name ||
       user?.mobileNumber !== phone ||
@@ -93,11 +122,7 @@ const CustomerEditProfile = ({navigation}) => {
       if (user?.fullName !== name) data.fullName = name;
       if (user?.mobileNumber !== phone) data.mobileNumber = phone;
       if (user?.email !== email) data.email = email;
-      dispatch(updateCustomer(data, () => navigation.goBack()));
-    }
-
-    if (JSON.stringify(profile?.favDesigner) !== JSON.stringify(preferences)) {
-      dispatch(updateCustomerProfile(preferences, () => navigation.goBack()));
+      dispatch(updateCustomer(data, onPressLogout));
     }
   };
 
@@ -167,7 +192,7 @@ const CustomerEditProfile = ({navigation}) => {
           <Text style={styles.back}>Back</Text>
         </TouchableOpacity>
         <Text style={styles.title}>Edit Profile</Text>
-        <TouchableOpacity onPress={navigation.goBack} style={styles.backButton}>
+        <TouchableOpacity onPress={onPressLogout} style={styles.backButton}>
           <Text style={styles.back}>Logout</Text>
           <Image source={Images.logout} style={styles.logoutIcon} />
         </TouchableOpacity>
@@ -202,7 +227,7 @@ const CustomerEditProfile = ({navigation}) => {
 
           <TextInputCustom
             title="Name"
-            textInputProps={{value: name, onChangeText: setName}}
+            textInputProps={{value: name, onChangeText: setName, maxLength: 70}}
           />
           <TextInputCustom
             title="Phone Number"

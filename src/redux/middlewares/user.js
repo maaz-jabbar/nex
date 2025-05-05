@@ -298,7 +298,6 @@ export const getUserSentInvites = onSuccess => {
       .then(({data}) => {
         console.log('🚀 ~ .then ~ data:', data);
         onSuccess(data);
-        // dispatch(saveUserContacts(data));
       })
       .finally(() => {
         dispatch(loaderFalse());
@@ -338,7 +337,13 @@ export const updateCustomer = (data, onSuccess) => {
     const userId = getState().user?.user?.userId;
     dispatch(loaderTrue());
     ApiInstanceWithJWT.patch('users/' + userId, data)
-      .then(() => {
+      .then((don) => {
+        console.log("🚀 ~ .then ~ don:", don.data)
+        console.log("🚀 ~ .then ~ don:", getState().user?.user)
+        console.log("🚀 ~ .then ~ don:", {
+          ...getState().user?.user,
+          ...data,
+        })
         dispatch(
           saveUser({
             ...getState().user?.user,

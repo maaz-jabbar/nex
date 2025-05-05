@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Keyboard,
+} from 'react-native';
 import {useDispatch} from 'react-redux';
 
 import {Colors, Fonts} from '../../config';
@@ -14,6 +21,8 @@ const ChooseFavoriteBrands = ({navigation}) => {
 
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [showOtherInput, setShowOtherInput] = useState(false);
+  const [customBrand, setCustomBrand] = useState('');
 
   useEffect(() => {
     dispatch(
@@ -29,6 +38,17 @@ const ChooseFavoriteBrands = ({navigation}) => {
         ? prev.filter(item => item !== brand)
         : [...prev, brand],
     );
+  };
+
+  const handleAddCustomBrand = () => {
+    const trimmed = customBrand.trim();
+    if (trimmed && !selectedBrands.includes(trimmed)) {
+      setSelectedBrands(prev => [...prev, trimmed]);
+      setBrands(prev => [...prev, {designerName: trimmed}]);
+    }
+    setCustomBrand('');
+    setShowOtherInput(false);
+    Keyboard.dismiss();
   };
 
   const moveToLocation = () => {
@@ -83,10 +103,33 @@ const ChooseFavoriteBrands = ({navigation}) => {
             onPress={() => toggleBrand(brand.designerName)}
           />
         ))}
+        <View style={styles.otherContainer}>
+          <SelectionPill
+            title="Other"
+            isSelected={showOtherInput}
+            onPress={() => {
+              setShowOtherInput(!showOtherInput);
+              setCustomBrand('');
+            }}
+          />
+          {showOtherInput && (
+            <TextInput
+              style={styles.input}
+              placeholder="Enter other brand"
+              placeholderTextColor={Colors.lightGrey}
+              value={customBrand}
+              onChangeText={setCustomBrand}
+              onSubmitEditing={handleAddCustomBrand}
+              returnKeyType="done"
+            />
+          )}
+        </View>
       </View>
 
       <GradientButton
         title="Next"
+        disabled={!selectedBrands.length}
+        noGradient={!selectedBrands.length}
         onPress={moveToLocation}
         buttonStyle={styles.nextButton}
         containerStyle={{backgroundColor: Colors.darkGrey, borderWidth: 0}}
@@ -101,6 +144,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.white,
+  },
+  otherContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   mainContentContainer: {
     flexGrow: 1,
@@ -123,6 +170,17 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     flexDirection: 'row',
     paddingHorizontal: 20,
+  },
+  input: {
+    paddingHorizontal: 10,
+    borderColor: Colors.lightGrey,
+    borderWidth: 1,
+    borderRadius: 30,
+    color: Colors.black,
+    fontFamily: Fonts.RobotoRegular,
+    marginBottom: 10,
+    height: 45,
+    width:200
   },
   nextButton: {
     alignSelf: 'center',

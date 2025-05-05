@@ -41,7 +41,10 @@ const Chat = ({route: {params}, navigation}) => {
       getMessages(
         conversation?.conversationId,
         chatMessages.length,
-        setChatMessages,
+        messages => {
+          setChatMessages(messages);
+          setLoader(false);
+        },
       ),
     );
   };
@@ -49,8 +52,8 @@ const Chat = ({route: {params}, navigation}) => {
   useEffect(() => {
     const timer = setInterval(() => {
       getAll();
-    }, 3000); // Adjusted polling interval
-    return () => clearInterval(timer); // Fixed incorrect clearTimeout
+    }, 3000);
+    return () => clearInterval(timer);
   }, []);
 
   const sendMessage = () => {
@@ -134,30 +137,41 @@ const Chat = ({route: {params}, navigation}) => {
         </TouchableOpacity>
       </View>
 
-      <FlatList
-        inverted
-        data={chatMessages}
-        extraData={chatMessages}
-        keyExtractor={item =>
-          item?.messageId?.toString() || item?.timestamp?.toString()
-        }
-        contentContainerStyle={{
-          paddingHorizontal: 20,
-          flexDirection: 'column-reverse',
-        }}
-        style={styles.chat}
-        renderItem={({item, index}) => {
-          const nextChatBySameUser =
-            chatMessages[index + 1]?.senderId === item?.senderId;
-          return (
-            <ChatBubble
-              sender={chatWith}
-              message={item}
-              nextChatBySameUser={nextChatBySameUser}
-            />
-          );
-        }}
-      />
+      {loader ? (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <ActivityIndicator size="large" color={Colors.primary} />
+        </View>
+      ) : (
+        <FlatList
+          inverted
+          data={chatMessages}
+          extraData={chatMessages}
+          keyExtractor={item =>
+            item?.messageId?.toString() || item?.timestamp?.toString()
+          }
+          contentContainerStyle={{
+            paddingHorizontal: 20,
+            flexDirection: 'column-reverse',
+          }}
+          style={styles.chat}
+          renderItem={({item, index}) => {
+            const nextChatBySameUser =
+              chatMessages[index + 1]?.senderId === item?.senderId;
+            return (
+              <ChatBubble
+                sender={chatWith}
+                message={item}
+                nextChatBySameUser={nextChatBySameUser}
+              />
+            );
+          }}
+        />
+      )}
 
       <View style={styles.sendMessCont}>
         <Image
@@ -169,6 +183,7 @@ const Chat = ({route: {params}, navigation}) => {
           value={message}
           onChangeText={setMessage}
           style={styles.textInput}
+          placeholderTextColor={Colors.darkerGrey}
           placeholder="Type your message here..."
         />
         <GradientButton

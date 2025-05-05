@@ -67,7 +67,7 @@ const Contacts = ({navigation}) => {
   const _goBack = () => navigation.goBack();
 
   const viewProfile = item => {
-    if (!item?.joined) {
+    if (item?.joined) {
       dispatch(
         getUserWithId(item?.userId, data => {
           const toSendData = {
@@ -152,7 +152,7 @@ const Contacts = ({navigation}) => {
           value={search}
           onChangeText={setSearch}
           placeholder="Search"
-          placeholderTextColor={Colors.gray}
+          placeholderTextColor={Colors.darkerGrey}
           style={styles.input}
         />
       </View>

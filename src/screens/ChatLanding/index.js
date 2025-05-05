@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
+  Platform,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -94,8 +95,10 @@ const ChatLanding = ({navigation}) => {
       });
     } else {
       return broadcasts.filter(b => {
-        return b?.title?.toLowerCase()?.includes(search.toLowerCase()) ||
-          b?.content?.toLowerCase()?.includes(search.toLowerCase());
+        return (
+          b?.title?.toLowerCase()?.includes(search.toLowerCase()) ||
+          b?.content?.toLowerCase()?.includes(search.toLowerCase())
+        );
       });
     }
   };
@@ -124,6 +127,7 @@ const ChatLanding = ({navigation}) => {
           />
           <TextInput
             placeholder="Search"
+            placeholderTextColor={Colors.darkerGrey}
             style={styles.input}
             value={search}
             onChangeText={val => setSearch(val)}
@@ -135,6 +139,9 @@ const ChatLanding = ({navigation}) => {
               containerStyle={styles.tabButtonContainer}
               title="Chat"
               indicator={chats.length}
+              customIndicatorTextStyles={{
+                marginTop: Platform.OS === 'ios' ? undefined : -2,
+              }}
               buttonStyle={{width: isCustomer ? '100%' : '48%'}}
               noGradient={selectedTab !== 'Chat'}
               onPress={() => setSelectedTab('Chat')}
@@ -144,6 +151,9 @@ const ChatLanding = ({navigation}) => {
                 containerStyle={styles.tabButtonContainer}
                 buttonStyle={{width: '48%'}}
                 indicator={broadcasts.length}
+                customIndicatorTextStyles={{
+                  marginTop: Platform.OS === 'ios' ? undefined : -2,
+                }}
                 title="Broadcast"
                 noGradient={selectedTab !== 'Broadcast'}
                 onPress={() => setSelectedTab('Broadcast')}

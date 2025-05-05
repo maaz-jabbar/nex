@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   welcomeText: {
     fontSize: 16,
     textAlign: 'center',
-    cocolor: Colors.lightGrey,
+    color: Colors.lightGrey,
     fontFamily: Fonts.FigtreeRegular,
     marginBottom: 20,
   },

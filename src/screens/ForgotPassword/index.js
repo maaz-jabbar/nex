@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {Colors, Fonts} from '../../config';
+import {Colors, Fonts, phoneRegex} from '../../config';
 import Images from '../../assets';
 import {GradientButton, TextInputCustom} from '../../components';
 import {useDispatch} from 'react-redux';
@@ -37,7 +37,7 @@ const ForgotPassword = ({navigation: {goBack}}) => {
       if (otp.length < 6) message.push(otpError);
       if (password.length < 8) message.push(passwordError);
     } else {
-      if (phone.length < 10) message.push(phoneError);
+      if (!phoneRegex.test(phone)) message.push(phoneError);
     }
 
     if (message.length) return errorToast({message: message.join('\n')});

@@ -1,8 +1,8 @@
 import React, {useMemo} from 'react';
 import {Dimensions, Image, StyleSheet, Text, View} from 'react-native';
 import {useSelector} from 'react-redux';
-
-import {Colors, Fonts} from '../../config';
+import Share from 'react-native-share';
+import {Colors, Fonts, message as inviteMessage} from '../../config';
 import Images from '../../assets';
 import {GradientButton} from '../../components';
 
@@ -14,6 +14,17 @@ const Congratulations = ({navigation}) => {
 
   const goToAppStack = () => {
     navigation.navigate('AppStack');
+  };
+
+  const onPressInvite = () => {
+    const shareOptions = {
+      title: 'INVITE',
+      message: inviteMessage,
+    };
+    const method = Share.open;
+    method(shareOptions)
+      .then(res => console.log(res))
+      .catch(err => err && console.log(err));
   };
 
   const message = isCustomer
@@ -45,7 +56,7 @@ const Congratulations = ({navigation}) => {
 
         <GradientButton
           title="Invite Link"
-          onPress={() => {}}
+          onPress={onPressInvite}
           icon={Images.link}
           iconSize={20}
           noGradient

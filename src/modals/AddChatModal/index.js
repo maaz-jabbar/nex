@@ -6,15 +6,18 @@ import {GradientButton} from '../../components';
 import {Colors, Fonts} from '../../config';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Images from '../../assets';
+import {useSelector} from 'react-redux';
 
 const AddChatModal = ({isVisible, setVisible}) => {
   const navigation = useNavigation();
   const {top} = useSafeAreaInsets();
+  const user = useSelector(state => state?.user.user);
 
   const handleNavigation = screen => {
     setVisible(false);
     navigation.navigate(screen);
   };
+  const isCustomer = user?.userType === 'CUSTOMER';
 
   return (
     <ReactNativeModal
@@ -26,23 +29,32 @@ const AddChatModal = ({isVisible, setVisible}) => {
       style={[styles.popupModal, {paddingTop: top + 40}]}
       onDismiss={() => setVisible(false)}>
       <View style={styles.popup}>
-        <Text style={styles.createChat}>Create Chat or Broadcast</Text>
+        <Text style={styles.createChat}>
+          Create Chat{isCustomer ? '' : 'Or Broadcast'}
+        </Text>
         <GradientButton
-          title="New Chat"
-          onPress={() => handleNavigation('Contacts')}
+          title="Create Chat"
+          onPress={() =>
+            handleNavigation({
+              name: 'AppStack',
+              params: {screen: 'Contacts'},
+            })
+          }
           icon={Images.chat}
           iconStyle={{tintColor: Colors.white}}
           containerStyle={styles.buttonContainer}
           buttonStyle={styles.button}
         />
-        <GradientButton
-          title="Broadcast msg"
-          icon={Images.contacts}
-          onPress={() => handleNavigation('SelectContacts')}
-          iconStyle={{tintColor: Colors.white}}
-          containerStyle={styles.buttonContainer}
-          buttonStyle={styles.button}
-        />
+        {!isCustomer && (
+          <GradientButton
+            title="Broadcast"
+            icon={Images.contacts}
+            onPress={() => handleNavigation('SelectContacts')}
+            iconStyle={{tintColor: Colors.white}}
+            containerStyle={styles.buttonContainer}
+            buttonStyle={styles.button}
+          />
+        )}
       </View>
     </ReactNativeModal>
   );

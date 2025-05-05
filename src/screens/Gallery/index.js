@@ -137,6 +137,7 @@ const Gallery = ({route: {params}, navigation: {goBack, navigate}}) => {
             onChangeText={setSearch}
             value={search}
             placeholder="Search"
+            placeholderTextColor={Colors.darkerGrey}
             style={styles.input}
           />
         </View>

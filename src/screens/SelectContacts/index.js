@@ -15,9 +15,7 @@ import Images from '../../assets';
 import {ContactAvatar} from '../../components';
 import {useDispatch, useSelector} from 'react-redux';
 import {errorToast} from '../../config/api';
-import {
-  getCustomerBasedOnSearch,
-} from '../../redux/middlewares/user';
+import {getCustomerBasedOnSearch} from '../../redux/middlewares/user';
 
 const SelectContacts = ({navigation}) => {
   const [search, setSearch] = useState('');
@@ -42,7 +40,11 @@ const SelectContacts = ({navigation}) => {
           if (data.body) {
             setSearchedItems(
               data.body.filter(contact => {
-                return contacts.find(c => c?.userId == contact?.profileId);
+                return contacts.find(
+                  c =>
+                    c?.userId == contact?.profileId &&
+                    c?.inviteStatus == 'ACCEPTED',
+                );
               }),
             );
           }
@@ -101,7 +103,7 @@ const SelectContacts = ({navigation}) => {
       <>
         <View>
           <FlatList
-            data={contacts}
+            data={contacts.filter(c => c?.inviteStatus == 'ACCEPTED')}
             horizontal
             ListEmptyComponent={() => {
               return (
@@ -210,9 +212,13 @@ const SelectContacts = ({navigation}) => {
     );
   };
 
-  const filteredContacts = searchedItems?.length ? [] : contacts.filter(contact =>
-    contact?.name?.toLowerCase().includes(search?.toLowerCase()),
-  );
+  const filteredContacts = searchedItems?.length
+    ? []
+    : contacts.filter(
+        contact =>
+          contact?.name?.toLowerCase().includes(search?.toLowerCase()) &&
+          contact?.inviteStatus == 'ACCEPTED',
+      );
 
   return (
     <View style={[styles.container, {paddingTop: top}]}>
@@ -241,6 +247,7 @@ const SelectContacts = ({navigation}) => {
         />
         <TextInput
           placeholder="Search"
+          placeholderTextColor={Colors.darkerGrey}
           onChangeText={text => setSearch(text)}
           value={search}
           style={styles.input}

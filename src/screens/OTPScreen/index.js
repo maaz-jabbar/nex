@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
+  Dimensions,
   Image,
   ImageBackground,
   ScrollView,
@@ -17,6 +18,7 @@ import {login, sendOTP, signup, verifyOTP} from '../../redux/middlewares/user';
 import {errorToast} from '../../config/api';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import OTPTextInput from 'react-native-otp-textinput';
+const {width} = Dimensions.get('window');
 
 const otpError = 'Please enter a valid OTP code.';
 
@@ -126,6 +128,7 @@ const OTPScreen = ({route, navigation: {goBack, navigate}}) => {
               autoFocus
               textInputStyle={styles.otpInput}
               handleTextChange={setOtp}
+              width={(width/6) - 20}
             />
           </View>
           <Text style={styles.resendText}>

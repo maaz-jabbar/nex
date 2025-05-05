@@ -7,16 +7,44 @@ import {
   Image,
   ScrollView,
   FlatList,
+  Linking,
+  Platform,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useDispatch, useSelector} from 'react-redux';
+import Share from 'react-native-share';
 
-import {Colors, Fonts} from '../../config';
+import {Colors, Fonts, androidUrl, iosUrl, message} from '../../config';
 import Images from '../../assets';
 import {ContactAvatar, GradientButton, ToggleButton} from '../../components';
 import {logout} from '../../redux/actions/UserActions';
-import { getProfileExplicitly } from '../../redux/middlewares/user';
+import {getProfileExplicitly} from '../../redux/middlewares/user';
+
+const socialIcons = [
+  {icon: Images.instagram, social: Share.Social.INSTAGRAM},
+  {icon: Images.facebook, social: Share.Social.FACEBOOK},
+  {icon: Images.whatsapp, social: Share.Social.WHATSAPP},
+  {icon: Images.twitterX, social: Share.Social.TWITTER},
+];
+
+const onPressSocialIcon = async (social = undefined) => {
+  if (social == Share.Social.WHATSAPP)
+    return Linking.openURL('https://wa.me/?text=' + message);
+  const shareOptions = {
+    title: 'INVITE',
+    message,
+    url:
+      social == Share.Social.FACEBOOK
+        ? Platform.select({ios: iosUrl, android: androidUrl})
+        : undefined,
+    social,
+  };
+  const method = social ? Share.shareSingle : Share.open;
+  method(shareOptions)
+    .then(res => console.log(res))
+    .catch(err => err && console.log(err));
+};
 
 const CustomerProfile = ({navigation}) => {
   const user = useSelector(state => state.user?.user);
@@ -27,11 +55,6 @@ const CustomerProfile = ({navigation}) => {
 
   const [sendSMS, setSendSMS] = useState(false);
   const [pushNotifications, setPushNotifications] = useState(false);
-
-  const socialIcons = useMemo(
-    () => [Images.instagram, Images.facebook, Images.tiktok, Images.twitterX],
-    [],
-  );
 
   const handleGoBack = useCallback(() => navigation.goBack(), [navigation]);
 
@@ -57,16 +80,6 @@ const CustomerProfile = ({navigation}) => {
   const placeholderForRefreshingToken = async () => {
     dispatch(getProfileExplicitly(user, null, null, false));
   };
-
-  const renderSocialIcon = (icon, index) => (
-    <TouchableOpacity key={index} activeOpacity={0.8} style={styles.socialIcon}>
-      <Image
-        source={icon}
-        resizeMode="contain"
-        style={styles.socialIconImage}
-      />
-    </TouchableOpacity>
-  );
 
   const renderBrand = ({item}) => (
     <View style={styles.brandItem}>
@@ -110,7 +123,7 @@ const CustomerProfile = ({navigation}) => {
 
           <GradientButton
             title="Invite Link"
-            onPress={() => {}}
+            onPress={() => onPressSocialIcon()}
             icon={Images.link}
             iconSize={20}
             noGradient
@@ -121,7 +134,18 @@ const CustomerProfile = ({navigation}) => {
           <Text style={styles.email}>Share Nexsa. Unlock rewards</Text>
 
           <View style={styles.socialIcons}>
-            {socialIcons.map(renderSocialIcon)}
+            {socialIcons.map((icon, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => onPressSocialIcon(icon.social)}
+                activeOpacity={0.8}>
+                <Image
+                  source={icon?.icon}
+                  resizeMode="contain"
+                  style={styles.socialIconImage}
+                />
+              </TouchableOpacity>
+            ))}
           </View>
 
           <Text style={styles.preferences}>Preferences:</Text>
@@ -251,9 +275,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
     marginBottom: 30,
-  },
-  socialIcon: {
-    marginRight: 10,
+    columnGap: 20,
   },
   socialIconImage: {
     width: 30,

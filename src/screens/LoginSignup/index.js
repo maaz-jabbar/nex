@@ -17,12 +17,7 @@ import {login, signup, sendOTP, verifyOTP} from '../../redux/middlewares/user';
 import * as EmailValidator from 'email-validator';
 import {errorToast} from '../../config/api';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-
-const otpError = 'Please enter a valid OTP code.';
-const emailError = 'Please enter a valid email.';
-const passwordError = 'Password must be at least 8 characters.';
-const phoneError = 'Please enter a valid phone number.';
-const nameError = 'Please enter a valid name (at least 3 characters).';
+import {phoneRegex, otpError, emailError, passwordError, phoneError, nameError} from '../../config'
 
 const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
   const dispatch = useDispatch();
@@ -62,7 +57,7 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
     let message = [];
 
     if (!loginActive && fullName.length < 3) message.push(nameError);
-    if (!loginActive && phone.length < 10) message.push(phoneError);
+    if (!loginActive && !phoneRegex.test(phone)) message.push(phoneError);
     if (otpSent && !otp) message.push(otpError);
     if (!EmailValidator.validate(email)) message.push(emailError);
     if (password.length < 8) message.push(passwordError);
@@ -95,6 +90,7 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
     } else {
       dispatch(
         verifyOTP(phone, otp, isSuccess => {
+          console.log('🚀 ~ handleSubmit ~ isSuccess:', isSuccess);
           if (isSuccess) {
             dispatch(
               signup(
@@ -172,6 +168,7 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
                     onChangeText: setFullName,
                     keyboardType: 'default',
                     returnKeyType: 'next',
+                    maxLength: 70,
                     onSubmitEditing: () => phoneInput.current.focus(),
                   }}
                 />
@@ -265,7 +262,7 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
               </View>
             ) : (
               <Text style={styles.agreementText}>
-                By signing up, you agree to our{' '}
+                By signing up, you agree to our{'\n'}
                 <Text style={styles.linkText}>Terms</Text> &{' '}
                 <Text style={styles.linkText}>Privacy Policy</Text>
               </Text>

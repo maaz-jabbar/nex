@@ -38,7 +38,7 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
   const [message, setMessage] = useState('');
   const [dropDownActive, setDropDownActive] = useState(false);
   const [addPrice, setAddPrice] = useState(!!product?.price);
-  const [price, setPrice] = useState(product?.price?.toString() || '');
+  const [price, setPrice] = useState(product?.price ? product?.price?.toString() : '' || '');
   const [addSale, setAddSale] = useState(!!product?.sale);
 
   const onPressSave = () => {
@@ -153,7 +153,7 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
             )}
             {addPrice && (
               <View style={styles.priceCont}>
-                <Text style={styles.priceText}>$</Text>
+                <Text style={styles.priceText}>$ </Text>
                 <TextInput
                   keyboardType="number-pad"
                   autoFocus
@@ -311,7 +311,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: Fonts.RobotoMedium,
     color: Colors.black,
-    flex: 1,
   },
   listItem: {
     flexDirection: 'row',
