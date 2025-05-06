@@ -26,6 +26,7 @@ import GalleryContacts from './GalleryContacts';
 import ForgotPassword from './ForgotPassword';
 import OTPScreen from './OTPScreen';
 import ChooseSizes from './ChooseSizes';
+import Invitations from './Invitations';
 
 export {
   OTPScreen,
@@ -55,5 +56,6 @@ export {
   ViewSellerProfile,
   ViewCustomerProfile,
   ViewGallery,
-  ChooseSizes
+  ChooseSizes,
+  Invitations,
 };

@@ -107,7 +107,7 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
             <Image
               source={Images.delete}
               resizeMode="contain"
-              style={styles.icon}
+              style={[styles.icon, {tintColor: Colors.primary}]}
             />
             <Text style={styles.dropDownListText}>Delete Photo</Text>
           </TouchableOpacity>

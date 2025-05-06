@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
     height: 30,
     width: 30,
     resizeMode: 'contain',
+    tintColor: Colors.primary,
   },
   deleteIconCont: {
     height: 100,

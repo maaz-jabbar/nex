@@ -297,6 +297,7 @@ const styles = StyleSheet.create({
     height: 20,
     marginLeft: 5,
     resizeMode: 'contain',
+    tintColor: Colors.primary,
   },
   header: {
     flexDirection: 'row',

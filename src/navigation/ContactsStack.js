@@ -5,6 +5,7 @@ import {
   Chat,
   ViewSellerProfile,
   ViewCustomerProfile,
+  Invitations,
 } from '../screens';
 
 const Stack = createNativeStackNavigator();
@@ -14,6 +15,7 @@ const ContactsStack = () => {
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="Contacts" component={Contacts} />
       <Stack.Screen name="ViewSellerProfile" component={ViewSellerProfile} />
+      <Stack.Screen name="Invitations" component={Invitations} />
       <Stack.Screen
         name="ViewCustomerProfile"
         component={ViewCustomerProfile}

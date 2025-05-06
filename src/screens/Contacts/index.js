@@ -25,7 +25,7 @@ import {
 import Images from '../../assets';
 import {successToast} from '../../config/api';
 
-const Contacts = ({navigation}) => {
+const Contacts = ({navigation: {navigate, goBack}}) => {
   const {top} = useSafeAreaInsets();
   const dispatch = useDispatch();
 
@@ -55,7 +55,15 @@ const Contacts = ({navigation}) => {
       dispatch(
         getCustomerBasedOnSearch(debouncedQuery, data => {
           if (data.body) {
-            setSearchedItems(data.body);
+            setSearchedItems(
+              data.body.filter(contact => {
+                return contacts.find(
+                  c =>
+                    c?.userId == contact?.profileId &&
+                    c?.inviteStatus == 'ACCEPTED',
+                );
+              }),
+            );
           }
         }),
       );
@@ -64,29 +72,7 @@ const Contacts = ({navigation}) => {
     }
   }, [debouncedQuery]);
 
-  const _goBack = () => navigation.goBack();
-
-  const viewProfile = item => {
-    if (item?.joined) {
-      dispatch(
-        getUserWithId(item?.userId, data => {
-          const toSendData = {
-            user: {
-              ...item,
-              userId: item?.userId,
-            },
-          };
-          if (data?.body?.userType === 'CUSTOMER') {
-            navigation.navigate('ViewCustomerProfile', toSendData);
-          } else {
-            navigation.navigate('ViewSellerProfile', toSendData);
-          }
-        }),
-      );
-    } else {
-      navigation.navigate('ViewCustomerProfile', {user: item});
-    }
-  };
+  const _goBack = () => goBack();
 
   const deleteInvite = senderId => {
     dispatch(
@@ -102,11 +88,9 @@ const Contacts = ({navigation}) => {
     );
   };
 
-  const filteredContacts = searchedItems?.length
+  const filteredContacts = search
     ? []
-    : contacts.filter(contact =>
-        contact?.name?.toLowerCase().includes(search?.toLowerCase()),
-      );
+    : contacts.filter(contact => contact.inviteStatus === 'ACCEPTED');
 
   return (
     <View style={[styles.container, {paddingTop: top}]}>
@@ -130,7 +114,7 @@ const Contacts = ({navigation}) => {
         <View style={styles.row}>
           <GradientButton
             icon={Images.invite}
-            onPress={() => setInviteModal(true)}
+            onPress={() => navigate('Invitations')}
             containerStyle={styles.plusButtonCont}
             buttonStyle={[styles.plusButton, {marginRight: 10}]}
             iconSize={24}
@@ -156,30 +140,13 @@ const Contacts = ({navigation}) => {
           style={styles.input}
         />
       </View>
-      <View>
+      {!search && <View>
         <FlatList
           data={filteredContacts}
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.listContent}
           style={styles.list}
-          refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={() => dispatch(getUserContacts(profileId))}
-            />
-          }
-          ListHeaderComponent={
-            <GradientButton
-              icon={Images.plus}
-              containerStyle={styles.listPlusButtonCont}
-              buttonStyle={styles.listPlusButton}
-              iconSize={24}
-              noGradient
-              onPress={() => setAddContactModal(true)}
-              iconStyle={{tintColor: Colors.secondary}}
-            />
-          }
           ListEmptyComponent={
             <View>
               <Text style={styles.emptyText}>No contacts to show.</Text>
@@ -189,13 +156,19 @@ const Contacts = ({navigation}) => {
             <ContactAvatar onPress={() => viewProfile(item)} contact={item} />
           )}
         />
-      </View>
+      </View>}
       <FlatList
         data={filteredContacts}
+        refreshControl={
+          <RefreshControl
+            refreshing={false}
+            onRefresh={() => dispatch(getUserContacts(profileId))}
+          />
+        }
         ListHeaderComponent={() => {
           return (
             <>
-              {searchedItems.map((item, index) => {
+              {!!search && searchedItems.map((item, index) => {
                 const itemToSend = {
                   name: item?.fullName,
                   userId: item?.profileId,
@@ -248,6 +221,7 @@ const Contacts = ({navigation}) => {
         }}
         keyExtractor={(item, index) => `${item?.userId}_${index}`}
         renderItem={({item}) => {
+          console.log(item);
           const accepted = item?.inviteStatus === 'ACCEPTED';
           return (
             <ContactCard
@@ -386,6 +360,7 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
     resizeMode: 'contain',
+    tintColor: Colors.primary,
   },
   addIcon: {
     width: 25,
