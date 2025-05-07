@@ -175,6 +175,7 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
                 value={message}
                 onChangeText={setMessage}
                 placeholder="Type your message here..."
+                placeholderTextColor={Colors.textGrey}
                 style={styles.messageInput}
               />
               <GradientButton

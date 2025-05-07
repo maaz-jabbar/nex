@@ -76,9 +76,8 @@ const ChooseLocation = ({route}) => {
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={{flex: 1}}>
-      <ScrollView
+      <View
         style={styles.container}
-        contentContainerStyle={styles.contentContainer}
         keyboardShouldPersistTaps="handled">
         <View style={styles.upperContainer}>
           <Text style={styles.heading}>Location</Text>
@@ -103,7 +102,7 @@ const ChooseLocation = ({route}) => {
           />
 
           {showDropdown && searchResults.length > 0 && (
-            <ScrollView style={styles.dropdown}>
+            <ScrollView keyboardShouldPersistTaps style={styles.dropdown}>
               {searchResults.map(item => (
                 <TouchableOpacity
                   key={item.geonameId}
@@ -153,7 +152,7 @@ const ChooseLocation = ({route}) => {
             onPress={moveToCongratulations}
           />
         </View>
-      </ScrollView>
+      </View>
     </KeyboardAvoidingView>
   );
 };
@@ -177,7 +176,6 @@ const styles = StyleSheet.create({
   },
   lowerContainer: {
     justifyContent: 'center',
-    paddingBottom: 100,
     zIndex: 0,
   },
   heading: {
@@ -196,7 +194,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.lightGrey,
     borderWidth: 1,
     borderRadius: 5,
-    maxHeight: 200,
+    height: 200,
     marginBottom: 20,
   },
   dropdownItem: {

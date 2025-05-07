@@ -12,6 +12,7 @@ const imageError = 'Please select an image.';
 const androidUrl = `https://play.google.com/store/apps/details?id=com.nexsa`;
 const iosUrl = 'https://apps.apple.com/us/app/nexsa/id6742017759';
 const message = `You are invited to join nexsa app! Download now!\n${androidUrl}\n${iosUrl}`;
+const imagePath = "logoColored.jpg";
 
 export {
   Colors,
@@ -27,4 +28,5 @@ export {
   message,
   descriptionError,
   imageError,
+  imagePath
 };

@@ -262,9 +262,10 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
               </View>
             ) : (
               <Text style={styles.agreementText}>
-                By signing up, you agree to our{'\n'}
-                <Text style={styles.linkText}>Terms</Text> &{' '}
+                By signing up, you agree to our
+                <Text style={styles.linkText}>{" Terms \n"}</Text> {'& '}
                 <Text style={styles.linkText}>Privacy Policy</Text>
+                {" & consent to receive a \none-time verification code via SMS"}
               </Text>
             )}
           </View>

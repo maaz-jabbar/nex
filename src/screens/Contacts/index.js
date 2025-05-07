@@ -221,7 +221,6 @@ const Contacts = ({navigation: {navigate, goBack}}) => {
         }}
         keyExtractor={(item, index) => `${item?.userId}_${index}`}
         renderItem={({item}) => {
-          console.log(item);
           const accepted = item?.inviteStatus === 'ACCEPTED';
           return (
             <ContactCard

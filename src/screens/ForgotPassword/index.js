@@ -15,6 +15,7 @@ import {GradientButton, TextInputCustom} from '../../components';
 import {useDispatch} from 'react-redux';
 import {resetPassword, forgotPassSendOtp} from '../../redux/middlewares/user';
 import {errorToast} from '../../config/api';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const otpError = 'Please enter a valid OTP code.';
 const passwordError = 'Password must be at least 8 characters.';
@@ -57,6 +58,8 @@ const ForgotPassword = ({navigation: {goBack}}) => {
     }
   };
 
+  const {top} = useSafeAreaInsets();
+
   return (
     <LinearGradient
       colors={[Colors.primary, Colors.secondary]}
@@ -71,7 +74,7 @@ const ForgotPassword = ({navigation: {goBack}}) => {
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={goBack}
-          style={styles.backIconContainer}>
+          style={[styles.backIconContainer, {top: top}]}>
           <Image source={Images.back} style={styles.back} />
         </TouchableOpacity>
       </ImageBackground>
@@ -108,6 +111,7 @@ const ForgotPassword = ({navigation: {goBack}}) => {
                   textInputProps={{
                     value: otp,
                     onChangeText: setOtp,
+                    maxLength: 6,
                     keyboardType: 'number-pad',
                     returnKeyType: 'next',
                     onSubmitEditing: () => passwordInput.current.focus(),

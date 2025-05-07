@@ -75,7 +75,7 @@ export const login = (email, password) => {
 export const forgotPassSendOtp = (phone, onSuccess) => {
   return dispatch => {
     dispatch(loaderTrue());
-    ApiInstance.post(`auth/forgot-password?phoneNumber=${phone}`)
+    ApiInstance.post(`auth/forgot-password/${phone}`)
       .then(({data}) => {
         onSuccess(true);
       })
@@ -89,7 +89,7 @@ export const resetPassword = (phone, otp, newPassword, onSuccess) => {
   return dispatch => {
     dispatch(loaderTrue());
     ApiInstance.post(
-      `auth/reset-password?phoneNumber=${phone}&otp=${otp}&newPassword=${newPassword}`,
+      `auth/reset-password?mobileNumber=${phone.replaceAll("+", "")}&otp=${otp}&newPassword=${newPassword}`,
     )
       .then(({data}) => {
         onSuccess(true);
@@ -212,7 +212,7 @@ export const getUserContacts = id => {
     dispatch(loaderTrue());
     ApiInstanceWithJWT.get('profiles/contacts/' + id)
       .then(({data}) => {
-        console.log(data);
+        console.log('new contacts', data);
         dispatch(saveUserContacts(data));
       })
       .finally(() => {
@@ -306,11 +306,11 @@ export const getUserSentInvites = onSuccess => {
 };
 
 export const saveContact = (data, closeModal) => {
+  console.log('🚀 ~ saveContact ~ data:', data);
   return (dispatch, getState) => {
     const profileId = getState().user?.profile?.profileId;
     const userType = getState().user?.userType;
     const isCustomer = userType === 'CUSTOMER';
-    console.log('🚀 ~ return ~ isCustomer:', isCustomer);
 
     const url = !isCustomer
       ? 'profiles/contacts-customer/'
@@ -319,7 +319,8 @@ export const saveContact = (data, closeModal) => {
     console.log('🚀 ~ return ~ url:', url + profileId);
     dispatch(loaderTrue());
     ApiInstanceWithJWT.patch(url + profileId, data)
-      .then(() => {
+      .then(({data}) => {
+        console.log('🚀 ~ add contact .then ~ data:', data);
         dispatch(getUserContacts(profileId));
       })
       .catch(err => {
@@ -337,13 +338,13 @@ export const updateCustomer = (data, onSuccess) => {
     const userId = getState().user?.user?.userId;
     dispatch(loaderTrue());
     ApiInstanceWithJWT.patch('users/' + userId, data)
-      .then((don) => {
-        console.log("🚀 ~ .then ~ don:", don.data)
-        console.log("🚀 ~ .then ~ don:", getState().user?.user)
-        console.log("🚀 ~ .then ~ don:", {
+      .then(don => {
+        console.log('🚀 ~ .then ~ don:', don.data);
+        console.log('🚀 ~ .then ~ don:', getState().user?.user);
+        console.log('🚀 ~ .then ~ don:', {
           ...getState().user?.user,
           ...data,
-        })
+        });
         dispatch(
           saveUser({
             ...getState().user?.user,

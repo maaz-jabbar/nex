@@ -17,13 +17,20 @@ import {updateSellerProfile, updateSeller} from '../../redux/middlewares/user';
 import {logout, saveUser} from '../../redux/actions/UserActions';
 import LinearGradient from 'react-native-linear-gradient';
 import {GradientButton, TextInputCustom, ContactAvatar} from '../../components';
-import {Colors, emailError, Fonts, nameError, phoneError, phoneRegex} from '../../config';
+import {
+  Colors,
+  emailError,
+  Fonts,
+  nameError,
+  phoneError,
+  phoneRegex,
+} from '../../config';
 import Images from '../../assets';
 import * as EmailValidator from 'email-validator';
 import {CommonActions} from '@react-navigation/native';
 
 const urlRegex =
-  /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
+  /(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9-]+(?:\.[a-zA-Z]{2,})(?:\:[0-9]{1,5})?(?:\/[^\s?#]*)?(?:\?[^\s#]*)?(?:#[^\s]*)?/gi;
 
 const SellerEditProfile = ({navigation}) => {
   const dispatch = useDispatch();
@@ -55,8 +62,8 @@ const SellerEditProfile = ({navigation}) => {
   };
 
   const onPressSaveLink = () => {
-    if (urlRegex.test(link)) {
-      setLinks([...links, link]);
+    if (urlRegex.test(link.trim())) {
+      setLinks([...links, link.trim()]);
       setLink('');
       setLinkAdd(false);
     } else errorToast({message: 'Please provide a valid link'});
@@ -151,7 +158,7 @@ const SellerEditProfile = ({navigation}) => {
     <View style={[styles.container, {paddingTop: top}]}>
       <View style={styles.header}>
         <TouchableOpacity
-          onPress={logoutButton}
+          onPress={_goBack}
           activeOpacity={0.8}
           style={styles.backButton}>
           <Image source={Images.back} style={styles.backIcon} />
@@ -159,7 +166,7 @@ const SellerEditProfile = ({navigation}) => {
         </TouchableOpacity>
         <Text style={styles.title}>Edit Profile</Text>
         <TouchableOpacity
-          onPress={_goBack}
+          onPress={logoutButton}
           activeOpacity={0.8}
           style={styles.backButton}>
           <Text style={styles.back}>Logout</Text>

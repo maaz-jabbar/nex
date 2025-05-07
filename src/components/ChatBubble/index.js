@@ -1,14 +1,20 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Colors, Fonts} from '../../config';
 import {userId} from '../../dummyData';
 import ContactAvatar from '../ContactAvatar';
 import {useSelector} from 'react-redux';
 import moment from 'moment';
+import {baseURL} from '../../config/api';
+import ReactNativeModal from 'react-native-modal';
 
 const ChatBubble = ({nextChatBySameUser, message, sender}) => {
   const user = useSelector(state => state.user?.user);
   const sentByMe = user?.userId === message?.senderId;
+  const accessToken = useSelector(state => state.user?.user?.accessToken);
+
+  const [attachmentModal, setAttachmentModal] = React.useState('');
+
   return (
     <View
       style={[
@@ -18,6 +24,26 @@ const ChatBubble = ({nextChatBySameUser, message, sender}) => {
           flexDirection: !sentByMe ? 'row' : 'row-reverse',
         },
       ]}>
+      <ReactNativeModal
+        onBackButtonPress={() => setAttachmentModal('')}
+        onBackdropPress={() => setAttachmentModal('')}
+        isVisible={!!attachmentModal}>
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => setAttachmentModal('')}
+          style={styles.modalCont}>
+          <Image
+            source={{
+              uri: attachmentModal,
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }}
+            resizeMode="contain"
+            style={styles.attachment1}
+          />
+        </TouchableOpacity>
+      </ReactNativeModal>
       {nextChatBySameUser ? (
         <View style={{width: 44}} />
       ) : (
@@ -35,19 +61,40 @@ const ChatBubble = ({nextChatBySameUser, message, sender}) => {
             alignItems: !sentByMe ? 'flex-start' : 'flex-end',
           },
         ]}>
-        <View
-          style={{
-            backgroundColor: !sentByMe
-              ? Colors.primaryOpacity
-              : Colors.secondaryOpacity,
-            padding: 10,
-            paddingHorizontal: 20,
-            borderRadius: 20,
-            borderBottomLeftRadius: !sentByMe ? 0 : 20,
-            borderBottomRightRadius: !sentByMe ? 20 : 0,
-            maxWidth: '80%',
-          }}>
-          <Text style={styles.text}>{message?.content}</Text>
+        <View>
+          {!!message?.attachments?.length &&
+            message?.attachments?.map(asset => {
+              const uri = `${baseURL}/images/upload/${asset}`;
+              console.log('🚀 ~ ChatBubble ~ uri:', uri);
+              return (
+                <TouchableOpacity
+                  key={asset}
+                  onPress={() => setAttachmentModal(uri)}
+                  activeOpacity={0.8}>
+                  <Image
+                    source={{
+                      uri,
+                      headers: {Authorization: `Bearer ${accessToken}`},
+                    }}
+                    style={styles.attachment}
+                  />
+                </TouchableOpacity>
+              );
+            })}
+          {!!message?.content && <View
+            style={{
+              backgroundColor: !sentByMe
+                ? Colors.primaryOpacity
+                : Colors.secondaryOpacity,
+              padding: 10,
+              paddingHorizontal: 20,
+              borderRadius: 20,
+              borderBottomLeftRadius: !sentByMe ? 0 : 20,
+              borderBottomRightRadius: !sentByMe ? 20 : 0,
+              maxWidth: '80%',
+            }}>
+            <Text style={styles.text}>{message?.content}</Text>
+          </View>}
         </View>
         {!nextChatBySameUser && (
           <Text style={styles.time}>
@@ -76,5 +123,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.darkGrey,
     marginTop: 5,
+  },
+  attachment: {
+    width: 200,
+    height: 200,
+    borderRadius: 10,
+  },
+  attachment1: {
+    width: '100%',
+    height: '100%',
   },
 });

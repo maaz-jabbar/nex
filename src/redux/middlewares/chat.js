@@ -12,12 +12,10 @@ export const getChats = (loaderStop = () => {}) => {
     const user = getState().user?.user;
     const userType = getState().user?.userType;
     const isCustomer = userType === 'CUSTOMER';
-    console.log('🚀 ~ getChats ~ loaderStop:');
 
     if (!chatsLength) dispatch(loaderTrue());
     ApiInstanceWithJWT.get('/chat/conversations/' + user?.userId)
       .then(({data}) => {
-        console.log('🚀 ~ .then ~ data: chats', data);
         const filteredData = data?.filter(chat => {
           if (isCustomer) {
             return true;
@@ -127,6 +125,7 @@ export const uploadMediaAsync = async (file, specialId) => {
   const imageId = specialId ? specialId : Date.now();
   const formdata = new FormData();
   formdata.append('file', file);
+  console.log("🚀 ~ uploadMediaAsync ~ formdata:", JSON.stringify(formdata))
   return ApiInstanceWithJWT.post('/images/upload/' + imageId, formdata, {
     headers: {
       'Content-Type': 'multipart/form-data',

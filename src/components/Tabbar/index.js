@@ -3,6 +3,7 @@ import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Colors, Fonts} from '../../config';
 import Images from '../../assets';
+import {CommonActions} from '@react-navigation/native';
 
 const labels = ['Chat', 'Gallery', 'Home', 'Contacts', 'Settings'];
 
@@ -37,9 +38,14 @@ const TabbarCustom = ({state, navigation}) => {
         };
 
         const onPress = () => {
-          if (!isFocused) {
-            navigation.navigate(route.name, route.params);
-          }
+          const stackKey = route.key;
+          navigation.dispatch({
+            ...CommonActions.reset({
+              index: 0,
+              routes: [{name: route.name}],
+            }),
+            source: stackKey,
+          });
         };
 
         return (

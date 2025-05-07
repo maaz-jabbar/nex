@@ -8,13 +8,20 @@ import {
   FlatList,
   TextInput,
   ActivityIndicator,
+  ScrollView,
+  Platform,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Colors, Fonts} from '../../config';
 import Images from '../../assets';
 import {ChatBubble, ContactAvatar, GradientButton} from '../../components';
 import {useDispatch, useSelector} from 'react-redux';
-import {getMessages, sendMessageAsync} from '../../redux/middlewares/chat';
+import {
+  getMessages,
+  sendMessageAsync,
+  uploadMediaAsync,
+} from '../../redux/middlewares/chat';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 const Chat = ({route: {params}, navigation}) => {
   const dispatch = useDispatch();
@@ -25,6 +32,7 @@ const Chat = ({route: {params}, navigation}) => {
   const [sending, setSending] = React.useState(false);
   const [message, setMessage] = React.useState('');
   const [chatMessages, setChatMessages] = React.useState([]);
+  const [attachments, setAttachments] = React.useState([]);
 
   const user = useSelector(state => state.user?.user);
   const conversation = params?.conversation;
@@ -34,6 +42,20 @@ const Chat = ({route: {params}, navigation}) => {
     sender => sender.userId !== user?.userId,
   )[0];
   const {top} = useSafeAreaInsets();
+
+  const openPickerAsync = () => {
+    launchImageLibrary(
+      {
+        mediaType: 'photo',
+        selectionLimit: 5,
+      },
+      response => {
+        if (!response.didCancel) {
+          setAttachments(response.assets);
+        }
+      },
+    );
+  };
 
   const getAll = () => {
     setLoader(false);
@@ -56,15 +78,36 @@ const Chat = ({route: {params}, navigation}) => {
     return () => clearInterval(timer);
   }, []);
 
-  const sendMessage = () => {
-    if (message === '') return;
+  const sendMessage = async () => {
+    if (message === '' && attachments.length === 0) return;
+    let imageIds = [];
+    setSending(true);
+    if (attachments.length) {
+      imageIds = await Promise.all(
+        attachments.map((product, index) => {
+          const attachmentSent = {
+            uri: product.uri,
+            type: product.type,
+            name: product.fileName,
+          };
+          console.log('🚀 ~ attachments.map ~ product:', attachmentSent);
+          return uploadMediaAsync(
+            attachmentSent,
+            Number(`${Date.now()}${index}`),
+          );
+        }),
+      );
+      console.log('🚀 ~ sendMessage ~ imageIds:', imageIds);
+    }
     const messageObj = {
       conversationId: conversation?.conversationId,
       content: message,
       senderId: user?.userId,
+      attachments: imageIds,
     };
-    setSending(true);
+    
     setMessage('');
+    setAttachments([]);
     dispatch(sendMessageAsync(messageObj, () => setSending(false)));
   };
 
@@ -172,30 +215,57 @@ const Chat = ({route: {params}, navigation}) => {
           }}
         />
       )}
-
-      <View style={styles.sendMessCont}>
-        <Image
-          source={Images.attachment}
-          resizeMode="contain"
-          style={styles.backIcon}
-        />
-        <TextInput
-          value={message}
-          onChangeText={setMessage}
-          style={styles.textInput}
-          placeholderTextColor={Colors.darkerGrey}
-          placeholder="Type your message here..."
-        />
-        <GradientButton
-          icon={sending ? null : Images.send}
-          customComp={
-            sending ? <ActivityIndicator color={Colors.white} /> : null
-          }
-          onPress={sendMessage}
-          containerStyle={styles.sendButtonCont}
-          buttonStyle={styles.sendButton}
-          iconSize={24}
-        />
+      <View>
+        {!!attachments?.length && (
+          <ScrollView
+            horizontal
+            style={styles.attachmentsContainer}
+            contentContainerStyle={{
+              paddingHorizontal: 20,
+              paddingVertical: 10,
+            }}>
+            {attachments?.map(attachemnt => {
+              return (
+                <View style={styles.attachmentCont}>
+                  <TouchableOpacity
+                    style={styles.closeIconCont}
+                    onPress={() =>
+                      setAttachments(attachments.filter(a => a !== attachemnt))
+                    }>
+                    <Image source={Images.close} style={styles.closeIcon} />
+                  </TouchableOpacity>
+                  <Image source={attachemnt} style={styles.attachment} />
+                </View>
+              );
+            })}
+          </ScrollView>
+        )}
+        <View style={styles.sendMessCont}>
+          <TouchableOpacity onPress={openPickerAsync}>
+            <Image
+              source={Images.attachment}
+              resizeMode="contain"
+              style={styles.backIcon}
+            />
+          </TouchableOpacity>
+          <TextInput
+            value={message}
+            onChangeText={setMessage}
+            style={styles.textInput}
+            placeholderTextColor={Colors.darkerGrey}
+            placeholder="Type your message here..."
+          />
+          <GradientButton
+            icon={sending ? null : Images.send}
+            customComp={
+              sending ? <ActivityIndicator color={Colors.white} /> : null
+            }
+            onPress={sendMessage}
+            containerStyle={styles.sendButtonCont}
+            buttonStyle={styles.sendButton}
+            iconSize={24}
+          />
+        </View>
       </View>
     </View>
   );
@@ -207,6 +277,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.white,
+  },
+  attachmentsContainer: {},
+  attachmentCont: {
+    marginRight: 10,
+  },
+  closeIconCont: {
+    position: 'absolute',
+    top: -10,
+    right: -10,
+    zIndex: 99,
+    backgroundColor: Colors.secondary,
+    borderRadius: 20,
+    padding: 5,
+  },
+  closeIcon: {
+    height: 15,
+    width: 15,
+    tintColor: Colors.white,
+  },
+  attachment: {
+    width: 80,
+    height: 80,
+    borderRadius: 10,
   },
   header: {
     flexDirection: 'row',
