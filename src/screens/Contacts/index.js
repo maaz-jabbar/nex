@@ -32,7 +32,7 @@ const Contacts = ({navigation: {navigate, goBack}}) => {
   const [search, setSearch] = useState('');
   const [addContactModal, setAddContactModal] = useState(false);
   const [newContact, setNewContact] = useState(false);
-  const [inviteModal, setInviteModal] = useState(false);
+  // const [inviteModal, setInviteModal] = useState(false);
   const [searchedItems, setSearchedItems] = useState([]);
   const [debouncedQuery, setDebouncedQuery] = useState('');
 
@@ -74,6 +74,28 @@ const Contacts = ({navigation: {navigate, goBack}}) => {
 
   const _goBack = () => goBack();
 
+  const viewProfile = item => {
+    if (item?.joined) {
+      dispatch(
+        getUserWithId(item?.userId, data => {
+          const toSendData = {
+            user: {
+              ...item,
+              userId: item?.userId,
+            },
+          };
+          if (data?.body?.userType === 'CUSTOMER') {
+            navigate('ViewCustomerProfile', toSendData);
+          } else {
+            navigate('ViewSellerProfile', toSendData);
+          }
+        }),
+      );
+    } else {
+      navigate('ViewCustomerProfile', {user: item});
+    }
+  };
+
   const deleteInvite = senderId => {
     dispatch(
       getProfileExplicitly(
@@ -100,7 +122,7 @@ const Contacts = ({navigation: {navigate, goBack}}) => {
         setContactModal={setNewContact}
       />
       <NewContactModal isVisible={newContact} setVisible={setNewContact} />
-      <InvitesModal isVisible={inviteModal} setVisible={setInviteModal} />
+      {/* <InvitesModal isVisible={inviteModal} setVisible={setInviteModal} /> */}
 
       <View style={styles.header}>
         <TouchableOpacity

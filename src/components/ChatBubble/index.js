@@ -65,7 +65,6 @@ const ChatBubble = ({nextChatBySameUser, message, sender}) => {
           {!!message?.attachments?.length &&
             message?.attachments?.map(asset => {
               const uri = `${baseURL}/images/upload/${asset}`;
-              console.log('🚀 ~ ChatBubble ~ uri:', uri);
               return (
                 <TouchableOpacity
                   key={asset}

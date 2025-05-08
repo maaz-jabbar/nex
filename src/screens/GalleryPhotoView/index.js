@@ -15,7 +15,7 @@ import {useDispatch, useSelector} from 'react-redux';
 
 import {Colors, Fonts} from '../../config';
 import Images from '../../assets';
-import {baseURL} from '../../config/api';
+import {baseURL, errorToast, successToast} from '../../config/api';
 import {GradientButton, ToggleButton} from '../../components';
 import {
   deleteItemsFromServerGallery,
@@ -23,10 +23,14 @@ import {
 } from '../../redux/middlewares/gallery';
 import {createChat, sendMessageAsync} from '../../redux/middlewares/chat';
 
+const numbersRegex = /^(?:\d+\.\d+|\d+|\.\d+)$/;
+
 const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
   const {top} = useSafeAreaInsets();
   const dispatch = useDispatch();
-  const {accessToken, userType, userId} = useSelector(state => state?.user?.user);
+  const {accessToken, userType, userId} = useSelector(
+    state => state?.user?.user,
+  );
   const isCustomer = userType === 'CUSTOMER';
 
   const ownerId = params?.ownerId;
@@ -38,16 +42,20 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
   const [message, setMessage] = useState('');
   const [dropDownActive, setDropDownActive] = useState(false);
   const [addPrice, setAddPrice] = useState(!!product?.price);
-  const [price, setPrice] = useState(product?.price ? product?.price?.toString() : '' || '');
+  const [price, setPrice] = useState(
+    product?.price ? product?.price?.toString() : '' || '',
+  );
   const [addSale, setAddSale] = useState(!!product?.sale);
 
   const onPressSave = () => {
     if (addPrice && !price.trim()) return;
+    if (addPrice && !numbersRegex.test(price))
+      return errorToast({message: 'Please provide a valid price'});
 
     const updatedData = {
       sale: addSale,
       image: product?.image,
-      price: addPrice ? Number(price) : 0,
+      price: addPrice ? Number(price?.replaceAll(',', '')) : 0,
     };
 
     dispatch(
@@ -84,7 +92,10 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
 
         setLoader(true);
         setMessage('');
-        dispatch(sendMessageAsync(messageObj, () => setLoader(false)));
+        dispatch(sendMessageAsync(messageObj, () => {
+          setLoader(false)
+          successToast('Message sent successfully');
+        }));
       }),
     );
   };

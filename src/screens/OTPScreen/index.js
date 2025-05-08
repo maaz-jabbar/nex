@@ -44,7 +44,7 @@ const OTPScreen = ({route, navigation: {goBack, navigate}}) => {
 
   const handleResendOTP = () => {
     dispatch(
-      sendOTP(phone, isSent => {
+      sendOTP(phone, email, isSent => {
         if (isSent?.includes('success')) {
           setTimer(59);
           setIsResendAllowed(false);
@@ -68,7 +68,6 @@ const OTPScreen = ({route, navigation: {goBack, navigate}}) => {
     dispatch(
       verifyOTP(phone, otp, isSuccess => {
         if (isSuccess) {
-          goBack();
           dispatch(
             signup(
               fullName,
@@ -128,7 +127,7 @@ const OTPScreen = ({route, navigation: {goBack, navigate}}) => {
               autoFocus
               textInputStyle={styles.otpInput}
               handleTextChange={setOtp}
-              width={(width/6) - 20}
+              width={width / 6 - 20}
             />
           </View>
           <Text style={styles.resendText}>

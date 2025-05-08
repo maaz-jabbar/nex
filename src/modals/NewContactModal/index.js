@@ -11,9 +11,9 @@ import * as EmailValidator from 'email-validator';
 
 const NewContactModal = ({isVisible, setVisible}) => {
   const {top} = useSafeAreaInsets();
-  const [name, setName] = React.useState('');
-  const [email, setEmail] = React.useState('');
-  const [phone, setPhone] = React.useState('');
+  const [name, setName] = React.useState('customerr');
+  const [email, setEmail] = React.useState('customer@gmail.com');
+  const [phone, setPhone] = React.useState('+0987654322');
   const [errors, setErrors] = React.useState({
     name: '',
     email: '',

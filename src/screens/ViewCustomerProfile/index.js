@@ -9,7 +9,7 @@ import {
   FlatList,
   ActivityIndicator,
 } from 'react-native';
-import {Colors, Fonts} from '../../config';
+import {Colors, Fonts, formatPhoneNumber} from '../../config';
 import LinearGradient from 'react-native-linear-gradient';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Images from '../../assets';
@@ -132,7 +132,7 @@ const ViewCustomerProfile = ({navigation, route: {params}}) => {
         )}
 
         <Text style={styles.name}>{user?.name}</Text>
-        <Text style={styles.phone}>{user?.number}</Text>
+        <Text style={styles.phone}>{formatPhoneNumber(user?.number)}</Text>
         <Text style={styles.email}>{user?.email}</Text>
 
         {user?.joined && (

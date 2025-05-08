@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
+  Platform,
   RefreshControl,
   StyleSheet,
   Text,
@@ -28,7 +29,7 @@ import {
 import Images from '../../assets';
 import {successToast} from '../../config/api';
 
-const Invitations = ({navigation:{navigate, goBack}}) => {
+const Invitations = ({navigation: {navigate, goBack}}) => {
   const {top} = useSafeAreaInsets();
   const dispatch = useDispatch();
 
@@ -42,11 +43,12 @@ const Invitations = ({navigation:{navigate, goBack}}) => {
   const _goBack = () => goBack();
 
   useEffect(() => {
-    dispatch(
-      getUserInvites(invites => {
-        setReceivedInvites(invites);
-      }),
-    );
+    if (isCustomer)
+      dispatch(
+        getUserInvites(invites => {
+          setReceivedInvites(invites);
+        }),
+      );
   }, []);
 
   const onAcceptInvite = invitationId => {
@@ -192,6 +194,7 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.RobotoMedium,
     color: Colors.black,
     fontSize: 18,
+    marginTop: Platform?.OS === 'ios' ? 0 : -2,
   },
   invitesSentCont: {
     paddingHorizontal: 20,

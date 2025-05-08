@@ -14,10 +14,22 @@ import {
   saveUserType,
 } from '../actions/UserActions';
 
-export const sendOTP = (phone, onSuccess) => {
+export const unmaskPhoneNumber = phone => {
+  let unmaskedPhone = phone
+    ?.replace(/\s/g, '')
+    .replace(/[()]/g, '')
+    .replace(/-/g, '');
+  return unmaskedPhone?.includes('+1') ? unmaskedPhone : '+1' + unmaskedPhone;
+};
+
+export const sendOTP = (phone, email, onSuccess) => {
   return dispatch => {
+    let unmaskedPhone = unmaskPhoneNumber(phone);
     dispatch(loaderTrue());
-    ApiInstance.post('/auth/send-otp?phoneNumber=' + phone)
+    const url =
+      '/auth/send-otp?mobileNumber=' + unmaskedPhone + '&email=' + email;
+    console.log('🚀 ~ sendOTP ~ url:', url);
+    ApiInstance.post(url)
       .then(({data}) => {
         console.log('🚀 ~ .then ~ data:', data);
         onSuccess(data);
@@ -30,7 +42,10 @@ export const sendOTP = (phone, onSuccess) => {
 export const sendInvite = (phone, link = 'https://google.com/') => {
   return dispatch => {
     dispatch(loaderTrue());
-    ApiInstanceWithJWT.post(`/twilio/send-invites?inviteLink=${link}`, [phone])
+    let unmaskedPhone = unmaskPhoneNumber(phone);
+    ApiInstanceWithJWT.post(`/twilio/send-invites?inviteLink=${link}`, [
+      unmaskedPhone,
+    ])
       .then(({data}) => {
         successToast('Invite sent successfully');
       })
@@ -42,9 +57,12 @@ export const sendInvite = (phone, link = 'https://google.com/') => {
 
 export const verifyOTP = (phone, otp, onSuccess) => {
   console.log('🚀 ~ verifyOTP ~ phone, otp, onSuccess:', phone, otp, onSuccess);
+  let unmaskedPhone = unmaskPhoneNumber(phone);
   return dispatch => {
     dispatch(loaderTrue());
-    ApiInstance.post('/auth/verify-otp?phoneNumber=' + phone + '&otp=' + otp)
+    ApiInstance.post(
+      '/auth/verify-otp?phoneNumber=' + unmaskedPhone + '&otp=' + otp,
+    )
       .then(({data}) => {
         onSuccess(data);
       })
@@ -74,8 +92,9 @@ export const login = (email, password) => {
 
 export const forgotPassSendOtp = (phone, onSuccess) => {
   return dispatch => {
+    let unmaskedPhone = unmaskPhoneNumber(phone);
     dispatch(loaderTrue());
-    ApiInstance.post(`auth/forgot-password/${phone}`)
+    ApiInstance.post(`auth/forgot-password/${unmaskedPhone}`)
       .then(({data}) => {
         onSuccess(true);
       })
@@ -87,9 +106,10 @@ export const forgotPassSendOtp = (phone, onSuccess) => {
 
 export const resetPassword = (phone, otp, newPassword, onSuccess) => {
   return dispatch => {
+    let unmaskedPhone = unmaskPhoneNumber(phone);
     dispatch(loaderTrue());
     ApiInstance.post(
-      `auth/reset-password?mobileNumber=${phone.replaceAll("+", "")}&otp=${otp}&newPassword=${newPassword}`,
+      `auth/reset-password?mobileNumber=${unmaskedPhone}&otp=${otp}&newPassword=${newPassword}`,
     )
       .then(({data}) => {
         onSuccess(true);
@@ -109,14 +129,14 @@ export const signup = (
   onSuccess,
 ) => {
   return dispatch => {
+    let unmaskedPhone = unmaskPhoneNumber(mobileNumber);
     const body = {
       fullName,
       email,
-      mobileNumber,
+      mobileNumber: unmaskedPhone,
       password,
       userType,
     };
-    console.log('🚀 ~ body:', body);
     dispatch(loaderTrue());
     ApiInstance.post('auth/signup', body)
       .then(({data}) => {
@@ -316,7 +336,7 @@ export const saveContact = (data, closeModal) => {
       ? 'profiles/contacts-customer/'
       : 'profiles/contacts-agent/';
 
-    console.log('🚀 ~ return ~ url:', url + profileId);
+    console.log('🚀 ~ return ~ url:', url + profileId, data);
     dispatch(loaderTrue());
     ApiInstanceWithJWT.patch(url + profileId, data)
       .then(({data}) => {

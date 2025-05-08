@@ -8,7 +8,7 @@ import {
   ScrollView,
   FlatList,
 } from 'react-native';
-import {Colors, Fonts, phoneRegex} from '../../config';
+import {Colors, Fonts, maskPhoneNumber, phoneRegex} from '../../config';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Images from '../../assets';
 import {
@@ -22,6 +22,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {uploadMedia} from '../../redux/middlewares/chat';
 import {
+  unmaskPhoneNumber,
   updateCustomer,
   updateCustomerProfile,
 } from '../../redux/middlewares/user';
@@ -41,11 +42,12 @@ const CustomerEditProfile = ({navigation}) => {
   const user = useSelector(state => state.user?.user);
   const profile = useSelector(state => state.user?.profile);
   const dispatch = useDispatch();
+  const usersMobile = maskPhoneNumber(user?.mobileNumber?.replaceAll('+1', ''))
   const [preferencesModal, setPreferencesModal] = useState(false);
   const [sendSMS, setSendSMS] = useState(false);
   const [pushNotifications, setPushNotifications] = useState(false);
   const [name, setName] = useState(user?.fullName);
-  const [phone, setPhone] = useState(user?.mobileNumber);
+  const [phone, setPhone] = useState(usersMobile);
   const [email, setEmail] = useState(user?.email);
   const [preferences, setPreferences] = useState(profile?.favDesigner);
   const [image, setImage] = useState('');
@@ -79,7 +81,7 @@ const CustomerEditProfile = ({navigation}) => {
 
     if (
       user?.fullName === name &&
-      user?.mobileNumber === phone &&
+      usersMobile === phone &&
       user?.email === email &&
       image === '' &&
       JSON.stringify(profile?.preferences) === JSON.stringify(preferences)
@@ -115,12 +117,12 @@ const CustomerEditProfile = ({navigation}) => {
     }
     if (
       user?.fullName !== name ||
-      user?.mobileNumber !== phone ||
+      usersMobile !== phone ||
       user?.email !== email
     ) {
       const data = {};
       if (user?.fullName !== name) data.fullName = name;
-      if (user?.mobileNumber !== phone) data.mobileNumber = phone;
+      if (usersMobile !== phone) data.mobileNumber = unmaskPhoneNumber(phone);
       if (user?.email !== email) data.email = email;
       dispatch(updateCustomer(data, onPressLogout));
     }
@@ -231,7 +233,9 @@ const CustomerEditProfile = ({navigation}) => {
           />
           <TextInputCustom
             title="Phone Number"
-            textInputProps={{value: phone, onChangeText: setPhone}}
+            textInputProps={{value: phone, onChangeText: phone =>{
+              setPhone(maskPhoneNumber(phone))
+            }}}
           />
           <TextInputCustom
             title="Email"

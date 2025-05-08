@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {Colors, Fonts} from '../../config';
+import {Colors, Fonts, maskPhoneNumber} from '../../config';
 import Images from '../../assets';
 import {CheckBox, GradientButton, TextInputCustom} from '../../components';
 import {useDispatch, useSelector} from 'react-redux';
@@ -17,7 +17,14 @@ import {login, signup, sendOTP, verifyOTP} from '../../redux/middlewares/user';
 import * as EmailValidator from 'email-validator';
 import {errorToast} from '../../config/api';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {phoneRegex, otpError, emailError, passwordError, phoneError, nameError} from '../../config'
+import {
+  phoneRegex,
+  otpError,
+  emailError,
+  passwordError,
+  phoneError,
+  nameError,
+} from '../../config';
 
 const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
   const dispatch = useDispatch();
@@ -36,7 +43,12 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
   const [fullName, setFullName] = useState('');
   const [otp, setOtp] = useState('');
   const [otpSent, setOtpSent] = useState(false);
-  const [otpSendError, setOtpSendError] = useState('');
+  const [errors, setErrors] = useState({
+    email: '',
+    password: '',
+    phone: '',
+    fullName: '',
+  });
 
   useEffect(() => {
     setEmail('');
@@ -45,7 +57,13 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
     setFullName('');
     setOtp('');
     setOtpSent(false);
-    setOtpSendError('');
+    setErrors({
+      email: '',
+      password: '',
+      phone: '',
+      fullName: '',
+      otp: '',
+    });
   }, [loginActive]);
 
   const otpInput = useRef(null);
@@ -54,16 +72,24 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
   const passwordInput = useRef(null);
 
   const handleSubmit = () => {
-    let message = [];
+    const errorsToSend = {...errors};
+    if (!loginActive && fullName.length < 3) errorsToSend.fullName = nameError;
+    if (!loginActive && !phoneRegex.test(phone))
+      errorsToSend.phone = phoneError;
+    if (otpSent && !otp) errorsToSend.otp = otpError;
+    if (!EmailValidator.validate(email)) errorsToSend.email = emailError;
+    if (password.length < 8) errorsToSend.password = passwordError;
 
-    if (!loginActive && fullName.length < 3) message.push(nameError);
-    if (!loginActive && !phoneRegex.test(phone)) message.push(phoneError);
-    if (otpSent && !otp) message.push(otpError);
-    if (!EmailValidator.validate(email)) message.push(emailError);
-    if (password.length < 8) message.push(passwordError);
+    setErrors(errorsToSend);
 
-    if (message.length) {
-      return errorToast({message: message.join('\n')});
+    if (
+      errors.email ||
+      errors.password ||
+      errors.phone ||
+      errors.fullName ||
+      errors.otp
+    ) {
+      return;
     }
 
     if (loginActive) {
@@ -73,8 +99,8 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
 
     if (!otpSent) {
       dispatch(
-        sendOTP(phone, isSent => {
-          if (isSent?.includes('success')) {
+        sendOTP(phone, email, isSent => {
+          if (isSent?.toLowerCase()?.includes('success')) {
             navigate('OTPScreen', {
               fullName,
               phone,
@@ -83,7 +109,17 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
               isCustomer,
             });
           } else {
-            setOtpSendError(isSent);
+            if (isSent?.toLowerCase()?.includes('email')) {
+              console.log(
+                '🚀 ~ handleSubmit ~ isSent:',
+                isSent?.toLowerCase()?.includes('email'),
+              );
+              setErrors({...errors, email: isSent});
+            } else if (isSent?.toLowerCase()?.includes('phone') || isSent?.toLowerCase()?.includes('otp')) {
+              setErrors({...errors, phone: isSent});
+            } else {
+              errorToast({message: isSent});
+            }
           }
         }),
       );
@@ -162,10 +198,14 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
                   textInputStyle={styles.inputStyles}
                   titleStyles={styles.inputTitleStyles}
                   icon={Images.name}
+                  error={errors.fullName}
                   textInputProps={{
                     autoFocus: !loginActive,
                     value: fullName,
-                    onChangeText: setFullName,
+                    onChangeText: val => {
+                      setFullName(val);
+                      setErrors({...errors, fullName: ''});
+                    },
                     keyboardType: 'default',
                     returnKeyType: 'next',
                     maxLength: 70,
@@ -176,15 +216,16 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
                   title="Phone Number"
                   icon={Images.phone}
                   titleStyles={styles.inputTitleStyles}
-                  error={otpSendError}
+                  error={errors.phone}
                   textInputStyle={styles.inputStyles}
                   textInputProps={{
                     value: phone,
                     onChangeText: val => {
-                      setPhone(val);
+                      const maskedValue = maskPhoneNumber(val);
+                      setPhone(maskedValue);
                       setOtpSent(false);
                       setOtp('');
-                      setOtpSendError('');
+                      setErrors({...errors, phone: ''});
                     },
                     keyboardType: 'phone-pad',
                     returnKeyType: 'next',
@@ -216,13 +257,17 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
               icon={Images.email}
               textInputStyle={styles.inputStyles}
               titleStyles={styles.inputTitleStyles}
+              error={errors.email}
               textInputProps={{
                 autoCapitalize: 'none',
                 autoFocus: loginActive,
                 autoCorrect: false,
                 textContentType: 'emailAddress',
                 value: email,
-                onChangeText: setEmail,
+                onChangeText: val => {
+                  setEmail(val);
+                  setErrors({...errors, email: ''});
+                },
                 keyboardType: 'email-address',
                 returnKeyType: 'next',
                 ref: emailInput,
@@ -234,9 +279,13 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
               textInputStyle={styles.inputStyles}
               titleStyles={styles.inputTitleStyles}
               isPassword
+              error={errors.password}
               textInputProps={{
                 value: password,
-                onChangeText: setPassword,
+                onChangeText: val => {
+                  setPassword(val);
+                  setErrors({...errors, password: ''});
+                },
                 keyboardType: 'default',
                 returnKeyType: 'done',
                 secureTextEntry: true,
@@ -263,9 +312,9 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
             ) : (
               <Text style={styles.agreementText}>
                 By signing up, you agree to our
-                <Text style={styles.linkText}>{" Terms \n"}</Text> {'& '}
+                <Text style={styles.linkText}>{' Terms \n'}</Text> {'& '}
                 <Text style={styles.linkText}>Privacy Policy</Text>
-                {" & consent to receive a \none-time verification code via SMS"}
+                {' & consent to receive a \none-time verification code via SMS'}
               </Text>
             )}
           </View>
@@ -306,7 +355,7 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.RobotoBold,
   },
   checkboxTitleStyles: {
-    fontFamily: Fonts.RobotoRegular
+    fontFamily: Fonts.RobotoRegular,
   },
   backIconContainer: {
     position: 'absolute',

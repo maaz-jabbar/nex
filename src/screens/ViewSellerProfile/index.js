@@ -74,8 +74,7 @@ const ViewSellerProfile = ({navigation, route: {params}}) => {
         contentContainerStyle={styles.lowerContentContainer}
         style={styles.scroll}>
         <Text style={styles.name}>{user?.name}</Text>
-        <Text style={styles.phone}>{user?.number}</Text>
-        <Text style={styles.email}>{user?.email}</Text>
+        <Text style={styles.email}>{profile?.location?.link}</Text>
         {!!profile?.bio && <Text style={styles.preferences}>Bio</Text>}
         <Text style={styles.bio}>{profile?.bio}</Text>
         {profile?.links.map((link, index) => {

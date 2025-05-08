@@ -80,7 +80,6 @@ ApiInstance.interceptors.response.use(
 );
 
 export const errorToast = err => {
-  console.log("🚀 ~ err:", err)
   let messsage = 'Something went wrong. Please try again';
   if (err?.request?.response) {
     try {

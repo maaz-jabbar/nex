@@ -15,7 +15,15 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useDispatch, useSelector} from 'react-redux';
 import Share from 'react-native-share';
 
-import {Colors, Fonts, androidUrl, iosUrl, message} from '../../config';
+import {
+  Colors,
+  Fonts,
+  androidUrl,
+  formatPhoneNumber,
+  iosUrl,
+  maskPhoneNumber,
+  message,
+} from '../../config';
 import Images from '../../assets';
 import {ContactAvatar, GradientButton, ToggleButton} from '../../components';
 import {logout} from '../../redux/actions/UserActions';
@@ -35,9 +43,9 @@ const onPressSocialIcon = async (social = undefined) => {
     title: 'INVITE',
     message,
     url:
-    social == Share.Social.FACEBOOK
-    ? Platform.select({ios: iosUrl, android: androidUrl})
-    : "",
+      social == Share.Social.FACEBOOK
+        ? Platform.select({ios: iosUrl, android: androidUrl})
+        : '',
     social,
   };
   const method = social ? Share.shareSingle : Share.open;
@@ -118,7 +126,9 @@ const CustomerProfile = ({navigation}) => {
         contentContainerStyle={styles.lowerContentContainer}>
         <View style={styles.info}>
           <Text style={styles.name}>{user?.fullName}</Text>
-          <Text style={styles.phone}>{user?.mobileNumber}</Text>
+          <Text style={styles.phone}>
+            {formatPhoneNumber(user?.mobileNumber)}
+          </Text>
           <Text style={styles.email}>{user?.email}</Text>
 
           <GradientButton

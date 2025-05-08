@@ -16,6 +16,7 @@ export const getChats = (loaderStop = () => {}) => {
     if (!chatsLength) dispatch(loaderTrue());
     ApiInstanceWithJWT.get('/chat/conversations/' + user?.userId)
       .then(({data}) => {
+        console.log("🚀 ~ .then ~ data:", data)
         const filteredData = data?.filter(chat => {
           if (isCustomer) {
             return true;

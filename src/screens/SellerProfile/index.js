@@ -9,7 +9,7 @@ import {
   Linking,
 } from 'react-native';
 import Share from 'react-native-share';
-import {androidUrl, Colors, Fonts, iosUrl, message} from '../../config';
+import {androidUrl, Colors, Fonts, formatPhoneNumber, iosUrl, message} from '../../config';
 import LinearGradient from 'react-native-linear-gradient';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Images from '../../assets';
@@ -113,7 +113,7 @@ const SellerProfile = ({navigation}) => {
         style={styles.container}>
         <View style={styles.info}>
           <Text style={styles.name}>{user?.fullName}</Text>
-          <Text style={styles.phone}>{user?.mobileNumber}</Text>
+          <Text style={styles.phone}>{formatPhoneNumber(user?.mobileNumber)}</Text>
           <Text style={styles.email}>{user?.email}</Text>
           <GradientButton
             title="Invite Link"

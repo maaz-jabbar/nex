@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {Colors, Fonts, phoneRegex} from '../../config';
+import {Colors, Fonts, maskPhoneNumber, phoneRegex} from '../../config';
 import Images from '../../assets';
 import {GradientButton, TextInputCustom} from '../../components';
 import {useDispatch} from 'react-redux';
@@ -97,7 +97,10 @@ const ForgotPassword = ({navigation: {goBack}}) => {
               textInputProps={{
                 value: phone,
                 editable: !otpSent,
-                onChangeText: setPhone,
+                onChangeText: val => {
+                  const maskedValue = maskPhoneNumber(val);
+                  setPhone(maskedValue);
+                },
                 keyboardType: 'number-pad',
                 returnKeyType: 'next',
               }}
