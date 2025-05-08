@@ -49,7 +49,7 @@ const BroadcastCard = ({chat, onPress}) => {
         style={styles.container}>
         <Text style={styles.title}>{chat?.title}</Text>
         <View style={styles.chatContentCont}>
-          <Text numberOfLines={2} style={styles.chat}>
+          <Text style={styles.chat}>
             {chat?.content}
           </Text>
           <View>
