@@ -2,18 +2,18 @@ import React from 'react';
 import ReactNativeModal from 'react-native-modal';
 import {StyleSheet, Text, View} from 'react-native';
 import {GradientButton, TextInputCustom} from '../../components';
-import {Colors, Fonts, phoneRegex} from '../../config';
+import {Colors, Fonts, maskPhoneNumber, phoneRegex} from '../../config';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useDispatch} from 'react-redux';
-import {saveContact} from '../../redux/middlewares/user';
+import {saveContact, unmaskPhoneNumber} from '../../redux/middlewares/user';
 import {otpError, emailError, passwordError, phoneError, nameError} from '../../config';
 import * as EmailValidator from 'email-validator';
 
 const NewContactModal = ({isVisible, setVisible}) => {
   const {top} = useSafeAreaInsets();
-  const [name, setName] = React.useState('customerr');
-  const [email, setEmail] = React.useState('customer@gmail.com');
-  const [phone, setPhone] = React.useState('+0987654322');
+  const [name, setName] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [phone, setPhone] = React.useState('');
   const [errors, setErrors] = React.useState({
     name: '',
     email: '',
@@ -36,7 +36,7 @@ const NewContactModal = ({isVisible, setVisible}) => {
         {
           name,
           email,
-          number: phone,
+          number: unmaskPhoneNumber(phone),
         },
         () => {
           setVisible(false);
@@ -86,7 +86,7 @@ const NewContactModal = ({isVisible, setVisible}) => {
           textInputProps={{
             value: phone,
             onChangeText: val =>{
-              setPhone(val)
+              setPhone(maskPhoneNumber(val))
               setErrors({...errors, phone: ''})
             },
           }}
