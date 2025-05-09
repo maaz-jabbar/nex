@@ -86,6 +86,19 @@ export const getGallery = (galleryId = null, onSuccess) => {
       });
   };
 };
+export const getItem = (itemId = null, onSuccess, setLoader) => {
+  return dispatch => {
+    dispatch(loaderTrue());
+    ApiInstanceWithJWT.get('items/' + itemId)
+      .then(({data}) => {
+        onSuccess(data);
+      })
+      .finally(() => {
+        dispatch(loaderFalse());
+        setLoader(false)
+      });
+  };
+};
 
 export const addItemsToServerGallery = (galleriId, items, onSuccess) => {
   console.log(

@@ -171,13 +171,13 @@ const Chat = ({route: {params}, navigation}) => {
           </Text>
           <Text style={styles.onlineStatus}>Online</Text>
         </View>
-        <TouchableOpacity activeOpacity={0.8}>
+        {/* <TouchableOpacity activeOpacity={0.8}>
           <Image
             source={Images.dots}
             resizeMode="contain"
             style={styles.backIcon}
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       {loader ? (

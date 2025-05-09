@@ -68,6 +68,7 @@ export const getMessages = (conversationId, offset, onSuccess) => {
   };
 };
 export const sendMessageAsync = (messageObj, onSuccess) => {
+  console.log("🚀 ~ sendMessageAsync ~ messageObj:", messageObj)
   return dispatch => {
     ApiInstanceWithJWT.post('/chat/message', messageObj).then(() => {
       onSuccess();

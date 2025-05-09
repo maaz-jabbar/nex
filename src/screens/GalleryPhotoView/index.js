@@ -38,6 +38,7 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
   const ownerId = params?.ownerId;
   const item = params?.item;
   const product = params?.product;
+  const cameFromChat = params?.cameFromChat || false;
 
   let viewShotRef = React.useRef();
 
@@ -98,6 +99,8 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
           conversationId,
           content: message,
           senderId: userId,
+          galleryId: store?.galleryId,
+          itemId: product?.itemId,
         };
 
         setLoader(true);
@@ -188,7 +191,9 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
           </ImageBackground>
         </ViewShot>
 
-        {isCustomer ? (
+        {cameFromChat ? (
+          <View style={styles.chatContEmtpy} />
+        ) : isCustomer ? (
           <View style={styles.chatCont}>
             <View style={styles.sendMessCont}>
               <Image source={Images.attachment} style={styles.backIcon} />
@@ -246,6 +251,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 10,
+  },
+  chatContEmtpy: {
+    height: "25%",
   },
   title: {
     fontSize: 24,

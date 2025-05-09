@@ -299,7 +299,9 @@ export const rejectInvite = (invitationId, onSuccess) => {
   return (dispatch, getState) => {
     const id = getState().user?.profile?.profileId;
     dispatch(loaderTrue());
-    ApiInstanceWithJWT.put('invites/reject/' + invitationId)
+    const url = 'invites/reject/' + invitationId
+    console.log("🚀 ~ return ~ url:", url)
+    ApiInstanceWithJWT.put(url)
       .then(({data}) => {
         dispatch(getUserInvites(onSuccess));
         dispatch(getUserContacts(id));
