@@ -12,6 +12,7 @@ import {
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import {useDispatch, useSelector} from 'react-redux';
+import Share from 'react-native-share';
 
 import {Colors, Fonts} from '../../config';
 import Images from '../../assets';
@@ -22,6 +23,7 @@ import {
   editItemsFromServerGallery,
 } from '../../redux/middlewares/gallery';
 import {createChat, sendMessageAsync} from '../../redux/middlewares/chat';
+import ViewShot from 'react-native-view-shot';
 
 const numbersRegex = /^(?:\d+\.\d+|\d+|\.\d+)$/;
 
@@ -36,6 +38,8 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
   const ownerId = params?.ownerId;
   const item = params?.item;
   const product = params?.product;
+
+  let viewShotRef = React.useRef();
 
   const [store, setStore] = useState(item);
   const [loader, setLoader] = useState(false);
@@ -78,6 +82,12 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
     );
   };
 
+  const onPressShare = async () => {
+    setDropDownActive(false);
+    const uri = await viewShotRef.current.capture();
+    await Share.open({url: uri});
+  };
+
   const sendMessage = () => {
     if (!message.trim()) return;
 
@@ -92,10 +102,12 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
 
         setLoader(true);
         setMessage('');
-        dispatch(sendMessageAsync(messageObj, () => {
-          setLoader(false)
-          successToast('Message sent successfully');
-        }));
+        dispatch(
+          sendMessageAsync(messageObj, () => {
+            setLoader(false);
+            successToast('Message sent successfully');
+          }),
+        );
       }),
     );
   };
@@ -104,7 +116,7 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
     <View style={[styles.container, {paddingTop: top}]}>
       {dropDownActive && (
         <View style={styles.dropDown}>
-          <TouchableOpacity style={styles.dropDownList} onPress={goBack}>
+          <TouchableOpacity style={styles.dropDownList} onPress={onPressShare}>
             <Image
               source={Images.share}
               resizeMode="contain"
@@ -148,9 +160,7 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
       </View>
 
       <View style={styles.mainCont}>
-        <LinearGradient
-          colors={[Colors.transparent, Colors.transparent]}
-          style={styles.imageWrapper}>
+        <ViewShot ref={viewShotRef} style={styles.imageWrapper}>
           <ImageBackground
             source={{
               uri: `${baseURL}/images/upload/${product?.image}`,
@@ -176,7 +186,7 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
               </View>
             )}
           </ImageBackground>
-        </LinearGradient>
+        </ViewShot>
 
         {isCustomer ? (
           <View style={styles.chatCont}>
@@ -285,7 +295,6 @@ const styles = StyleSheet.create({
   imageWrapper: {
     flex: 1,
     borderRadius: 10,
-    padding: 2,
   },
   imageBackground: {
     flex: 1,
