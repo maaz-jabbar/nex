@@ -35,7 +35,7 @@ const onPressSocialIcon = async (social = undefined) => {
     url:
       social == Share.Social.FACEBOOK
         ? Platform.select({ios: iosUrl, android: androidUrl})
-        : undefined,
+        : "",
     social,
   };
   const method = social ? Share.shareSingle : Share.open;
