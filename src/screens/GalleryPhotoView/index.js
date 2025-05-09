@@ -223,7 +223,7 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
                 <TextInput
                   keyboardType="number-pad"
                   autoFocus
-                  editable={!isCustomer}
+                  editable={!isCustomer && !cameFromChat}
                   value={price}
                   onChangeText={setPrice}
                   style={styles.priceInput}
