@@ -35,7 +35,6 @@ ApiInstanceWithJWT.interceptors.response.use(
   },
   function (error) {
     const originalRequest = error.config;
-    console.log("🚀 ~ originalRequest:", originalRequest)
     const {accessToken, refreshToken} = store.getState()?.user?.user;
     if (error.status == 403) {
       console.log('refreshing')
@@ -46,7 +45,6 @@ ApiInstanceWithJWT.interceptors.response.use(
         },
       })
         .then(({data}) => {
-          console.log("🚀 ~ .then ~ data:", data)
           store.dispatch(getUser(data, false));
           originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
           return ApiInstance.request(originalRequest);

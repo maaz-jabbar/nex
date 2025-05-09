@@ -26,7 +26,7 @@ import {
   nameError,
 } from '../../config';
 
-const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
+const LoginSignup = ({route, navigation, navigation: {goBack, navigate, addListener}}) => {
   const dispatch = useDispatch();
   const {top} = useSafeAreaInsets();
 
@@ -51,6 +51,17 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
   });
 
   useEffect(() => {
+    emptyEvthng();
+  }, [loginActive]);
+
+  useEffect(() => {
+    const unsub = addListener('focus', () => {
+      emptyEvthng();
+    });
+    return unsub;
+  }, [navigation]);
+
+  const emptyEvthng = () => {
     setEmail('');
     setPassword('');
     setPhone('');
@@ -64,7 +75,7 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
       fullName: '',
       otp: '',
     });
-  }, [loginActive]);
+  };
 
   const otpInput = useRef(null);
   const phoneInput = useRef(null);
@@ -115,7 +126,10 @@ const LoginSignup = ({route, navigation: {goBack, navigate}}) => {
                 isSent?.toLowerCase()?.includes('email'),
               );
               setErrors({...errors, email: isSent});
-            } else if (isSent?.toLowerCase()?.includes('phone') || isSent?.toLowerCase()?.includes('otp')) {
+            } else if (
+              isSent?.toLowerCase()?.includes('phone') ||
+              isSent?.toLowerCase()?.includes('otp')
+            ) {
               setErrors({...errors, phone: isSent});
             } else {
               errorToast({message: isSent});

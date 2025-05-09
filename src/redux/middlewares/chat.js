@@ -16,7 +16,6 @@ export const getChats = (loaderStop = () => {}) => {
     if (!chatsLength) dispatch(loaderTrue());
     ApiInstanceWithJWT.get('/chat/conversations/' + user?.userId)
       .then(({data}) => {
-        console.log("🚀 ~ .then ~ data:", data)
         const filteredData = data?.filter(chat => {
           if (isCustomer) {
             return true;
@@ -44,7 +43,6 @@ export const getBroadcasts = (loaderStop = () => {}) => {
     if (!chatsLength) dispatch(loaderTrue());
     ApiInstanceWithJWT.get('/chat/broadcast/sender/' + userId)
       .then(({data}) => {
-        console.log('🚀 ~ .then ~ data:', data);
         dispatch(saveUserBroadcasts(data));
       })
       .catch(err => {
@@ -61,7 +59,7 @@ export const getMessages = (conversationId, offset, onSuccess) => {
   return dispatch => {
     ApiInstanceWithJWT.get('/chat/conversation/' + conversationId)
       .then(({data}) => {
-        console.log("🚀 ~ .then ~ data:", data)
+        
         onSuccess(data?.messages);
       })
       .finally(() => {
@@ -114,7 +112,6 @@ export const uploadMedia = (file, onSuccess = () => null, specialId) => {
       },
     })
       .then(({data}) => {
-        console.log('🚀 ~ .then ~ data:', data);
         onSuccess(imageId);
       })
       .finally(() => {
@@ -142,7 +139,7 @@ export const sendBroadcast = (body, onSuccess) => {
     dispatch(loaderTrue());
     ApiInstanceWithJWT.post('/chat/broadcast', body)
       .then(({data}) => {
-        console.log("🚀 ~ .then ~ data:", data)
+        
         onSuccess(data);
       })
       .finally(() => {

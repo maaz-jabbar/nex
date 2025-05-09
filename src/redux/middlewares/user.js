@@ -31,7 +31,6 @@ export const sendOTP = (phone, email, onSuccess) => {
     console.log('🚀 ~ sendOTP ~ url:', url);
     ApiInstance.post(url)
       .then(({data}) => {
-        console.log('🚀 ~ .then ~ data:', data);
         onSuccess(data);
       })
       .finally(() => {
@@ -107,11 +106,13 @@ export const forgotPassSendOtp = (phone, onSuccess) => {
 export const resetPassword = (phone, otp, newPassword, onSuccess) => {
   return dispatch => {
     let unmaskedPhone = unmaskPhoneNumber(phone);
+    console.log("🚀 ~ resetPassword ~ unmaskedPhone:", unmaskedPhone)
     dispatch(loaderTrue());
     ApiInstance.post(
       `auth/reset-password?mobileNumber=${unmaskedPhone}&otp=${otp}&newPassword=${newPassword}`,
     )
       .then(({data}) => {
+        successToast(data?.message || 'Password reset successfully');
         onSuccess(true);
       })
       .finally(() => {
@@ -247,7 +248,6 @@ export const getUserInvites = onSuccess => {
     dispatch(loaderTrue());
     ApiInstanceWithJWT.get('invites/receiver/' + id)
       .then(({data}) => {
-        console.log('🚀 ~ .then ~ data:', data);
         onSuccess(data.filter(i => i.inviteStatus !== 'ACCEPTED'));
         // dispatch(saveUserContacts(data));
       })
@@ -316,7 +316,6 @@ export const getUserSentInvites = onSuccess => {
     dispatch(loaderTrue());
     ApiInstanceWithJWT.get('invites/sender/' + id)
       .then(({data}) => {
-        console.log('🚀 ~ .then ~ data:', data);
         onSuccess(data);
       })
       .finally(() => {
@@ -359,12 +358,6 @@ export const updateCustomer = (data, onSuccess) => {
     dispatch(loaderTrue());
     ApiInstanceWithJWT.patch('users/' + userId, data)
       .then(don => {
-        console.log('🚀 ~ .then ~ don:', don.data);
-        console.log('🚀 ~ .then ~ don:', getState().user?.user);
-        console.log('🚀 ~ .then ~ don:', {
-          ...getState().user?.user,
-          ...data,
-        });
         dispatch(
           saveUser({
             ...getState().user?.user,
