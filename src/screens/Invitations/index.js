@@ -22,6 +22,7 @@ import {
   getProfileExplicitly,
   getUserContacts,
   getUserInvites,
+  getUserSentInvites,
   getUserWithId,
   rejectInvite,
   saveContact,
@@ -34,22 +35,33 @@ const Invitations = ({navigation: {navigate, goBack}}) => {
   const dispatch = useDispatch();
 
   const [receivedInvites, setReceivedInvites] = useState([]);
+  const [sentInvites, setSentInvites] = useState([]);
 
   const profileId = useSelector(state => state.user?.profile?.profileId);
   const userType = useSelector(state => state.user?.userType);
-  const contacts = useSelector(state => state.user?.contacts) || [];
   const isCustomer = userType === 'CUSTOMER';
 
   const _goBack = () => goBack();
 
   useEffect(() => {
+    getDataInvites();
+  }, []);
+
+  const getDataInvites = () => {
     if (isCustomer)
       dispatch(
         getUserInvites(invites => {
           setReceivedInvites(invites);
         }),
       );
-  }, []);
+    else
+      dispatch(
+        getUserSentInvites(invites => {
+          console.log('🚀 ~ useEffect ~ invites:', invites);
+          setSentInvites(invites);
+        }),
+      );
+  };
 
   const onAcceptInvite = invitationId => {
     dispatch(
@@ -61,8 +73,8 @@ const Invitations = ({navigation: {navigate, goBack}}) => {
 
   const onRejectInvite = invitationId => {
     dispatch(
-      rejectInvite(invitationId, invites => {
-        setReceivedInvites(invites);
+      rejectInvite(invitationId, () => {
+        getDataInvites();
       }),
     );
   };
@@ -80,11 +92,6 @@ const Invitations = ({navigation: {navigate, goBack}}) => {
       ),
     );
   };
-
-  const filteredContacts = contacts.filter(
-    contact => contact?.inviteStatus === 'PENDING',
-  );
-
   const deleteButton = onPress => {
     return (
       <TouchableOpacity style={styles.deleteIconWrapper} onPress={onPress}>
@@ -104,6 +111,7 @@ const Invitations = ({navigation: {navigate, goBack}}) => {
   };
 
   const _renderItem = ({item, index}) => {
+    console.log("🚀 ~ const_renderItem= ~ item:", item)
     if (isCustomer) {
       return (
         <ContactCard
@@ -119,8 +127,8 @@ const Invitations = ({navigation: {navigate, goBack}}) => {
     } else {
       return (
         <ContactCard
-          user={item}
-          customComp={deleteButton(() => deleteInvite(item?.userId))}
+          user={{name:item?.receiverName, userId: item?.receiverUserId}}
+          customComp={deleteButton(() => onRejectInvite(item?.invitationId))}
         />
       );
     }
@@ -130,7 +138,7 @@ const Invitations = ({navigation: {navigate, goBack}}) => {
     if (isCustomer) {
       return receivedInvites;
     } else {
-      return filteredContacts;
+      return sentInvites;
     }
   };
 

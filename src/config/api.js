@@ -57,6 +57,7 @@ ApiInstanceWithJWT.interceptors.response.use(
         (error?.request?.responseURL?.includes('profiles/') ||
           error?.request?.responseURL?.includes('invites/') ||
           error?.request?.responseURL?.includes('contacts/') ||
+          error?.request?.responseURL?.includes('items/') ||
           error?.request?.responseURL?.includes('chat/')) &&
         error?.request?._method === 'GET'
       ) {

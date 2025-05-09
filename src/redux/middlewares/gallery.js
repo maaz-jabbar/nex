@@ -86,12 +86,15 @@ export const getGallery = (galleryId = null, onSuccess) => {
       });
   };
 };
-export const getItem = (itemId = null, onSuccess, setLoader) => {
+export const getItem = (itemId = null, onSuccess, onFailure, setLoader) => {
   return dispatch => {
     dispatch(loaderTrue());
     ApiInstanceWithJWT.get('items/' + itemId)
       .then(({data}) => {
         onSuccess(data);
+      })
+      .catch(e => {
+        onFailure(e);
       })
       .finally(() => {
         dispatch(loaderFalse());

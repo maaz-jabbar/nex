@@ -299,11 +299,11 @@ export const rejectInvite = (invitationId, onSuccess) => {
   return (dispatch, getState) => {
     const id = getState().user?.profile?.profileId;
     dispatch(loaderTrue());
-    const url = 'invites/reject/' + invitationId
+    const url = 'invites/delete/' + invitationId
     console.log("🚀 ~ return ~ url:", url)
-    ApiInstanceWithJWT.put(url)
+    ApiInstanceWithJWT.delete(url)
       .then(({data}) => {
-        dispatch(getUserInvites(onSuccess));
+        onSuccess()
         dispatch(getUserContacts(id));
       })
       .finally(() => {

@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import {
+  ActivityIndicator,
   Image,
   ImageBackground,
   StyleSheet,
@@ -23,18 +24,21 @@ const ChatBubble = ({nextChatBySameUser, message, sender}) => {
   const sentByMe = user?.userId === message?.senderId;
   const accessToken = useSelector(state => state.user?.user?.accessToken);
   const dispatch = useDispatch();
-  const [loader, setLoader] = React.useState(false);
+  const [loader, setLoader] = React.useState(true);
   const [galleryItem, setGalleryItem] = React.useState(null);
 
   const [attachmentModal, setAttachmentModal] = React.useState('');
 
   const getGalleryItem = itemId => {
-    if (!itemId) return '';
+    if (!itemId || galleryItem) return '';
     dispatch(
       getItem(
         itemId,
         data => {
           setGalleryItem(data);
+        },
+        () => {
+          setGalleryItem({});
         },
         setLoader,
       ),
@@ -43,7 +47,6 @@ const ChatBubble = ({nextChatBySameUser, message, sender}) => {
 
   useEffect(() => {
     if (message?.itemId) {
-      setLoader(true);
       getGalleryItem(message?.itemId);
     }
   }, []);
@@ -98,7 +101,13 @@ const ChatBubble = ({nextChatBySameUser, message, sender}) => {
           {!!galleryItem && (
             <TouchableOpacity
               key={'asset'}
-              onPress={() => navigate('GalleryPhotoView', {product: galleryItem, cameFromChat: true})}
+              onPress={() => {
+                if (loader || !galleryItem?.image) return;
+                navigate('GalleryPhotoView', {
+                  product: galleryItem,
+                  cameFromChat: true,
+                });
+              }}
               activeOpacity={0.8}>
               <ImageBackground
                 source={{
@@ -113,7 +122,20 @@ const ChatBubble = ({nextChatBySameUser, message, sender}) => {
                 )}
                 {!!galleryItem?.price && (
                   <View style={styles.priceCont}>
-                    <Text style={styles.priceText}>${galleryItem?.price}</Text>
+                    <Text numberOfLines={1} style={styles.priceText}>
+                      ${galleryItem?.price}
+                    </Text>
+                  </View>
+                )}
+                {!loader && !galleryItem?.image && (
+                  <Image
+                    source={Images.productNotFound}
+                    style={styles.productNotFound}
+                  />
+                )}
+                {loader && (
+                  <View style={styles.loader}>
+                    <ActivityIndicator size="small" color={Colors.black} />
                   </View>
                 )}
               </ImageBackground>
@@ -170,6 +192,24 @@ const styles = StyleSheet.create({
   container: {
     padding: 3,
   },
+  loader: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    flex: 1,
+    borderRadius: 10,
+  },
+  productNotFound: {
+    width: 200,
+    height: 200,
+    borderRadius: 10,
+    resizeMode: 'stretch',
+  },
   priceCont: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -178,7 +218,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginVertical: 20,
     minWidth: '20%',
-    maxWidth: '40%',
+    maxWidth: '80%',
     alignSelf: 'center',
   },
   priceText: {
@@ -211,9 +251,11 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 10,
     justifyContent: 'flex-end',
+    backgroundColor: Colors.darkGrey,
   },
   attachmentImage: {
     borderRadius: 10,
+    backgroundColor: Colors.darkGrey,
   },
   attachment1: {
     width: '100%',

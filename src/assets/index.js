@@ -62,4 +62,5 @@ export default {
   onboarding1Seller: require('./onboarding1Seller.png'),
   onboarding2Seller: require('./onboarding2Seller.png'),
   onboarding3Seller: require('./onboarding3Seller.png'),
+  productNotFound: require('./product-not-found.jpg')
 };

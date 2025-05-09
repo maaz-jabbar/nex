@@ -70,8 +70,15 @@ const SelectContacts = ({navigation}) => {
   const [selectedContacts, setSelectedContacts] = React.useState([]);
   const contacts = useSelector(state => state.user?.contacts);
 
+  const filteredContacts = searchedItems?.length
+    ? []
+    : contacts.filter(
+        contact =>
+          contact?.name?.toLowerCase().includes(search?.toLowerCase()) &&
+          contact?.inviteStatus == 'ACCEPTED',
+      );
+
   const _renderItem = ({item, index}) => {
-    console.log('🚀 ~ const_renderItem= ~ item:', item);
     const isSelected =
       selectedContacts.filter(contact => contact.number === item.number)
         ?.length > 0;
@@ -164,7 +171,7 @@ const SelectContacts = ({navigation}) => {
             setIsChecked={() => {
               if (allSelected) {
                 setSelectedContacts([]);
-              } else setSelectedContacts([...contacts]);
+              } else setSelectedContacts([...filteredContacts]);
             }}
             isChecked={allSelected}
             rounded
@@ -211,14 +218,6 @@ const SelectContacts = ({navigation}) => {
       </>
     );
   };
-
-  const filteredContacts = searchedItems?.length
-    ? []
-    : contacts.filter(
-        contact =>
-          contact?.name?.toLowerCase().includes(search?.toLowerCase()) &&
-          contact?.inviteStatus == 'ACCEPTED',
-      );
 
   return (
     <View style={[styles.container, {paddingTop: top}]}>
