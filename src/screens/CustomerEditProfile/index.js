@@ -42,7 +42,7 @@ const CustomerEditProfile = ({navigation}) => {
   const user = useSelector(state => state.user?.user);
   const profile = useSelector(state => state.user?.profile);
   const dispatch = useDispatch();
-  const usersMobile = maskPhoneNumber(user?.mobileNumber?.replaceAll('+1', ''))
+  const usersMobile = maskPhoneNumber(user?.mobileNumber?.replaceAll('+1', ''));
   const [preferencesModal, setPreferencesModal] = useState(false);
   const [sendSMS, setSendSMS] = useState(false);
   const [pushNotifications, setPushNotifications] = useState(false);
@@ -52,6 +52,7 @@ const CustomerEditProfile = ({navigation}) => {
   const [preferences, setPreferences] = useState(profile?.favDesigner);
   const [image, setImage] = useState('');
   const [brands, setBrands] = useState([]);
+  const [fullnameError, setFullnameError] = useState('');
 
   useEffect(() => {
     dispatch(getAllBrands(data => setBrands(data)));
@@ -68,21 +69,10 @@ const CustomerEditProfile = ({navigation}) => {
   };
 
   const onPressSave = () => {
-    if (!name || !phone || !email) return;
-    let message = [];
-
-    if (name.length < 3) message.push(nameError);
-    if (!phoneRegex.test(phone)) message.push(phoneError);
-    if (!EmailValidator.validate(email)) message.push(emailError);
-
-    if (message.length) {
-      return errorToast({message: message.join('\n')});
-    }
+    if (name.length < 3) return setFullnameError(nameError);
 
     if (
       user?.fullName === name &&
-      usersMobile === phone &&
-      user?.email === email &&
       image === '' &&
       JSON.stringify(profile?.preferences) === JSON.stringify(preferences)
     ) {
@@ -115,15 +105,9 @@ const CustomerEditProfile = ({navigation}) => {
     if (JSON.stringify(profile?.favDesigner) !== JSON.stringify(preferences)) {
       dispatch(updateCustomerProfile(preferences, () => navigation.goBack()));
     }
-    if (
-      user?.fullName !== name ||
-      usersMobile !== phone ||
-      user?.email !== email
-    ) {
+    if (user?.fullName !== name) {
       const data = {};
       if (user?.fullName !== name) data.fullName = name;
-      if (usersMobile !== phone) data.mobileNumber = unmaskPhoneNumber(phone);
-      if (user?.email !== email) data.email = email;
       dispatch(updateCustomer(data, onPressLogout));
     }
   };
@@ -229,15 +213,21 @@ const CustomerEditProfile = ({navigation}) => {
 
           <TextInputCustom
             title="Name"
+            error={fullnameError}
             textInputProps={{value: name, onChangeText: setName, maxLength: 70}}
           />
           <TextInputCustom
+            editable={false}
             title="Phone Number"
-            textInputProps={{value: phone, onChangeText: phone =>{
-              setPhone(maskPhoneNumber(phone))
-            }}}
+            textInputProps={{
+              value: phone,
+              onChangeText: phone => {
+                setPhone(maskPhoneNumber(phone));
+              },
+            }}
           />
           <TextInputCustom
+            editable={false}
             title="Email"
             textInputProps={{value: email, onChangeText: setEmail}}
           />

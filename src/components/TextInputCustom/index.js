@@ -21,6 +21,7 @@ const TextInputCustom = ({
   icon = null,
   iconStyles = {},
   error = '',
+  editable = true,
 }) => {
   const [isSecureText, setIsSecureText] = useState(
     textInputProps.secureTextEntry,
@@ -29,37 +30,39 @@ const TextInputCustom = ({
   return (
     <View style={[styles.container, containerStyle]}>
       {!hideLabel && <Text style={[styles.title, titleStyles]}>{title}</Text>}
-        <TextInput
-          style={[
-            styles.input,
-            error && {borderColor: Colors.red},
-            (isPassword || icon) && {paddingRight: 50},
-            textInputStyle,
-          ]}
-          {...textInputProps}
-          secureTextEntry={isSecureText}
-        />
-        {isPassword && (
-          <TouchableOpacity
-            onPress={() => setIsSecureText(!isSecureText)}
-            style={styles.passwordToggle}
-            activeOpacity={0.8}>
-            <Image
-              source={isSecureText ? Images.eyeOff : Images.eye}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-        )}
-        {icon && (
+      <TextInput
+        editable={editable}
+        style={[
+          styles.input,
+          error && {borderColor: Colors.red},
+          (isPassword || icon) && {paddingRight: 50},
+          !editable && {backgroundColor: Colors.darkGrey},
+          textInputStyle,
+        ]}
+        {...textInputProps}
+        secureTextEntry={isSecureText}
+      />
+      {isPassword && (
+        <TouchableOpacity
+          onPress={() => setIsSecureText(!isSecureText)}
+          style={styles.passwordToggle}
+          activeOpacity={0.8}>
           <Image
-            source={icon}
-            style={[
-              styles.icon,
-              {position: 'absolute', right: 15, top: 40},
-              iconStyles,
-            ]}
+            source={isSecureText ? Images.eyeOff : Images.eye}
+            style={styles.icon}
           />
-        )}
+        </TouchableOpacity>
+      )}
+      {icon && (
+        <Image
+          source={icon}
+          style={[
+            styles.icon,
+            {position: 'absolute', right: 15, top: 40},
+            iconStyles,
+          ]}
+        />
+      )}
       {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );

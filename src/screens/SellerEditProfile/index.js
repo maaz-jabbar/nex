@@ -46,6 +46,7 @@ const SellerEditProfile = ({navigation}) => {
   const [email, setEmail] = React.useState(user?.email);
   const [link, setLink] = React.useState('');
   const [image, setImage] = React.useState('');
+  const [fullnameError, setFullnameError] = React.useState('');
 
   const _goBack = () => {
     navigation.goBack();
@@ -74,23 +75,10 @@ const SellerEditProfile = ({navigation}) => {
   };
 
   const onPressSave = () => {
-    if (!name || !phone || !email)
-      return errorToast({message: 'Please fill all the fields'});
-
-    let message = [];
-
-    if (name.length < 3) message.push(nameError);
-    if (!phoneRegex.test(phone)) message.push(phoneError);
-    if (!EmailValidator.validate(email)) message.push(emailError);
-
-    if (message.length) {
-      return errorToast({message: message.join('\n')});
-    }
+    if (name.length < 3) return setFullnameError(nameError);
 
     if (
       user?.fullName === name &&
-      user?.mobileNumber === phone &&
-      user?.email === email &&
       image === '' &&
       JSON.stringify(profile?.links) === JSON.stringify(links) &&
       bio === profile?.bio
@@ -119,15 +107,9 @@ const SellerEditProfile = ({navigation}) => {
         );
       }
 
-      if (
-        user?.fullName !== name ||
-        user?.mobileNumber !== phone ||
-        user?.email !== email
-      ) {
+      if (user?.fullName !== name) {
         const data = {};
         if (user?.fullName !== name) data.fullName = name;
-        if (user?.mobileNumber !== phone) data.mobileNumber = phone;
-        if (user?.email !== email) data.email = email;
         dispatch(updateSeller(data, () => navigation.goBack()));
       }
 
@@ -201,14 +183,17 @@ const SellerEditProfile = ({navigation}) => {
             />
           </View>
           <TextInputCustom
+            error={fullnameError}
             title="Name"
             textInputProps={{value: name, onChangeText: setName, maxLength: 70}}
           />
           <TextInputCustom
+            editable={false}
             title="Phone Number"
             textInputProps={{value: phone, onChangeText: setPhone}}
           />
           <TextInputCustom
+            editable={false}
             title="Email"
             textInputProps={{value: email, onChangeText: setEmail}}
           />
