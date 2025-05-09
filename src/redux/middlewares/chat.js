@@ -59,7 +59,6 @@ export const getMessages = (conversationId, offset, onSuccess) => {
   return dispatch => {
     ApiInstanceWithJWT.get('/chat/conversation/' + conversationId)
       .then(({data}) => {
-        
         onSuccess(data?.messages);
       })
       .finally(() => {
@@ -68,7 +67,6 @@ export const getMessages = (conversationId, offset, onSuccess) => {
   };
 };
 export const sendMessageAsync = (messageObj, onSuccess) => {
-  console.log("🚀 ~ sendMessageAsync ~ messageObj:", messageObj)
   return dispatch => {
     ApiInstanceWithJWT.post('/chat/message', messageObj).then(() => {
       onSuccess();
@@ -120,27 +118,32 @@ export const uploadMedia = (file, onSuccess = () => null, specialId) => {
       });
   };
 };
-export const uploadMediaAsync = async (file, specialId) => {
+export const uploadMediaAsync = async (
+  file,
+  specialId,
+  setLoader = () => {},
+) => {
   const imageId = specialId ? specialId : Date.now();
   const formdata = new FormData();
   formdata.append('file', file);
-  console.log("🚀 ~ uploadMediaAsync ~ formdata:", JSON.stringify(formdata))
   return ApiInstanceWithJWT.post('/images/upload/' + imageId, formdata, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
-  }).then(({data}) => {
-    return imageId;
-  });
+  })
+    .then(({data}) => {
+      return imageId;
+    })
+    .catch(() => {
+      setLoader(false);
+    });
 };
 
 export const sendBroadcast = (body, onSuccess) => {
-  console.log("🚀 ~ sendBroadcast ~ body, onSuccess:", body, onSuccess)
   return dispatch => {
     dispatch(loaderTrue());
     ApiInstanceWithJWT.post('/chat/broadcast', body)
       .then(({data}) => {
-        
         onSuccess(data);
       })
       .finally(() => {

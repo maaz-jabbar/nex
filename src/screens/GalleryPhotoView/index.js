@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ImageBackground,
   TextInput,
+  ScrollView,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
@@ -22,8 +23,13 @@ import {
   deleteItemsFromServerGallery,
   editItemsFromServerGallery,
 } from '../../redux/middlewares/gallery';
-import {createChat, sendMessageAsync} from '../../redux/middlewares/chat';
+import {
+  createChat,
+  sendMessageAsync,
+  uploadMediaAsync,
+} from '../../redux/middlewares/chat';
 import ViewShot from 'react-native-view-shot';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 const numbersRegex = /^(?:\d+\.\d+|\d+|\.\d+)$/;
 
@@ -51,6 +57,21 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
     product?.price ? product?.price?.toString() : '' || '',
   );
   const [addSale, setAddSale] = useState(!!product?.sale);
+  const [imagesPicked, setImagesPicked] = useState([]);
+
+  const openPickerAsync = () => {
+    launchImageLibrary(
+      {
+        mediaType: 'photo',
+        selectionLimit: 5,
+      },
+      response => {
+        if (!response.didCancel) {
+          setImagesPicked(response.assets);
+        }
+      },
+    );
+  };
 
   const onPressSave = () => {
     if (addPrice && !price.trim()) return;
@@ -89,8 +110,29 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
     await Share.open({url: uri});
   };
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (!message.trim()) return;
+    let imageIds = [];
+    setLoader(true);
+    if (imagesPicked.length) {
+      imageIds = await Promise.all(
+        imagesPicked.map((product, index) => {
+          const attachmentSent = {
+            uri: product.uri,
+            type: product.type,
+            name: product.fileName,
+          };
+          console.log('🚀 ~ attachments.map ~ product:', attachmentSent);
+          return uploadMediaAsync(
+            attachmentSent,
+            Number(`${Date.now()}${index}`),
+            setLoader
+          );
+        }),
+      );
+      console.log("🚀 ~ sendMessage ~ imageIds:", imageIds)
+    }
+    console.log('🚀 ~ sendMessage ~ imageIds:', imageIds);
 
     dispatch(
       createChat(ownerId, data => {
@@ -101,13 +143,13 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
           senderId: userId,
           galleryId: store?.galleryId,
           itemId: product?.itemId,
+          attachments: imageIds,
         };
-
-        setLoader(true);
         setMessage('');
         dispatch(
           sendMessageAsync(messageObj, () => {
             setLoader(false);
+            setImagesPicked([]);
             successToast('Message sent successfully');
           }),
         );
@@ -195,8 +237,39 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
           <View style={styles.chatContEmtpy} />
         ) : isCustomer ? (
           <View style={styles.chatCont}>
+            {!!imagesPicked?.length && (
+              <ScrollView
+                horizontal
+                style={styles.attachmentsContainer}
+                contentContainerStyle={{
+                  paddingTop: 10,
+                  paddingBottom: 5,
+                  marginTop: 20,
+                }}>
+                {imagesPicked?.map(attachemnt => {
+                  return (
+                    <View style={styles.attachmentCont}>
+                      <TouchableOpacity
+                        style={styles.closeIconCont}
+                        onPress={() =>
+                          setImagesPicked(
+                            imagesPicked.filter(
+                              a => a?.uri !== attachemnt?.uri,
+                            ),
+                          )
+                        }>
+                        <Image source={Images.close} style={styles.closeIcon} />
+                      </TouchableOpacity>
+                      <Image source={attachemnt} style={styles.attachment} />
+                    </View>
+                  );
+                })}
+              </ScrollView>
+            )}
             <View style={styles.sendMessCont}>
-              <Image source={Images.attachment} style={styles.backIcon} />
+              <TouchableOpacity onPress={openPickerAsync}>
+                <Image source={Images.attachment} style={styles.backIcon} />
+              </TouchableOpacity>
               <TextInput
                 value={message}
                 onChangeText={setMessage}
@@ -252,8 +325,31 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
   },
+  attachmentsContainer: {},
+  attachmentCont: {
+    marginRight: 10,
+  },
+  closeIconCont: {
+    position: 'absolute',
+    top: -10,
+    right: -10,
+    zIndex: 99,
+    backgroundColor: Colors.secondary,
+    borderRadius: 20,
+    padding: 5,
+  },
+  closeIcon: {
+    height: 15,
+    width: 15,
+    tintColor: Colors.white,
+  },
+  attachment: {
+    width: 80,
+    height: 80,
+    borderRadius: 10,
+  },
   chatContEmtpy: {
-    height: "25%",
+    height: '25%',
   },
   title: {
     fontSize: 24,
@@ -358,7 +454,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   chatCont: {
-    marginBottom: '25%',
+    marginBottom: '10%',
   },
   sendMessCont: {
     flexDirection: 'row',
