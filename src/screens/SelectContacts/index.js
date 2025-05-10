@@ -19,17 +19,21 @@ import {getCustomerBasedOnSearch} from '../../redux/middlewares/user';
 
 const SelectContacts = ({navigation}) => {
   const [search, setSearch] = useState('');
-  const dispatch = useDispatch();
-  const [searchedItems, setSearchedItems] = useState([]);
   const [debouncedQuery, setDebouncedQuery] = useState('');
+  const [searchedItems, setSearchedItems] = useState([]);
+  const [selectedContacts, setSelectedContacts] = useState([]);
+
+  const dispatch = useDispatch();
+  const contacts = useSelector(state => state.user?.contacts);
   const userType = useSelector(state => state.user?.userType);
   const isCustomer = userType === 'CUSTOMER';
+
+  const {top} = useSafeAreaInsets();
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedQuery(search);
     }, 500);
-
     return () => clearTimeout(timer);
   }, [search]);
 
@@ -39,13 +43,13 @@ const SelectContacts = ({navigation}) => {
         getCustomerBasedOnSearch(debouncedQuery, data => {
           if (data.body) {
             setSearchedItems(
-              data.body.filter(contact => {
-                return contacts.find(
+              data.body.filter(contact =>
+                contacts.find(
                   c =>
-                    c?.userId == contact?.profileId &&
-                    c?.inviteStatus == 'ACCEPTED',
-                );
-              }),
+                    c?.userId === contact?.profileId &&
+                    c?.inviteStatus === 'ACCEPTED',
+                ),
+              ),
             );
           }
         }),
@@ -55,33 +59,60 @@ const SelectContacts = ({navigation}) => {
     }
   }, [debouncedQuery]);
 
-  const {top} = useSafeAreaInsets();
+  const filteredContacts = contacts.filter(
+    contact =>
+      contact?.name?.toLowerCase().includes(search?.toLowerCase()) &&
+      contact?.inviteStatus === 'ACCEPTED',
+  );
+
+  const mappedSearchedItems = searchedItems.map(c => ({
+    email: c?.email,
+    inviteStatus: 'ACCEPTED',
+    joined: true,
+    name: c?.fullName,
+    number: c?.mobileNumber,
+    userId: c?.profileId,
+  }));
+
+  const displayedContacts =
+    searchedItems.length > 0 ? mappedSearchedItems : filteredContacts;
+
+  const allSelected =
+    displayedContacts.length > 0 &&
+    displayedContacts.every(dc =>
+      selectedContacts.some(sc => sc.number === dc.number),
+    );
+
+  const toggleSelectAll = () => {
+    if (allSelected) {
+      setSelectedContacts(
+        selectedContacts.filter(
+          sc => !displayedContacts.some(dc => dc.number === sc.number),
+        ),
+      );
+    } else {
+      const newSelections = displayedContacts.filter(
+        dc => !selectedContacts.some(sc => sc.number === dc.number),
+      );
+      setSelectedContacts([...selectedContacts, ...newSelections]);
+    }
+  };
 
   const _goBack = () => {
     navigation.goBack();
   };
 
   const moveToForm = () => {
-    if (!selectedContacts.length)
+    if (!selectedContacts.length) {
       return errorToast({message: 'Please select at least one contact'});
+    }
     navigation.navigate('BroadcastForm', {selectedContacts});
   };
 
-  const [selectedContacts, setSelectedContacts] = React.useState([]);
-  const contacts = useSelector(state => state.user?.contacts);
-
-  const filteredContacts = searchedItems?.length
-    ? []
-    : contacts.filter(
-        contact =>
-          contact?.name?.toLowerCase().includes(search?.toLowerCase()) &&
-          contact?.inviteStatus == 'ACCEPTED',
-      );
-
   const _renderItem = ({item, index}) => {
-    const isSelected =
-      selectedContacts.filter(contact => contact.number === item.number)
-        ?.length > 0;
+    const isSelected = selectedContacts.some(
+      contact => contact.number === item.number,
+    );
 
     const onPressSelect = () => {
       if (isSelected) {
@@ -92,6 +123,7 @@ const SelectContacts = ({navigation}) => {
         setSelectedContacts([...selectedContacts, item]);
       }
     };
+
     return (
       <ContactCard
         onPress={onPressSelect}
@@ -105,22 +137,17 @@ const SelectContacts = ({navigation}) => {
   };
 
   const _listHeader = () => {
-    const allSelected = selectedContacts.length === contacts.length;
     return (
       <>
         <View>
           <FlatList
-            data={contacts.filter(c => c?.inviteStatus == 'ACCEPTED')}
+            data={contacts.filter(c => c?.inviteStatus === 'ACCEPTED')}
             horizontal
-            ListEmptyComponent={() => {
-              return (
-                <View>
-                  <Text style={styles.noContactsText}>
-                    No contacts to show.
-                  </Text>
-                </View>
-              );
-            }}
+            ListEmptyComponent={() => (
+              <View>
+                <Text style={styles.noContactsText}>No contacts to show.</Text>
+              </View>
+            )}
             style={styles.list}
             ListHeaderComponent={() => (
               <GradientButton
@@ -134,9 +161,9 @@ const SelectContacts = ({navigation}) => {
             )}
             contentContainerStyle={styles.listContent}
             showsHorizontalScrollIndicator={false}
-            renderItem={({item, index}) => {
-              return <ContactAvatar key={index} contact={item} />;
-            }}
+            renderItem={({item, index}) => (
+              <ContactAvatar key={index} contact={item} />
+            )}
           />
         </View>
 
@@ -151,69 +178,26 @@ const SelectContacts = ({navigation}) => {
               )}
               contentContainerStyle={[styles.listContent, {paddingTop: 0}]}
               showsHorizontalScrollIndicator={false}
-              renderItem={({item, index}) => {
-                return (
-                  <GradientButton
-                    key={index}
-                    buttonStyle={styles.toListButton}
-                    containerStyle={styles.toListButtonCont}
-                    textStyle={styles.toListButtonText}
-                    title={item.name}
-                  />
-                );
-              }}
+              renderItem={({item, index}) => (
+                <GradientButton
+                  key={index}
+                  buttonStyle={styles.toListButton}
+                  containerStyle={styles.toListButtonCont}
+                  textStyle={styles.toListButtonText}
+                  title={item.name}
+                />
+              )}
             />
           </View>
         )}
+
         <View style={styles.selectAll}>
           <Text style={styles.selectAllText}>Select All</Text>
           <CheckBox
-            setIsChecked={() => {
-              if (allSelected) {
-                setSelectedContacts([]);
-              } else setSelectedContacts([...filteredContacts]);
-            }}
+            setIsChecked={toggleSelectAll}
             isChecked={allSelected}
             rounded
           />
-        </View>
-        <View>
-          {searchedItems.map((newItem, index) => {
-            const item = {
-              email: newItem?.email,
-              inviteStatus: 'ACCEPTED',
-              joined: true,
-              name: newItem?.fullName,
-              number: newItem?.mobileNumber,
-              userId: newItem?.profileId,
-            };
-
-            const isSelected =
-              selectedContacts.filter(contact => contact.number === item.number)
-                ?.length > 0;
-
-            const onPressSelect = () => {
-              if (isSelected) {
-                setSelectedContacts(
-                  selectedContacts.filter(
-                    contact => contact.number !== item.number,
-                  ),
-                );
-              } else {
-                setSelectedContacts([...selectedContacts, item]);
-              }
-            };
-            return (
-              <ContactCard
-                user={item}
-                onPress={onPressSelect}
-                key={index}
-                onSelect={onPressSelect}
-                selected={isSelected}
-                selectable
-              />
-            );
-          })}
         </View>
       </>
     );
@@ -238,6 +222,7 @@ const SelectContacts = ({navigation}) => {
           <Image source={Images.back} style={styles.backIconReverse} />
         </TouchableOpacity>
       </View>
+
       <View style={styles.searchCont}>
         <Image
           source={Images.search}
@@ -252,18 +237,18 @@ const SelectContacts = ({navigation}) => {
           style={styles.input}
         />
       </View>
+
       <FlatList
-        ListEmptyComponent={() => {
-          return (
-            <View style={styles.emptyList}>
-              <Text style={styles.noContactsText}>
-                Please add contacts to proceed.
-              </Text>
-            </View>
-          );
-        }}
-        data={filteredContacts}
+        ListEmptyComponent={() => (
+          <View style={styles.emptyList}>
+            <Text style={styles.noContactsText}>
+              Please add contacts to proceed.
+            </Text>
+          </View>
+        )}
+        data={displayedContacts}
         renderItem={_renderItem}
+        keyExtractor={(item, index) => `${item.number}-${index}`}
         ListHeaderComponent={_listHeader}
       />
     </View>
@@ -306,7 +291,6 @@ const styles = StyleSheet.create({
   backIconReverse: {
     width: 25,
     height: 25,
-    marginRight: 0,
     marginLeft: 5,
     transform: [{scaleX: -1}],
   },
