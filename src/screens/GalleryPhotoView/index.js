@@ -169,7 +169,7 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
             />
             <Text style={styles.dropDownListText}>Share Photo</Text>
           </TouchableOpacity>
-          <TouchableOpacity
+          {!cameFromChat && <TouchableOpacity
             style={[styles.dropDownList, {borderBottomWidth: 0}]}
             onPress={onPressDelete}>
             <Image
@@ -178,7 +178,7 @@ const ViewGallery = ({route: {params}, navigation: {goBack, navigate}}) => {
               style={[styles.icon, {tintColor: Colors.primary}]}
             />
             <Text style={styles.dropDownListText}>Delete Photo</Text>
-          </TouchableOpacity>
+          </TouchableOpacity>}
         </View>
       )}
 

@@ -4,7 +4,7 @@ import {
   errorToast,
   successToast,
 } from '../../config/api';
-import {navigate} from '../../navigation/navigationService';
+import {navigate, resetStack} from '../../navigation/navigationService';
 import {
   loaderFalse,
   loaderTrue,
@@ -196,8 +196,8 @@ export const getProfile = (user, isLogin = false) => {
         dispatch(getUserContacts(data?.body?.profileId));
       })
       .catch(err => {
-        if (isCustomer) navigate('CustomerProfileCreation');
-        else navigate('ProfileCreation');
+        if (isCustomer) resetStack('CustomerProfileCreation');
+        else resetStack('ProfileCreation');
       })
       .finally(() => {
         dispatch(loaderFalse());
@@ -342,6 +342,7 @@ export const saveContact = (data, closeModal) => {
     ApiInstanceWithJWT.patch(url + profileId, data)
       .then(({data}) => {
         console.log('🚀 ~ add contact .then ~ data:', data);
+        successToast('Contact invited successfully');
         dispatch(getUserContacts(profileId));
       })
       .catch(err => {

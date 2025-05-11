@@ -43,6 +43,10 @@ const Contacts = ({navigation: {navigate, goBack}}) => {
   const isCustomer = userType === 'CUSTOMER';
 
   useEffect(() => {
+    dispatch(getUserContacts(profileId));
+  }, []);
+
+  useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedQuery(search);
     }, 500);

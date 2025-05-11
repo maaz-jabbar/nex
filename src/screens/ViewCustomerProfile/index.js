@@ -69,13 +69,13 @@ const ViewCustomerProfile = ({navigation, route: {params}}) => {
       name: 'Favorite',
       disabled: notAccepted,
       icon: Images.star,
-      onPress: () => alert('Favorite'),
+      onPress: () => {},
     },
     {
       name: 'Block',
       disabled: notAccepted,
       icon: Images.block,
-      onPress: () => alert('Block'),
+      onPress: () => {},
     },
   ];
 
