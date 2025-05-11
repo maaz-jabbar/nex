@@ -191,7 +191,7 @@ export const getProfile = (user, isLogin = false) => {
         user?.userId,
     )
       .then(({data}) => {
-        if (isLogin) navigate('AppStack');
+        if (isLogin) resetStack('AppStack');
         dispatch(saveUserProfile(data?.body));
         dispatch(getUserContacts(data?.body?.profileId));
       })
